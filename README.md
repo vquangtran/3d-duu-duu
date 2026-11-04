@@ -20,7 +20,7 @@ docs/quy-trinh/      # Sơ đồ quy trình bán hàng của shop (swimlane + m�
 - **Sạp** được dựng từ danh sách `khu` và trường `khu` của từng mẫu. Ảnh đầu tiên của mẫu được treo lên sạp, kèm giá.
 - **Giá và size** được đọc tự động từ đoạn chữ đã đăng Zalo (`chu`): `10-30kg 129k`, `ko có size 18-19`, `chỉ còn size 9-15kg`, `99k/4quần`.
 - **Kiểm tra size:** khách nhập cân nặng bé, chợ báo mẫu có size cho bé hay không.
-- **Giỏ hàng** tính tiền hàng, ship dự kiến theo số bộ (1–3 bộ 20k, từ 4 bộ 25k), tiền cọc (50k từ 2 bộ, 100k từ 4 bộ, 500k từ 20 bộ) và số tiền COD còn lại. Đơn dưới 2 bộ không gửi được, trừ khi khách đã cọc trước đó. Giỏ được lưu trên máy của khách.
+- **Giỏ hàng** tính tiền hàng, ship dự kiến theo số bộ và theo hàng hè / hàng đông (hàng hè 20k kể cả 7–10 bộ; hàng đông 20k cho 1–3 bộ, 25k từ 4 bộ, 30k từ 10 bộ), tiền cọc (50k từ 2 bộ, 100k từ 4 bộ, 500k từ 20 bộ) và số tiền COD còn lại. Đơn dưới 2 bộ không gửi được, trừ khi khách đã cọc trước đó. Giỏ được lưu trên máy của khách.
 - **Gửi đơn:** chợ chép sẵn tin chốt đơn rồi mở Zalo của shop để khách dán và gửi.
 - Mẫu chưa có ảnh sẽ được vẽ hình minh hoạ.
 

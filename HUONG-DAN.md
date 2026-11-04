@@ -63,6 +63,15 @@ mau: [{ ten: 'Xanh', anh: 0 }, { ten: 'Tím', anh: 1 }],
 - Hết **cả mẫu** nhưng vẫn muốn khách xem: thêm `het: true,`.
 - **Bỏ hẳn** mẫu khỏi chợ: thêm `an: true,` hoặc xoá cả khối.
 
+## Hàng hè, hàng đông
+
+Ship hàng hè rẻ hơn hàng đông, nên chợ cần biết mẫu nào là hàng gì. Có 3 cách, cách trên được ưu tiên hơn cách dưới:
+- Ghi vào mẫu: `mua: 'he',` hoặc `mua: 'dong',`.
+- Ghi cho cả sạp trong danh sách `khu`: `{ ten: 'Đồ hè', mau: '#FFC93C', mua: 'he' }`.
+- Không ghi gì thì lấy theo `muaMacDinh` ở phần `shop`.
+
+Mùa đông thì để `muaMacDinh: 'dong'` và chỉ cần ghi `mua: 'he'` cho vài mẫu hè còn bán.
+
 ## 4. Sạp trong chợ
 
 Danh sách `khu` ở đầu file là các sạp, theo thứ tự. Chợ có 6 chỗ đặt sạp: khu nào không có mẫu thì bị bỏ qua, chỗ còn trống thì tự thành sạp "Mẫu hot", "Xem thêm".
@@ -71,7 +80,8 @@ Danh sách `khu` ở đầu file là các sạp, theo thứ tự. Chợ có 6 ch
 
 Ở đầu file, phần `shop`:
 - `zalo`: số Zalo nhận đơn. Nút "Chép tin và mở Zalo shop" sẽ mở số này.
-- `ship`: phí ship dự kiến theo số bộ (nghìn đồng). Ví dụ `{ tu: 4, tien: 25 }` nghĩa là từ 4 bộ ship 25k. Khách được báo đây là phí dự kiến.
+- `ship`: phí ship dự kiến theo số bộ (nghìn đồng), chia hai bảng `he` (hàng hè) và `dong` (hàng đông). Ví dụ `{ tu: 4, tien: 25 }` nghĩa là từ 4 bộ ship 25k. Đơn có ít nhất một món hàng đông thì tính theo bảng hàng đông, toàn hàng hè thì theo bảng hàng hè. Khách được báo đây là phí dự kiến.
+- `muaMacDinh`: mẫu không ghi mùa thì tính là mùa này. Đang mùa đông để `'dong'`, sang hè đổi thành `'he'`.
 - `donToiThieu`: số bộ tối thiểu để đi đơn.
 - `coc`: tiền cọc theo số bộ.
 
@@ -89,7 +99,7 @@ Bé cao: 98cm
 1. YN-A42 Set áo dạ nơ kẻ, chân váy · 14kg · 129k
 2. MO-GIO Set gió cổ hoa (Tím) · 13kg · 59k
 Tiền hàng: 188k
-Ship (dự kiến): 20k
+Ship dự kiến (hàng đông): 20k
 Tổng: 208k
 Cọc: 50k (chuyển khoản)
 Còn lại khi nhận hàng (COD): 158k

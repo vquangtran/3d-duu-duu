@@ -12,6 +12,8 @@
                    '... chỉ còn size 9-15kg ... 79k', '... 99k/4quần ...'
     anh   : danh sách ảnh trong thư mục anh/. Ảnh đầu tiên được treo lên sạp.
     mau   : (không bắt buộc) các màu khách được chọn. Có thể ghi số thứ tự ảnh của màu đó.
+    mua   : (không bắt buộc) 'he' hoặc 'dong'. Hàng hè nhẹ nên ship rẻ hơn hàng đông.
+            Không ghi thì lấy theo sạp (mua ở danh sách khu), rồi theo muaMacDinh của shop.
     het   : true  -> mẫu đã hết, sạp vẫn treo nhưng khách không thêm vào giỏ được
     an    : true  -> ẩn hẳn khỏi chợ
 
@@ -22,10 +24,17 @@ window.DUU_CHO = {
   shop: {
     ten: 'Duu Duu',
     zalo: '0364958993',   // số Zalo nhận đơn (lấy từ tin ghim trong nhóm, nhớ kiểm tra lại)
-    ship: [               // phí ship dự kiến theo số bộ (gói càng nặng ship càng cao), nghìn đồng
-      { tu: 1, tien: 20 },  // 1-3 bộ: 20k   (theo đơn thật: 3 bộ ship 20k)
-      { tu: 4, tien: 25 }   // từ 4 bộ: 25k  (theo đơn thật: 7 bộ ship 25k)
-    ],                      // thêm mốc nếu đơn lớn ship cao hơn, ví dụ { tu: 10, tien: 30 }
+    ship: {               // phí ship dự kiến theo số bộ, nghìn đồng. Hàng đông nặng hơn nên ship cao hơn.
+      he: [                 // đơn toàn hàng hè
+        { tu: 1, tien: 20 }   // 20k, kể cả đơn 7-10 bộ
+      ],
+      dong: [               // đơn có ít nhất 1 món hàng đông
+        { tu: 1,  tien: 20 }, // 1-3 bộ: 20k  (theo đơn thật: 3 bộ ship 20k)
+        { tu: 4,  tien: 25 }, // 4-9 bộ: 25k  (theo đơn thật: 7 bộ ship 25k)
+        { tu: 10, tien: 30 }  // từ 10 bộ: 30k (mốc này đoán, sửa theo giá SPX thật)
+      ]
+    },
+    muaMacDinh: 'dong',   // mẫu không ghi mua thì tính là hàng đông. Sang hè đổi thành 'he'.
     donToiThieu: 2,       // đi đơn từ 2 bộ
     coc: [                // tiền cọc theo số bộ, đơn vị nghìn đồng
       { tu: 20, tien: 500 },
@@ -35,6 +44,7 @@ window.DUU_CHO = {
   },
 
   // Các sạp trong chợ, theo thứ tự. Màu là màu mái sạp.
+  // Có thể ghi mua: 'he' hoặc 'dong' cho cả sạp, ví dụ { ten: 'Đồ hè', mau: '#FFC93C', mua: 'he' }.
   khu: [
     { ten: 'Hàng mới về', mau: '#FF6F9F' },
     { ten: 'Set thu đông', mau: '#3E8BFF' },

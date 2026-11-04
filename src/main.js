@@ -12,7 +12,7 @@ const mat=(x,y,z,ry=0,rx=0,rz=0,sx=1,sy=1,sz=1)=>new T.Matrix4().compose(new V3(
 
 /* ---------- Sản phẩm: đọc từ data/san-pham.js ---------- */
 const DATA=window.DUU_CHO||{};
-const SHOP=Object.assign({ten:'Duu Duu',zalo:'',ship:[{tu:1,tien:20},{tu:4,tien:25}],donToiThieu:2,coc:[{tu:20,tien:500},{tu:4,tien:100},{tu:2,tien:50}]},DATA.shop||{});
+const SHOP=Object.assign({ten:'Duu Duu',zalo:'',ship:{he:[{tu:1,tien:20}],dong:[{tu:1,tien:20},{tu:4,tien:25},{tu:10,tien:30}]},muaMacDinh:'dong',donToiThieu:2,coc:[{tu:20,tien:500},{tu:4,tien:100},{tu:2,tien:50}]},DATA.shop||{});
 /* Đọc giá, dải cân nặng, size thiếu từ đoạn chữ đã đăng Zalo */
 function docChu(t){
   const s=String(t||'').toLowerCase().replace(/[–—]/g,'-'),o={};
@@ -35,13 +35,16 @@ function veMau(p,i){
   c=c||BANG[keys[i%keys.length]];
   return{kind,tile:c[0],base:c[1],mark:c[2],pat:kind==='pj'?'dots':(i%2?'stripe':'plain'),bear:kind==='pj'?1:0,pant:kind==='pj'?null:c[2]};
 }
+/* Hàng hè hay hàng đông: ghi ở mẫu (mua), ở sạp, hoặc lấy theo shop.muaMacDinh */
+const chuanMua=v=>{v=String(v||'').toLowerCase();return /h[eè]/.test(v)?'he':/[dđ][oô]ng/.test(v)?'dong':'';};
+const muaKhu=ten=>{const k=(DATA.khu||[]).find(k=>k&&k.ten===ten);return k?chuanMua(k.mua):'';};
 const P=[],byId={};
 (DATA.sanPham||[]).forEach((x,i)=>{
   if(!x||x.an===true)return;const d=docChu(x.chu);
   let id=String(x.ma||('mau-'+i)).toLowerCase().replace(/[^a-z0-9]+/g,'-');if(byId[id])id+='-'+i;
   const p={id,ma:x.ma||'',name:x.ten||x.ma||('Mẫu '+(i+1)),price:x.gia??d.gia??0,combo:x.combo??d.combo??0,comboDv:x.comboDv||d.comboDv||'cái',
     tu:x.tu??d.tu??10,den:x.den??d.den??28,thieu:x.thieu||d.thieu||[],tinhTrang:x.het?'het':(x.tinhTrang||d.tinhTrang||'con'),
-    khu:x.khu||'Hàng mới về',chu:x.chu||'',anh:(x.anh||[]).filter(Boolean),mau:(x.mau||[]).map(m=>typeof m==='string'?{ten:m}:m),look:2+(i*7)%9};
+    khu:x.khu||'Hàng mới về',mua:chuanMua(x.mua)||muaKhu(x.khu)||chuanMua(SHOP.muaMacDinh)||'dong',chu:x.chu||'',anh:(x.anh||[]).filter(Boolean),mau:(x.mau||[]).map(m=>typeof m==='string'?{ten:m}:m),look:2+(i*7)%9};
   Object.assign(p,veMau(p,i));P.push(p);byId[id]=p;
 });
 if(!P.length){$('#load').textContent='Chưa có mẫu nào trong data/san-pham.js';throw new Error('no products');}
@@ -668,17 +671,26 @@ $('#buy').addEventListener('click',()=>{const p=openP;if(hopSize(p,pickKg)!=='ok
 /* ---------- Giỏ hàng và tin chốt đơn ---------- */
 const theoMoc=(moc,n)=>{for(const r of [...moc].sort((a,b)=>b.tu-a.tu))if(n>=r.tu)return r.tien;return 0;};
 const cocCan=n=>theoMoc(SHOP.coc,n);
-const shipCan=n=>!n?0:typeof SHOP.ship==='number'?SHOP.ship:theoMoc(SHOP.ship,n);
+const TEN_MUA={he:'hàng hè',dong:'hàng đông'};
+/* Ship dự kiến: đơn có món hàng đông thì tính theo bảng hàng đông (gói nặng hơn), toàn hàng hè thì theo bảng hàng hè */
+function shipTinh(){
+  const n=GIO.length,s=SHOP.ship;if(!n)return{tien:0,mua:''};
+  if(typeof s==='number')return{tien:s,mua:''};
+  if(Array.isArray(s))return{tien:theoMoc(s,n),mua:''};
+  const mua=GIO.some(l=>byId[l.id].mua==='dong')?'dong':'he';
+  return{tien:theoMoc(s[mua]||s.dong||s.he||[],n),mua};
+}
+const nhanShip=t=>'Ship dự kiến'+(t.shipMua?' ('+TEN_MUA[t.shipMua]+')':'');
 function tinhGio(){
-  const n=GIO.length,hang=GIO.reduce((t,l)=>t+byId[l.id].price,0),ship=shipCan(n),tong=hang+ship;
+  const n=GIO.length,hang=GIO.reduce((t,l)=>t+byId[l.id].price,0),sh=shipTinh(),ship=sh.tien,tong=hang+ship;
   const daCoc=Math.max(0,parseInt($('#cDaCoc').value,10)||0),can=cocCan(n),them=Math.max(0,can-daCoc),cod=Math.max(0,tong-daCoc-them);
-  return{n,hang,ship,tong,daCoc,can,them,cod};
+  return{n,hang,ship,shipMua:sh.mua,tong,daCoc,can,them,cod};
 }
 function tinNhan(t){
   const L=[`Chốt đơn chợ ${SHOP.ten}`,`Tên: ${player.o.name}`];
   const cao=parseInt($('#cCao').value,10);if(cao)L.push(`Bé cao: ${cao}cm`);
   GIO.forEach((l,i)=>{const p=byId[l.id];L.push(`${i+1}. ${p.ma?p.ma+' ':''}${p.name}${l.mau?' ('+l.mau+')':''} · ${l.kg}kg${l.hao?' (trừ hao)':''} · ${giaChu(p)}`);});
-  L.push(`Tiền hàng: ${t.hang}k`,`Ship (dự kiến): ${t.ship}k`,`Tổng: ${t.tong}k`);
+  L.push(`Tiền hàng: ${t.hang}k`,`${nhanShip(t)}: ${t.ship}k`,`Tổng: ${t.tong}k`);
   if(t.daCoc)L.push(`Đã cọc trước: ${t.daCoc}k`);
   if(t.them)L.push(`${t.daCoc?'Cọc thêm':'Cọc'}: ${t.them}k (chuyển khoản)`);
   L.push(`Còn lại khi nhận hàng (COD): ${t.cod}k`);
@@ -698,7 +710,7 @@ function renderGio(){
   if(!has)return;
   const t=tinhGio(),sum=$('#cSum');sum.innerHTML='';
   const row=(k,v,cls)=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;if(cls){dt.className=dd.className=cls;}sum.append(dt,dd);};
-  row(`Tiền hàng (${t.n} bộ)`,t.hang+'k');row('Ship dự kiến',t.ship+'k');row('Tổng',t.tong+'k','big');
+  row(`Tiền hàng (${t.n} bộ)`,t.hang+'k');row(nhanShip(t),t.ship+'k');row('Tổng',t.tong+'k','big');
   if(t.daCoc)row('Đã cọc trước','−'+t.daCoc+'k');
   if(t.them)row(t.daCoc?'Cọc thêm (chuyển khoản)':'Cọc (chuyển khoản)',t.them+'k','hl');
   row('Còn lại khi nhận hàng',t.cod+'k','big');
