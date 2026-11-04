@@ -37,11 +37,36 @@
   <div class="scrim" id="sheetWrap" hidden>
     <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sName">
       <button class="close" data-close aria-label="Đóng"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-      <canvas class="hero" id="sThumb" aria-hidden="true"></canvas>
-      <div><header><h2 id="sName"></h2><p class="price" id="sPrice"></p></header><p class="sub" id="sLook"></p></div>
-      <h3>Chọn size theo cân nặng</h3>
-      <div class="sizes" id="sizes"></div>
-      <div class="row"><button class="btn ghost" id="tryOn">Cho bé mặc thử</button><button class="btn main" id="buy">Chốt đơn</button></div>
+      <div class="gal" id="sGal" aria-label="Ảnh mẫu"></div>
+      <div><header><h2 id="sName"></h2><p class="price" id="sPrice"></p></header><p class="sub" id="sMeta"></p></div>
+      <p class="cap" id="sCap"></p>
+      <div id="sMauWrap"><h3>Màu</h3><div class="chips" id="sMau"></div></div>
+      <div class="kgrow">
+        <h3>Bé nặng</h3>
+        <div class="kg"><button id="kgMinus" aria-label="Bớt 1kg">−</button><output id="kgVal" aria-live="polite"></output><button id="kgPlus" aria-label="Thêm 1kg">+</button></div>
+      </div>
+      <p class="fit" id="sFit"></p>
+      <label class="tick"><input type="checkbox" id="sHao"> Lấy rộng hơn một chút (trừ hao)</label>
+      <div class="row"><button class="btn ghost" id="tryOn">Cho bé mặc thử</button><button class="btn main" id="buy">Thêm vào giỏ</button></div>
+    </section>
+  </div>
+
+  <div class="scrim" id="cartWrap" hidden>
+    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cTitle">
+      <button class="close" data-close aria-label="Đóng"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <h2 id="cTitle">Giỏ của mẹ</h2>
+      <p class="empty" id="cEmpty">Giỏ đang trống. Chạm vào quần áo trên sạp để xem và thêm vào giỏ nha.</p>
+      <ul class="lines" id="cList"></ul>
+      <div class="fields" id="cFields">
+        <label>Bé cao (cm)<input id="cCao" type="number" inputmode="numeric" min="40" max="180" placeholder="Không bắt buộc"></label>
+        <label>Đã cọc trước (k)<input id="cDaCoc" type="number" inputmode="numeric" min="0" step="10" placeholder="0"></label>
+      </div>
+      <dl class="sum" id="cSum"></dl>
+      <p class="warn" id="cWarn" hidden></p>
+      <details class="msg" id="cMsgWrap"><summary>Xem tin nhắn sẽ gửi</summary><textarea id="cMsg" readonly rows="9"></textarea></details>
+      <button class="btn main" id="cSend">Chép tin và mở Zalo shop</button>
+      <p class="sub" id="cHow"></p>
+      <button class="link" id="cClear">Xoá giỏ</button>
     </section>
   </div>
 
@@ -58,13 +83,18 @@
       <h1>Duu Duu họp chợ</h1>
       <p>Dẫn bé đi dạo chợ đêm, ghé từng sạp và vào cửa hàng xem đồ mới.</p>
       <label>Tên hiện trong chợ<input id="who" type="text" maxlength="16" value="Bé Bống" autocomplete="off"></label>
+      <div class="two">
+        <label>Bé nặng (kg)<input id="beKg" type="number" inputmode="numeric" min="3" max="50" placeholder="VD: 14"></label>
+        <label>Bé cao (cm)<input id="beCao" type="number" inputmode="numeric" min="40" max="180" placeholder="VD: 98"></label>
+      </div>
       <button class="btn main" type="submit">Vào chợ</button>
-      <p class="demo">Bản minh hoạ: người trong chợ, tồn kho và số liệu đều là mẫu.</p>
+      <p class="demo">Mẫu, giá và size lấy từ bài đăng của shop. Người đi chợ là minh hoạ.</p>
     </form>
   </div>
   <div id="load">Đang dựng chợ…</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="data/san-pham.js"></script>
 <script src="src/main.js"></script>
 </body>
 </html>
