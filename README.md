@@ -12,6 +12,7 @@ data/san-pham.js    # Danh sách mẫu, các sạp, quy định ship và cọc. 
 anh/                # Ảnh thật của các mẫu
 src/style.css       # Toàn bộ CSS
 src/main.js         # Dựng cảnh 3D, nhân vật, sạp, bảng mẫu, giỏ hàng
+docs/quy-trinh/      # Sơ đồ quy trình bán hàng của shop (swimlane + mã Mermaid)
 ```
 
 ## Cách chợ hoạt động

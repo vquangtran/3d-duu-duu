@@ -1,0 +1,77 @@
+flowchart LR
+  %% SƠ ĐỒ 2 — KHÁCH MUA TRÊN CHỢ 3D (từ lúc vào chợ đến khi nhận hàng)
+  %% Mỗi subgraph là một làn. Đọc từ trái sang phải.
+  %% Ký hiệu: viền đậm = khách làm tay · ⚡ = chợ 3D tự làm · 🔒 = nút bị khoá
+  %%          hình bình hành = tin/tiền từ bên ngoài · 🔗 T1–T5 = điểm gặp shop (xem Sơ đồ 3)
+
+  classDef tay fill:#FFFFFF,stroke:#1B2458,stroke-width:3px,color:#1B2458
+  classDef tudong fill:#EFE9FF,stroke:#8B5CF6,stroke-width:1.5px,color:#1B2458
+  classDef quyetdinh fill:#FFC93C,stroke:#1B2458,stroke-width:1.5px,color:#1B2458
+  classDef ngoai fill:#FFFFFF,stroke:#5A6190,stroke-width:1.5px,stroke-dasharray:5 4,color:#1B2458
+  classDef ketthuc fill:#1B2458,stroke:#1B2458,color:#FFC93C
+
+  subgraph K["Khách (mẹ bé)"]
+    direction LR
+    D1(["Thấy link ở profile TikTok<br/>hoặc tin ghim nhóm Zalo, mở link"])
+    D3["Nhập tên, cân nặng bé (kg),<br/>chiều cao bé (cm), bấm “Vào chợ”"]
+    D5["Dạo chợ tròn: 6 sạp vòng cung<br/>quanh bồn hoa và cột đèn lồng.<br/>Bấm tên sạp ở thanh dưới,<br/>hoặc kéo một ngón / chạm nền để đi"]
+    D8["Bấm vào một mẫu"]
+    D10["Chọn màu<br/>(chợ lật tới ảnh màu đó)"]
+    D11["Chọn cân nặng bằng nút − / +"]
+    D14["Tuỳ chọn: “Lấy rộng hơn (trừ hao)”,<br/>“Cho bé mặc thử”"]
+    D16["Thêm vào giỏ"]
+    D17{"Chọn thêm<br/>mẫu?"}
+    D18["Mở giỏ: xem danh sách món,<br/>nhập chiều cao bé,<br/>ô “Đã cọc trước”"]
+    D22["Bấm “Chép tin và mở Zalo shop”"]
+    D24["🔗 T1 Dán tin vào khung chat Zalo,<br/>bấm gửi"]
+    D26["🔗 T3 Chuyển khoản cọc theo mã QR"]
+    D28["Gửi biên lai qua Zalo"]
+    D30["🔗 T4 🔗 T5 Nhận tin tổng tiền<br/>và mã vận đơn"]
+    D32(["Nhận hàng, trả COD,<br/>quay video bóc hàng"])
+  end
+
+  subgraph C["Chợ 3D"]
+    direction LR
+    D2["⚡ Màn hình vào chợ<br/>có linh vật Duu Duu"]
+    D4["⚡ Máy quay bay vào quảng trường"]
+    D6["⚡ Nhân vật tự đi tới sạp,<br/>tự vòng qua bồn hoa"]
+    D7["⚡ Đến gần sạp:<br/>hiện dải thẻ mẫu của sạp"]
+    D9["⚡ Bảng chi tiết: ảnh thật vuốt ngang,<br/>mã, giá, đoạn chữ của shop"]
+    D12{"Size<br/>cho bé?"}
+    D13["⚡ 🔒 “Mẫu này chỉ có size X–Y”<br/>hoặc “Hết size”:<br/>khoá nút thêm vào giỏ"]
+    D15["⚡ Mặc thử: nhân vật<br/>mặc màu của mẫu"]
+    D19["⚡ Tự tính tiền hàng, ship dự kiến,<br/>cọc theo mốc, COD còn lại"]
+    D20{"Dưới 2 bộ<br/>và chưa cọc?"}
+    D21["⚡ 🔒 Khoá nút gửi,<br/>nhắc chọn thêm"]
+    D23["⚡ Chép tin chốt đơn,<br/>mở Zalo của shop.<br/>Giỏ vẫn lưu trên máy khách"]
+  end
+
+  subgraph Z["Zalo shop"]
+    direction LR
+    D25["🔗 T2 Shop xác nhận size và ship"]
+    D29["Shop nhập đơn, gửi tin tổng tiền<br/>và mã vận đơn (Sơ đồ 1, giai đoạn C)"]
+  end
+
+  subgraph B["Ngân hàng / SPX"]
+    direction LR
+    D27[/"Ngân hàng nhận tiền cọc"/]
+    D31[/"SPX giao hàng, thu COD"/]
+  end
+
+  D1 --> D2 --> D3 --> D4 --> D5 --> D6 --> D7 --> D8 --> D9 --> D10 --> D11 --> D12
+  D12 -->|Chỉ có size X–Y / Hết size| D13
+  D13 -->|chọn mẫu khác| D8
+  D12 -->|Có size cho bé| D14
+  D14 -. nếu chọn mặc thử .-> D15
+  D14 --> D16 --> D17
+  D17 -->|Có: dạo tiếp| D5
+  D17 -->|Đủ rồi| D18 --> D19 --> D20
+  D20 -->|Đúng| D21
+  D21 -->|chọn thêm| D5
+  D20 -->|Không| D22 --> D23 --> D24 --> D25 --> D26 --> D27 --> D28 --> D29 --> D30 --> D31 --> D32
+
+  class D3,D5,D8,D10,D11,D14,D16,D18,D22,D24,D26,D28,D30,D25,D29 tay
+  class D2,D4,D6,D7,D9,D13,D15,D19,D21,D23 tudong
+  class D12,D17,D20 quyetdinh
+  class D27,D31 ngoai
+  class D1,D32 ketthuc

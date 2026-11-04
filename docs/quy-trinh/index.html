@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Quy trình DUU DUU</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap&subset=vietnamese">
+<style>
+/* Bố cục: dải tiêu đề thương hiệu, chú thích ký hiệu, rồi 3 sơ đồ swimlane cuộn ngang, mỗi sơ đồ kèm ghi chú bên lề và mã Mermaid. */
+:root{
+  --bg:#F7F6FD; --surface:#FFFFFF; --surface-2:#F0EEFA; --lane-a:#FFFFFF; --lane-b:#F4F2FC; --lane-label:#ECE9F9;
+  --ink:#1B2458; --muted:#5A6190; --line:#3B4475; --rule:#DCD8F0;
+  --purple:#8B5CF6; --purple-ink:#6D3FE0; --yellow:#FFC93C; --on-yellow:#1B2458;
+  --auto-fill:#EFE9FF; --warn:#E5484D; --warn-fill:#FFECEB;
+  --end-fill:#1B2458; --end-ink:#FFC93C; --code-bg:#1B2458; --code-ink:#E9EAFF;
+  --f-display:"Baloo 2","Be Vietnam Pro",system-ui,sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#11142B; --surface:#1A1E3D; --surface-2:#20254A; --lane-a:#161A36; --lane-b:#1B2042; --lane-label:#232850;
+  --ink:#EEF0FF; --muted:#A9AED8; --line:#B9BEE8; --rule:#2E3463;
+  --purple:#A78BFA; --purple-ink:#C4B2FF; --yellow:#FFC93C; --on-yellow:#1B2458;
+  --auto-fill:#2C2660; --warn:#FF6B6B; --warn-fill:#3B1F2E;
+  --end-fill:#FFC93C; --end-ink:#1B2458; --code-bg:#0B0E22; --code-ink:#E9EAFF; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#11142B; --surface:#1A1E3D; --surface-2:#20254A; --lane-a:#161A36; --lane-b:#1B2042; --lane-label:#232850;
+  --ink:#EEF0FF; --muted:#A9AED8; --line:#B9BEE8; --rule:#2E3463;
+  --purple:#A78BFA; --purple-ink:#C4B2FF; --yellow:#FFC93C; --on-yellow:#1B2458;
+  --auto-fill:#2C2660; --warn:#FF6B6B; --warn-fill:#3B1F2E;
+  --end-fill:#FFC93C; --end-ink:#1B2458; --code-bg:#0B0E22; --code-ink:#E9EAFF; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+a{color:var(--purple-ink)}
+
+/* Đầu trang */
+.mast{display:flex;flex-wrap:wrap;gap:20px 32px;align-items:flex-end;justify-content:space-between;padding-bottom:20px;border-bottom:2px solid var(--rule)}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{width:56px;height:56px;flex:none}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-size:clamp(28px,4.2vw,42px);font-weight:800}
+h1 em{font-style:normal;color:var(--purple-ink)}
+.lede{max-width:62ch;color:var(--muted);margin:10px 0 0}
+.toc{display:flex;flex-wrap:wrap;gap:8px}
+.toc a{display:inline-flex;gap:8px;align-items:center;text-decoration:none;color:var(--ink);background:var(--surface);border:1.5px solid var(--rule);padding:7px 12px;border-radius:999px;font-weight:600;font-size:14px}
+.toc a:hover,.toc a:focus-visible{border-color:var(--purple);outline:none}
+.toc b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--yellow);color:var(--on-yellow);font-size:12px}
+
+/* Chú thích ký hiệu */
+.legend{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px}
+.lg{display:flex;gap:10px;align-items:center;font-size:13.5px;min-width:0}
+.lg svg{flex:none}
+.lg small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
+
+/* Thẻ số liệu tháng 10 */
+.kpis{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline;padding:14px 18px;background:var(--surface);border:1.5px solid var(--rule);border-radius:14px}
+.kpis .k-title{font-family:var(--f-display);font-weight:700;font-size:17px;margin-right:4px}
+.kpi{display:flex;gap:6px;align-items:baseline;font-variant-numeric:tabular-nums}
+.kpi strong{font-family:var(--f-display);font-size:22px;font-weight:800;color:var(--purple-ink)}
+.kpi span{color:var(--muted);font-size:13px}
+
+/* Mỗi sơ đồ */
+section.sd{margin-top:48px;scroll-margin-top:16px}
+.sd-head{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:flex-end;justify-content:space-between}
+.sd-head .num{font-family:var(--f-display);font-weight:800;color:var(--purple-ink);font-size:15px;letter-spacing:.04em}
+h2{font-size:clamp(22px,3vw,30px);font-weight:800}
+.sd-desc{color:var(--muted);max-width:70ch;margin:6px 0 0}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-size:13px;font-weight:600;color:var(--ink);background:var(--surface);border:1.5px solid var(--rule);border-radius:999px;padding:6px 13px;cursor:pointer}
+button:hover{border-color:var(--purple)}
+button:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.canvas{margin-top:14px;overflow-x:auto;border:1.5px solid var(--rule);border-radius:14px;background:var(--surface);cursor:grab;-webkit-overflow-scrolling:touch}
+.canvas.dragging{cursor:grabbing;user-select:none}
+.canvas svg{display:block}
+.canvas.fit svg{width:100%;height:auto}
+.hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+
+/* Ghi chú bên lề */
+.notes{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px 22px;padding:0;list-style:none}
+.notes li{display:flex;gap:10px;font-size:14px;min-width:0}
+.notes .nb{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--purple);color:#fff;font-weight:700;font-size:12px;margin-top:1px}
+.notes-title{margin-top:18px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+
+/* Bảng điểm gặp nhau */
+.touch{margin-top:14px;overflow-x:auto}
+.touch table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+.touch th,.touch td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+.touch th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tag{display:inline-block;font-weight:700;font-size:12px;background:var(--ink);color:var(--yellow);border-radius:6px;padding:1px 7px;font-variant-numeric:tabular-nums}
+
+/* Mã Mermaid */
+details.code{margin-top:16px;border:1.5px solid var(--rule);border-radius:12px;background:var(--surface)}
+details.code summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;list-style:none}
+details.code summary::-webkit-details-marker{display:none}
+details.code summary::after{content:"▸";color:var(--muted);transition:transform .15s}
+details.code[open] summary::after{transform:rotate(90deg)}
+.code-body{padding:0 14px 14px}
+.code-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:12.5px;color:var(--muted)}
+pre{margin:0;max-height:420px;overflow:auto;background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:14px 16px;font-family:var(--f-mono);font-size:12.5px;line-height:1.55;tab-size:2}
+footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:var(--muted);font-size:13px}
+
+/* Chữ trong SVG */
+.svg-lane{font:700 13px var(--f-body);fill:var(--ink)}
+.svg-phase{font:700 14px var(--f-display);fill:var(--ink)}
+.svg-node{font:500 12px var(--f-body);fill:var(--ink)}
+.svg-node.on-dec{font-weight:700;fill:var(--on-yellow)}
+.svg-node.on-end{font-weight:600;fill:var(--end-ink)}
+.svg-elabel{font:600 11px var(--f-body);fill:var(--muted)}
+.svg-elabel.loop{fill:var(--purple-ink)}
+.svg-tag{font:700 10.5px var(--f-body);fill:var(--yellow)}
+.svg-nb{font:700 11px var(--f-body);fill:#fff}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media (max-width:520px){.kpi strong{font-size:19px}}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="28" r="27" fill="var(--yellow)"/>
+          <circle cx="19" cy="25" r="3.6" fill="#1B2458"/><circle cx="37" cy="25" r="3.6" fill="#1B2458"/>
+          <path d="M20 34c4 5 12 5 16 0" fill="none" stroke="#1B2458" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="13" cy="32" r="3.4" fill="#8B5CF6" opacity=".55"/><circle cx="43" cy="32" r="3.4" fill="#8B5CF6" opacity=".55"/>
+        </svg>
+        <div>
+          <div class="eyebrow">Shop quần áo trẻ em 7–30kg</div>
+          <h1>Quy trình <em>DUU DUU</em></h1>
+        </div>
+      </div>
+      <p class="lede">Ba sơ đồ: việc của shop mỗi ngày, đường đi của khách trên chợ 3D, và một trang tổng quan nối hai bên lại tại 5 điểm gặp nhau. Đọc từ trái sang phải.</p>
+    </div>
+    <nav class="toc" aria-label="Các sơ đồ">
+      <a href="#so-do-1"><b>1</b>Phía shop</a>
+      <a href="#so-do-2"><b>2</b>Khách chợ 3D</a>
+      <a href="#so-do-3"><b>3</b>Tổng quan</a>
+    </nav>
+  </header>
+
+  <div class="legend" aria-label="Chú thích ký hiệu">
+    <div class="lg"><svg width="46" height="30" viewBox="0 0 46 30"><rect x="2" y="3" width="42" height="24" rx="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.6"/></svg><div>Bước làm tay<small>ô viền đậm</small></div></div>
+    <div class="lg"><svg width="46" height="30" viewBox="0 0 46 30"><rect x="6" y="5" width="38" height="22" rx="6" fill="var(--auto-fill)" stroke="var(--purple)" stroke-width="1.3"/><circle cx="8" cy="7" r="7.5" fill="var(--yellow)" stroke="var(--ink)" stroke-width="1"/><path d="M9.2 2.6 5.4 8h2.6l-1.2 4.4L10.8 6.8H8.2z" fill="#1B2458"/></svg><div>Tự động<small>chợ 3D hoặc Google Sheets tự làm</small></div></div>
+    <div class="lg"><svg width="46" height="30" viewBox="0 0 46 30"><rect x="2" y="5" width="36" height="22" rx="6" fill="var(--warn-fill)" stroke="var(--warn)" stroke-width="2.6"/><path d="M38 1 46 15H30z" fill="var(--warn)"/><rect x="37.2" y="5.5" width="1.6" height="5" fill="#fff"/><rect x="37.2" y="11.6" width="1.6" height="1.6" fill="#fff"/></svg><div>Điểm nghẽn tốn công nhất<small>tìm size, trả lời tin, tính tiền, nhập sheet ngày</small></div></div>
+    <div class="lg"><svg width="46" height="30" viewBox="0 0 46 30"><path d="M23 1 44 15 23 29 2 15z" fill="var(--yellow)" stroke="var(--ink)" stroke-width="1.4"/></svg><div>Rẽ nhánh<small>câu hỏi có / không</small></div></div>
+    <div class="lg"><svg width="46" height="30" viewBox="0 0 46 30"><rect x="2" y="4" width="42" height="22" rx="11" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3"/></svg><div>Tin hoặc tiền gửi tới<small>từ khách, ngân hàng, SPX</small></div></div>
+    <div class="lg"><svg width="46" height="30" viewBox="0 0 46 30"><path d="M4 22h24v-12h8" fill="none" stroke="var(--purple)" stroke-width="1.6"/><path d="M36 6l6 4-6 4z" fill="var(--purple)"/></svg><div>Vòng lặp<small>đường tím, có ghi điều kiện</small></div></div>
+    <div class="lg"><svg width="46" height="30" viewBox="0 0 46 30"><rect x="7" y="8" width="30" height="16" rx="5" fill="var(--ink)"/><text x="22" y="20" text-anchor="middle" class="svg-tag">T1</text></svg><div>Điểm khách và shop gặp nhau<small>T1–T5, xem Sơ đồ 3</small></div></div>
+    <div class="lg"><svg width="46" height="30" viewBox="0 0 46 30"><circle cx="23" cy="15" r="10" fill="var(--purple)"/><text x="23" y="19" text-anchor="middle" class="svg-nb">1</text></svg><div>Ghi chú tiết kiệm thời gian<small>đọc bên dưới mỗi sơ đồ</small></div></div>
+  </div>
+
+  <!-- SƠ ĐỒ 1 -->
+  <section class="sd" id="so-do-1">
+    <div class="sd-head">
+      <div>
+        <div class="num">SƠ ĐỒ 1</div>
+        <h2>Phía shop: chủ shop và nhân viên</h2>
+        <p class="sd-desc">Ba giai đoạn trong ngày: chuẩn bị hàng, trả lời khách, hoàn thành đơn. Cuối ngày dán số liệu sang file tháng.</p>
+      </div>
+      <div class="tools"><button type="button" class="fit-btn" data-target="cv1" aria-pressed="false">Thu vừa màn hình</button></div>
+    </div>
+    <div class="canvas" id="cv1" role="img" aria-label="Sơ đồ swimlane quy trình phía shop DUU DUU"></div>
+    <p class="hint">Kéo ngang (hoặc vuốt) để xem hết sơ đồ.</p>
+    <div class="notes-title">Chỗ chợ 3D và bảng gom đơn giúp tiết kiệm thời gian</div>
+    <ol class="notes" id="nt1"></ol>
+    <details class="code">
+      <summary>Mã Mermaid của Sơ đồ 1</summary>
+      <div class="code-body">
+        <div class="code-bar"><span>Dán vào mermaid.live hoặc file .md trên GitHub để sửa. Mermaid tự xếp các làn nên bố cục sẽ khác bản vẽ ở trên.</span><button type="button" class="copy-btn" data-src="m1">Chép mã</button></div>
+        <pre id="m1">flowchart LR
+  %% SƠ ĐỒ 1 — PHÍA SHOP DUU DUU (chủ shop và nhân viên)
+  %% Mỗi subgraph là một làn. Đọc từ trái sang phải: A chuẩn bị hàng → B trả lời khách → C hoàn thành đơn.
+  %% Ký hiệu: viền đậm = làm tay · ⚡ = chợ 3D hoặc Google Sheets tự làm · ⚠️ = điểm nghẽn tốn công
+  %%          hình bình hành = tin/tiền từ khách hoặc sàn gửi tới · 🔗 T1–T5 = điểm gặp khách (xem Sơ đồ 3)
+
+  classDef tay fill:#FFFFFF,stroke:#1B2458,stroke-width:3px,color:#1B2458
+  classDef tudong fill:#EFE9FF,stroke:#8B5CF6,stroke-width:1.5px,color:#1B2458
+  classDef nghen fill:#FFECEB,stroke:#E5484D,stroke-width:3px,color:#1B2458
+  classDef tudongnghen fill:#EFE9FF,stroke:#E5484D,stroke-width:3px,color:#1B2458
+  classDef quyetdinh fill:#FFC93C,stroke:#1B2458,stroke-width:1.5px,color:#1B2458
+  classDef ngoai fill:#FFFFFF,stroke:#5A6190,stroke-width:1.5px,stroke-dasharray:5 4,color:#1B2458
+  classDef ketthuc fill:#1B2458,stroke:#1B2458,color:#FFC93C
+
+  subgraph L1["Chủ shop"]
+    direction LR
+    A1["Nhận hàng từ nguồn hàng"]
+    A2["Chụp hoặc lấy ảnh mẫu&lt;br/&gt;(ảnh trải sàn + ảnh bé mặc)"]
+    A3["Bán trên livestream trước&lt;br/&gt;~100 đơn/ngày"]
+    A4["Live xong, đăng chợ Zalo:&lt;br/&gt;mỗi mẫu 1 album + 1 đoạn chữ&lt;br/&gt;(dải kg, giá, size thiếu),&lt;br/&gt;đăng giống nhau vào 10 nhóm"]
+    A5["Bỏ ảnh vào thư mục anh/,&lt;br/&gt;dán nguyên đoạn chữ Zalo&lt;br/&gt;vào data/san-pham.js"]
+    A6["Đẩy lên GitHub"]
+    B1[/"Tin từ chợ Zalo: khách gửi lại&lt;br/&gt;ảnh mẫu + cân nặng, chiều cao bé"/]
+    B3["⚠️ 🔗 T1 Đọc và trả lời tin Zalo&lt;br/&gt;(hàng trăm tin mỗi ngày)"]
+    B5{"Còn size&lt;br/&gt;không?"}
+    B6["Báo khách hết,&lt;br/&gt;gợi ý size hoặc mẫu khác"]
+    B8{"Đủ 2 bộ&lt;br/&gt;chưa?"}
+    B9["Nhắc khách chọn thêm"]
+    B10["🔗 T2 Báo còn size, gửi quy định cọc&lt;br/&gt;kèm số tài khoản + mã QR&lt;br/&gt;(50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ)"]
+    B11[/"🔗 T3 Khách chuyển khoản cọc,&lt;br/&gt;gửi biên lai"/]
+    C1{"Khách&lt;br/&gt;thêm món?"}
+    C5["🔗 T4 Gửi tin tổng tiền cho khách"]
+    C8["🔗 T5 Gửi khách link mã vận đơn&lt;br/&gt;+ lưu ý quay video bóc hàng&lt;br/&gt;+ “đã có mã vận đơn thì&lt;br/&gt;không chuyển khoản nữa”"]
+    C12["Nhập tiền khách chuyển khoản,&lt;br/&gt;đối soát COD của sàn"]
+    C14(["Xem tab “Theo nguồn”:&lt;br/&gt;chợ 3D mang về bao nhiêu đơn"])
+  end
+
+  subgraph L2["Nhân viên"]
+    direction LR
+    B4["⚠️ Đi tìm size trong kho"]
+    B12["Nhập từng món vào tab “Nhập đơn”:&lt;br/&gt;ngày, nguồn (Live / Chợ Zalo / Chợ 3D),&lt;br/&gt;tên khách, mã mẫu, size, màu, SL, giá"]
+    B14["Ghi “Đã cọc” + trạng thái&lt;br/&gt;ở tab “Gom theo khách”"]
+    C2["Thêm dòng vào “Nhập đơn”"]
+    C6["Đóng gói"]
+    C9["Cập nhật “Đã đi đơn”&lt;br/&gt;+ mã vận đơn"]
+    C10["⚠️ Cuối ngày: dán 4 cột&lt;br/&gt;(Tên khách, SL, Doanh thu, Cọc)&lt;br/&gt;vào sheet ngày của file tháng"]
+  end
+
+  subgraph L3["Google Sheets"]
+    direction LR
+    B13["⚡ Bảng tự gom các món theo khách"]
+    C3["⚡ Bảng tự cộng dồn&lt;br/&gt;vào đơn của khách"]
+    C4["⚡ ⚠️ Bảng tự ra tin báo khách&lt;br/&gt;129x5+89+59+25-100=718&lt;br/&gt;(giá × số bộ + ship − cọc = COD)&lt;br/&gt;thay cho tính tay"]
+    C13["⚡ Dashboard tự tổng hợp"]
+  end
+
+  subgraph L4["Chợ 3D / GitHub"]
+    direction LR
+    A7["⚡ Chợ tự đọc giá, dải size,&lt;br/&gt;size thiếu, combo (99k/4 quần)"]
+    A8["⚡ Trang chợ tự cập nhật&lt;br/&gt;sau 1–2 phút"]
+    B2[/"⚡ Tin chốt soạn sẵn từ chợ 3D:&lt;br/&gt;mã, size, màu, tiền hàng, ship,&lt;br/&gt;cọc, COD + “Nguồn: Chợ 3D”"/]
+    B7["Ghi “ko có size X” hoặc het: true&lt;br/&gt;vào file dữ liệu, đẩy GitHub"]
+  end
+
+  subgraph L5["SPX"]
+    direction LR
+    C7["Lên đơn SPX, lấy mã vận đơn"]
+    C11[/"Tiền COD về&lt;br/&gt;+ bảng đối soát của sàn"/]
+  end
+
+  %% Giai đoạn A — chuẩn bị hàng mỗi ngày
+  A1 --&gt; A2 --&gt; A3 --&gt; A4 --&gt; A5 --&gt; A6 --&gt; A7 --&gt; A8
+
+  %% Giai đoạn B — trả lời khách
+  A4 -. khách xem chợ Zalo .-&gt; B1
+  A8 -. khách đặt trên chợ 3D .-&gt; B2
+  B1 --&gt; B3
+  B2 --&gt; B3
+  B3 --&gt;|hỏi size| B4 --&gt; B5
+  B5 --&gt;|Hết| B6 --&gt; B7
+  B6 --&gt;|khách chọn lại| B3
+  B5 --&gt;|Còn| B8
+  B8 --&gt;|Chưa| B9
+  B9 --&gt;|khách chọn thêm| B3
+  B8 --&gt;|Đủ| B10 --&gt; B11 --&gt; B12 --&gt; B13 --&gt; B14
+
+  %% Giai đoạn C — hoàn thành đơn (vòng lặp dồn đơn)
+  B14 --&gt; C1
+  C1 --&gt;|Có| C2 --&gt; C3
+  C3 --&gt;|lặp đến khi chốt| C1
+  C1 --&gt;|Chốt đi đơn| C4 --&gt; C5 --&gt; C6 --&gt; C7 --&gt; C8 --&gt; C9 --&gt; C10
+  C10 --&gt; C12
+  C11 --&gt; C12
+  C12 --&gt; C13 --&gt; C14
+
+  class A1,A2,A3,A4,A5,A6,B6,B7,B9,B10,B12,B14,C2,C5,C6,C7,C8,C9,C12 tay
+  class A7,A8,B2,B13,C3,C13 tudong
+  class B3,B4,C10 nghen
+  class C4 tudongnghen
+  class B5,B8,C1 quyetdinh
+  class B1,B11,C11 ngoai
+  class C14 ketthuc</pre>
+      </div>
+    </details>
+  </section>
+
+  <!-- SƠ ĐỒ 2 -->
+  <section class="sd" id="so-do-2">
+    <div class="sd-head">
+      <div>
+        <div class="num">SƠ ĐỒ 2</div>
+        <h2>Phía khách: mua trên chợ 3D</h2>
+        <p class="sd-desc">Từ lúc mẹ bé mở link đến khi nhận hàng. Chợ 3D làm phần kiểm size và tính tiền, Zalo vẫn là nơi chốt đơn với shop.</p>
+      </div>
+      <div class="tools"><button type="button" class="fit-btn" data-target="cv2" aria-pressed="false">Thu vừa màn hình</button></div>
+    </div>
+    <div class="canvas" id="cv2" role="img" aria-label="Sơ đồ swimlane hành trình khách mua trên chợ 3D"></div>
+    <p class="hint">Kéo ngang (hoặc vuốt) để xem hết sơ đồ.</p>
+    <div class="notes-title">Chỗ chợ 3D giúp khách và shop đỡ việc</div>
+    <ol class="notes" id="nt2"></ol>
+    <details class="code">
+      <summary>Mã Mermaid của Sơ đồ 2</summary>
+      <div class="code-body">
+        <div class="code-bar"><span>Dán vào mermaid.live hoặc file .md trên GitHub để sửa.</span><button type="button" class="copy-btn" data-src="m2">Chép mã</button></div>
+        <pre id="m2">flowchart LR
+  %% SƠ ĐỒ 2 — KHÁCH MUA TRÊN CHỢ 3D (từ lúc vào chợ đến khi nhận hàng)
+  %% Mỗi subgraph là một làn. Đọc từ trái sang phải.
+  %% Ký hiệu: viền đậm = khách làm tay · ⚡ = chợ 3D tự làm · 🔒 = nút bị khoá
+  %%          hình bình hành = tin/tiền từ bên ngoài · 🔗 T1–T5 = điểm gặp shop (xem Sơ đồ 3)
+
+  classDef tay fill:#FFFFFF,stroke:#1B2458,stroke-width:3px,color:#1B2458
+  classDef tudong fill:#EFE9FF,stroke:#8B5CF6,stroke-width:1.5px,color:#1B2458
+  classDef quyetdinh fill:#FFC93C,stroke:#1B2458,stroke-width:1.5px,color:#1B2458
+  classDef ngoai fill:#FFFFFF,stroke:#5A6190,stroke-width:1.5px,stroke-dasharray:5 4,color:#1B2458
+  classDef ketthuc fill:#1B2458,stroke:#1B2458,color:#FFC93C
+
+  subgraph K["Khách (mẹ bé)"]
+    direction LR
+    D1(["Thấy link ở profile TikTok&lt;br/&gt;hoặc tin ghim nhóm Zalo, mở link"])
+    D3["Nhập tên, cân nặng bé (kg),&lt;br/&gt;chiều cao bé (cm), bấm “Vào chợ”"]
+    D5["Dạo chợ tròn: 6 sạp vòng cung&lt;br/&gt;quanh bồn hoa và cột đèn lồng.&lt;br/&gt;Bấm tên sạp ở thanh dưới,&lt;br/&gt;hoặc kéo một ngón / chạm nền để đi"]
+    D8["Bấm vào một mẫu"]
+    D10["Chọn màu&lt;br/&gt;(chợ lật tới ảnh màu đó)"]
+    D11["Chọn cân nặng bằng nút − / +"]
+    D14["Tuỳ chọn: “Lấy rộng hơn (trừ hao)”,&lt;br/&gt;“Cho bé mặc thử”"]
+    D16["Thêm vào giỏ"]
+    D17{"Chọn thêm&lt;br/&gt;mẫu?"}
+    D18["Mở giỏ: xem danh sách món,&lt;br/&gt;nhập chiều cao bé,&lt;br/&gt;ô “Đã cọc trước”"]
+    D22["Bấm “Chép tin và mở Zalo shop”"]
+    D24["🔗 T1 Dán tin vào khung chat Zalo,&lt;br/&gt;bấm gửi"]
+    D26["🔗 T3 Chuyển khoản cọc theo mã QR"]
+    D28["Gửi biên lai qua Zalo"]
+    D30["🔗 T4 🔗 T5 Nhận tin tổng tiền&lt;br/&gt;và mã vận đơn"]
+    D32(["Nhận hàng, trả COD,&lt;br/&gt;quay video bóc hàng"])
+  end
+
+  subgraph C["Chợ 3D"]
+    direction LR
+    D2["⚡ Màn hình vào chợ&lt;br/&gt;có linh vật Duu Duu"]
+    D4["⚡ Máy quay bay vào quảng trường"]
+    D6["⚡ Nhân vật tự đi tới sạp,&lt;br/&gt;tự vòng qua bồn hoa"]
+    D7["⚡ Đến gần sạp:&lt;br/&gt;hiện dải thẻ mẫu của sạp"]
+    D9["⚡ Bảng chi tiết: ảnh thật vuốt ngang,&lt;br/&gt;mã, giá, đoạn chữ của shop"]
+    D12{"Size&lt;br/&gt;cho bé?"}
+    D13["⚡ 🔒 “Mẫu này chỉ có size X–Y”&lt;br/&gt;hoặc “Hết size”:&lt;br/&gt;khoá nút thêm vào giỏ"]
+    D15["⚡ Mặc thử: nhân vật&lt;br/&gt;mặc màu của mẫu"]
+    D19["⚡ Tự tính tiền hàng, ship dự kiến,&lt;br/&gt;cọc theo mốc, COD còn lại"]
+    D20{"Dưới 2 bộ&lt;br/&gt;và chưa cọc?"}
+    D21["⚡ 🔒 Khoá nút gửi,&lt;br/&gt;nhắc chọn thêm"]
+    D23["⚡ Chép tin chốt đơn,&lt;br/&gt;mở Zalo của shop.&lt;br/&gt;Giỏ vẫn lưu trên máy khách"]
+  end
+
+  subgraph Z["Zalo shop"]
+    direction LR
+    D25["🔗 T2 Shop xác nhận size và ship"]
+    D29["Shop nhập đơn, gửi tin tổng tiền&lt;br/&gt;và mã vận đơn (Sơ đồ 1, giai đoạn C)"]
+  end
+
+  subgraph B["Ngân hàng / SPX"]
+    direction LR
+    D27[/"Ngân hàng nhận tiền cọc"/]
+    D31[/"SPX giao hàng, thu COD"/]
+  end
+
+  D1 --&gt; D2 --&gt; D3 --&gt; D4 --&gt; D5 --&gt; D6 --&gt; D7 --&gt; D8 --&gt; D9 --&gt; D10 --&gt; D11 --&gt; D12
+  D12 --&gt;|Chỉ có size X–Y / Hết size| D13
+  D13 --&gt;|chọn mẫu khác| D8
+  D12 --&gt;|Có size cho bé| D14
+  D14 -. nếu chọn mặc thử .-&gt; D15
+  D14 --&gt; D16 --&gt; D17
+  D17 --&gt;|Có: dạo tiếp| D5
+  D17 --&gt;|Đủ rồi| D18 --&gt; D19 --&gt; D20
+  D20 --&gt;|Đúng| D21
+  D21 --&gt;|chọn thêm| D5
+  D20 --&gt;|Không| D22 --&gt; D23 --&gt; D24 --&gt; D25 --&gt; D26 --&gt; D27 --&gt; D28 --&gt; D29 --&gt; D30 --&gt; D31 --&gt; D32
+
+  class D3,D5,D8,D10,D11,D14,D16,D18,D22,D24,D26,D28,D30,D25,D29 tay
+  class D2,D4,D6,D7,D9,D13,D15,D19,D21,D23 tudong
+  class D12,D17,D20 quyetdinh
+  class D27,D31 ngoai
+  class D1,D32 ketthuc</pre>
+      </div>
+    </details>
+  </section>
+
+  <!-- SƠ ĐỒ 3 -->
+  <section class="sd" id="so-do-3">
+    <div class="sd-head">
+      <div>
+        <div class="num">SƠ ĐỒ 3</div>
+        <h2>Tổng quan một trang</h2>
+        <p class="sd-desc">Ba kênh bán cùng đổ về bảng “Gom đơn Duu Duu”, rồi sang file tháng và Dashboard. Các thẻ T1–T5 là chỗ Sơ đồ 2 (khách) gặp Sơ đồ 1 (shop).</p>
+      </div>
+      <div class="tools"><button type="button" class="fit-btn" data-target="cv3" aria-pressed="false">Thu vừa màn hình</button></div>
+    </div>
+    <div class="canvas" id="cv3" role="img" aria-label="Sơ đồ tổng quan ba kênh bán đổ về bảng gom đơn"></div>
+    <div class="kpis" aria-label="Số liệu tháng 10">
+      <span class="k-title">Tháng 10</span>
+      <span class="kpi"><strong>2.687</strong><span>đơn trong 23 ngày</span></span>
+      <span class="kpi"><strong>117</strong><span>đơn/ngày</span></span>
+      <span class="kpi"><strong>4,9</strong><span>bộ/đơn</span></span>
+      <span class="kpi"><strong>303k</strong><span>/đơn</span></span>
+      <span class="kpi"><strong>~813 tr</strong><span>doanh thu</span></span>
+    </div>
+    <div class="notes-title">5 điểm khách và shop gặp nhau</div>
+    <div class="touch">
+      <table>
+        <thead><tr><th>Điểm</th><th>Việc</th><th>Phía khách (Sơ đồ 2)</th><th>Phía shop (Sơ đồ 1)</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">T1</span></td><td>Tin chốt đơn Zalo</td><td>Dán tin chép sẵn từ chợ 3D vào Zalo, bấm gửi</td><td>Giai đoạn B: đọc và trả lời tin Zalo</td></tr>
+          <tr><td><span class="tag">T2</span></td><td>Xác nhận size</td><td>Chờ shop xác nhận size và ship</td><td>“Còn size không?” → báo còn size, gửi quy định cọc, STK, mã QR</td></tr>
+          <tr><td><span class="tag">T3</span></td><td>Chuyển khoản cọc</td><td>Chuyển khoản theo mã QR, gửi biên lai</td><td>Nhận biên lai, nhập đơn, ghi “Đã cọc”</td></tr>
+          <tr><td><span class="tag">T4</span></td><td>Tin báo tổng tiền</td><td>Nhận tin dạng 129x5+89+59+25-100=718</td><td>Giai đoạn C: bảng tự ra tin, gửi cho khách</td></tr>
+          <tr><td><span class="tag">T5</span></td><td>Mã vận đơn</td><td>Nhận mã vận đơn, nhận hàng, trả COD, quay video bóc hàng</td><td>Lên đơn SPX, gửi link mã vận đơn và lưu ý video bóc hàng</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notes-title">Ghi chú</div>
+    <ol class="notes" id="nt3"></ol>
+    <details class="code">
+      <summary>Mã Mermaid của Sơ đồ 3</summary>
+      <div class="code-body">
+        <div class="code-bar"><span>Dán vào mermaid.live hoặc file .md trên GitHub để sửa.</span><button type="button" class="copy-btn" data-src="m3">Chép mã</button></div>
+        <pre id="m3">flowchart LR
+  %% SƠ ĐỒ 3 — TỔNG QUAN MỘT TRANG
+  %% 3 kênh bán cùng đổ về bảng “Gom đơn Duu Duu”, rồi sang file tháng và Dashboard.
+  %% 🔗 T1–T5 là 5 điểm khách (Sơ đồ 2) và shop (Sơ đồ 1) gặp nhau:
+  %%   T1 tin chốt đơn Zalo · T2 xác nhận size · T3 chuyển khoản cọc · T4 tin báo tổng tiền · T5 mã vận đơn
+  %% Ký hiệu: viền đậm = làm tay · ⚡ = tự động · ⚠️ = điểm nghẽn tốn công
+
+  classDef tay fill:#FFFFFF,stroke:#1B2458,stroke-width:3px,color:#1B2458
+  classDef tudong fill:#EFE9FF,stroke:#8B5CF6,stroke-width:1.5px,color:#1B2458
+  classDef nghen fill:#FFECEB,stroke:#E5484D,stroke-width:3px,color:#1B2458
+  classDef ngoai fill:#FFFFFF,stroke:#5A6190,stroke-width:1.5px,stroke-dasharray:5 4,color:#1B2458
+  classDef ketthuc fill:#1B2458,stroke:#1B2458,color:#FFC93C
+
+  subgraph K["Khách (mẹ bé)"]
+    direction LR
+    E1(["Mẹ có bé 7–30kg"])
+    E7["🔗 T3 Chuyển khoản cọc&lt;br/&gt;+ gửi biên lai"]
+    E11["🔗 T4 Nhận tin tổng tiền&lt;br/&gt;129x5+89+59+25-100=718"]
+    E14["🔗 T5 Nhận mã vận đơn, nhận hàng,&lt;br/&gt;trả COD, quay video bóc hàng"]
+  end
+
+  subgraph KB["Kênh bán"]
+    direction LR
+    E2["Livestream&lt;br/&gt;~100 đơn/ngày"]
+    E3["Chợ Zalo: 10 nhóm,&lt;br/&gt;~10.000 thành viên&lt;br/&gt;10–15 đơn/ngày"]
+    E4["⚡ Chợ 3D (mới): tự kiểm size,&lt;br/&gt;tự tính tiền → Sơ đồ 2"]
+  end
+
+  subgraph S["Shop (Zalo) — Sơ đồ 1"]
+    direction LR
+    E5["⚠️ 🔗 T1 Nhận tin chốt đơn&lt;br/&gt;(hàng trăm tin mỗi ngày)"]
+    E6["⚠️ 🔗 T2 Xác nhận size (đi kho),&lt;br/&gt;gửi quy định cọc"]
+    E12["Đóng gói, lên đơn SPX"]
+    E17(["Chủ shop xem số ngày, số tháng"])
+  end
+
+  subgraph GS["Google Sheets"]
+    direction LR
+    E8["Gom đơn Duu Duu › Nhập đơn:&lt;br/&gt;mỗi món một dòng,&lt;br/&gt;ghi nguồn Live / Chợ Zalo / Chợ 3D"]
+    E9["⚡ Gom theo khách: tự cộng dồn&lt;br/&gt;khi dồn đơn, tự ra tin tổng tiền"]
+    E15["⚠️ File tháng: dán 4 cột&lt;br/&gt;vào sheet ngày"]
+    E16["⚡ Dashboard + tab “Theo nguồn”&lt;br/&gt;tự tổng hợp, đếm đơn chợ 3D"]
+  end
+
+  subgraph SB["SPX / Ngân hàng"]
+    direction LR
+    E13[/"SPX: mã vận đơn, giao hàng,&lt;br/&gt;thu COD, đối soát"/]
+  end
+
+  E1 --&gt; E2 &amp; E3 &amp; E4
+  E2 &amp; E3 &amp; E4 --&gt; E5
+  E5 --&gt; E6 --&gt; E7 --&gt; E8 --&gt; E9
+  E9 --&gt;|khách thêm món: dồn đơn| E8
+  E9 --&gt; E11 --&gt; E12 --&gt; E13 --&gt; E14
+  E9 --&gt;|cuối ngày: 4 cột| E15
+  E13 --&gt;|đối soát COD| E15
+  E15 --&gt; E16 --&gt; E17
+
+  class E2,E3,E7,E8,E11,E12,E14 tay
+  class E4,E9,E16 tudong
+  class E5,E6,E15 nghen
+  class E13 ngoai
+  class E1,E17 ketthuc</pre>
+      </div>
+    </details>
+  </section>
+
+  <footer>Mã nguồn các sơ đồ nằm trong repo 3d-duu-duu, thư mục <code>docs/quy-trinh/</code> (file .mmd cho từng sơ đồ). Quy định đơn trên sơ đồ: đi đơn từ 2 bộ · cọc 50k từ 2 bộ, 100k từ 4 bộ, 500k sỉ từ 20 bộ · ship 20k cho 1–3 bộ, 25k từ 4 bộ · còn lại thu COD qua SPX · chỉ giải quyết khiếu nại khi có video bóc hàng.</footer>
+</div>
+
+<script>
+/* ============ DỮ LIỆU CÁC SƠ ĐỒ ============
+   t: tay (làm tay) | auto (tự động) | dec (rẽ nhánh) | ext (tin/tiền gửi tới) | end (bắt đầu/kết thúc)
+   warn: điểm nghẽn · touch: ['T1'] điểm gặp nhau · note: số ghi chú
+   Cạnh: route auto | loopDown | loopUp | backLeft ; kind: loop (tím) | dash (nét đứt) */
+const SD1 = {
+  id:'cv1', notesEl:'nt1',
+  lanes:['Chủ shop','Nhân viên','Google Sheets','Chợ 3D / GitHub','SPX'],
+  phases:[
+    {t:'A · Chuẩn bị hàng mỗi ngày', a:0, b:6},
+    {t:'B · Trả lời khách', a:7, b:15},
+    {t:'C · Hoàn thành đơn', a:16, b:22},
+    {t:'C · Cuối ngày', a:23, b:26}
+  ],
+  nodes:[
+    {id:'A1',l:0,c:0,t:'tay',x:'Nhận hàng từ nguồn hàng'},
+    {id:'A2',l:0,c:1,t:'tay',x:'Chụp hoặc lấy ảnh mẫu: ảnh trải sàn + ảnh bé mặc'},
+    {id:'A3',l:0,c:2,t:'tay',x:'Bán trên livestream trước (khoảng 100 đơn/ngày)'},
+    {id:'A4',l:0,c:3,t:'tay',x:'Live xong, đăng chợ Zalo: mỗi mẫu 1 album + 1 đoạn chữ (dải kg, giá, size thiếu), đăng giống nhau vào 10 nhóm'},
+    {id:'A5',l:0,c:4,t:'tay',x:'Bỏ ảnh vào thư mục anh/, dán nguyên đoạn chữ Zalo vào data/san-pham.js'},
+    {id:'A6',l:0,c:5,t:'tay',x:'Đẩy lên GitHub'},
+    {id:'A7',l:3,c:5,t:'auto',note:1,x:'Chợ tự đọc giá, dải size, size thiếu, combo (99k/4 quần)'},
+    {id:'A8',l:3,c:6,t:'auto',x:'Trang chợ tự cập nhật sau 1–2 phút'},
+
+    {id:'B1',l:0,c:7,r:1,t:'ext',x:'Tin từ chợ Zalo: khách gửi lại ảnh mẫu + cân nặng, chiều cao bé'},
+    {id:'B2',l:3,c:7,t:'auto',note:2,x:'Khách đặt trên chợ 3D, gửi tin chốt soạn sẵn: mã, size, màu, tiền hàng, ship, cọc, COD + “Nguồn: Chợ 3D”'},
+    {id:'B3',l:0,c:8,t:'tay',warn:1,touch:['T1'],x:'Đọc và trả lời tin Zalo (hàng trăm tin mỗi ngày)'},
+    {id:'B4',l:1,c:9,t:'tay',warn:1,x:'Đi tìm size trong kho'},
+    {id:'B5',l:0,c:10,t:'dec',x:'Còn size không?'},
+    {id:'B6',l:0,c:10,r:1,t:'tay',x:'Báo khách hết, gợi ý size hoặc mẫu khác'},
+    {id:'B7',l:3,c:10,t:'tay',note:3,x:'Ghi “ko có size X” hoặc het: true vào file dữ liệu, đẩy GitHub'},
+    {id:'B8',l:0,c:11,t:'dec',x:'Đủ 2 bộ chưa?'},
+    {id:'B9',l:0,c:11,r:1,t:'tay',x:'Nhắc khách chọn thêm'},
+    {id:'B10',l:0,c:12,t:'tay',touch:['T2'],x:'Báo còn size, gửi quy định cọc kèm số tài khoản + mã QR (50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ)'},
+    {id:'B11',l:0,c:13,t:'ext',touch:['T3'],x:'Khách chuyển khoản cọc, gửi biên lai'},
+    {id:'B12',l:1,c:14,t:'tay',x:'Nhập từng món vào tab “Nhập đơn”: ngày, nguồn (Live / Chợ Zalo / Chợ 3D), tên khách, mã, size, màu, SL, giá'},
+    {id:'B13',l:2,c:14,t:'auto',x:'Bảng tự gom các món theo khách'},
+    {id:'B14',l:1,c:15,t:'tay',x:'Ghi “Đã cọc” + trạng thái ở tab “Gom theo khách”'},
+
+    {id:'C1',l:0,c:16,t:'dec',x:'Khách thêm món?'},
+    {id:'C2',l:1,c:16,t:'tay',x:'Thêm dòng vào “Nhập đơn”'},
+    {id:'C3',l:2,c:16,t:'auto',note:4,x:'Bảng tự cộng dồn vào đơn của khách'},
+    {id:'C4',l:2,c:17,t:'auto',warn:1,note:5,x:'Bảng tự ra tin báo khách: 129x5+89+59+25-100=718 (giá × số bộ + ship − cọc = COD), thay cho tính tay'},
+    {id:'C5',l:0,c:18,t:'tay',touch:['T4'],x:'Gửi tin tổng tiền cho khách'},
+    {id:'C6',l:1,c:19,t:'tay',x:'Đóng gói'},
+    {id:'C7',l:4,c:20,t:'tay',x:'Lên đơn SPX, lấy mã vận đơn'},
+    {id:'C8',l:0,c:21,t:'tay',touch:['T5'],x:'Gửi khách link mã vận đơn + lưu ý quay video bóc hàng + “đã có mã vận đơn thì không chuyển khoản nữa”'},
+    {id:'C9',l:1,c:22,t:'tay',x:'Cập nhật “Đã đi đơn” + mã vận đơn'},
+    {id:'C10',l:1,c:23,t:'tay',warn:1,note:6,x:'Dán 4 cột (Tên khách, SL, Doanh thu, Cọc) vào sheet ngày của file tháng'},
+    {id:'C11',l:4,c:23,t:'ext',x:'Tiền COD về + bảng đối soát của sàn'},
+    {id:'C12',l:0,c:24,t:'tay',x:'Nhập tiền khách chuyển khoản, đối soát COD của sàn'},
+    {id:'C13',l:2,c:25,t:'auto',x:'Dashboard tự tổng hợp'},
+    {id:'C14',l:0,c:26,t:'end',note:7,x:'Xem tab “Theo nguồn”: chợ 3D mang về bao nhiêu đơn'}
+  ],
+  edges:[
+    ['A1','A2'],['A2','A3'],['A3','A4'],['A4','A5'],['A5','A6'],['A6','A7'],['A7','A8'],
+    ['A4','B1',{kind:'dash',label:'khách xem chợ Zalo',lpSeg:2}],
+    ['A8','B2',{kind:'dash'}],
+    ['B1','B3'],['B2','B3'],
+    ['B3','B4',{label:'hỏi size'}],['B4','B5'],
+    ['B5','B6',{label:'Hết'}],['B6','B7'],
+    ['B6','B3',{route:'backLeft',kind:'loop',label:'khách chọn lại',off:8,lpSeg:3,lpAt:.15}],
+    ['B5','B8',{label:'Còn'}],
+    ['B8','B9',{label:'Chưa'}],
+    ['B9','B3',{route:'loopDown',kind:'loop',label:'khách chọn thêm',laneBottom:8}],
+    ['B8','B10',{label:'Đủ'}],['B10','B11'],['B11','B12'],['B12','B13'],['B13','B14'],
+    ['B14','C1'],
+    ['C1','C2',{label:'Có'}],['C2','C3'],
+    ['C3','C1',{route:'backLeft',kind:'loop',label:'lặp đến khi chốt',off:-8,lpSeg:1}],
+    ['C1','C4',{label:'Chốt đi đơn',lpSeg:1}],
+    ['C4','C5'],['C5','C6'],['C6','C7'],['C7','C8'],['C8','C9'],['C9','C10'],
+    ['C10','C12'],['C11','C12'],['C12','C13'],['C13','C14']
+  ],
+  notes:[
+    'Đăng chợ Zalo xong là có luôn dữ liệu cho chợ 3D: dán nguyên đoạn chữ (ví dụ “12-28kg ko có size 18-19 ạ 69k”), chợ tự đọc giá, dải size, size thiếu, combo. Không phải gõ lại.',
+    'Tin từ chợ 3D đã đủ mã, size, màu, tiền hàng, ship, cọc, COD. Shop đọc một tin là biết khách cần gì, không phải hỏi lại cân nặng hay đoán mẫu qua ảnh.',
+    'Ghi “ko có size X” một lần thì mọi khách sau trên chợ 3D đều thấy và nút thêm vào giỏ tự khoá. Bớt tin hỏi size, bớt chuyến đi kho.',
+    'Khách dồn đơn trong vài ngày: chỉ thêm dòng, bảng Gom đơn tự cộng. Không phải lật lại tin cũ để cộng tay.',
+    'Tin tổng tiền tự ra theo công thức giá × số bộ + ship − cọc. Thay cho việc tính tay cho khoảng 117 khách mỗi ngày.',
+    'Tab “Gom theo khách” có sẵn 4 cột Tên khách, SL, Doanh thu, Cọc. Cuối ngày dán một lần thay vì gõ lại từng đơn vào sheet ngày.',
+    'Tab “Theo nguồn” tự đếm đơn theo Live / Chợ Zalo / Chợ 3D, biết ngay chợ 3D mang về bao nhiêu đơn và doanh thu.'
+  ]
+};
+
+const SD2 = {
+  id:'cv2', notesEl:'nt2',
+  lanes:['Khách (mẹ bé)','Chợ 3D','Zalo shop','Ngân hàng / SPX'],
+  phases:[
+    {t:'Vào chợ', a:0, b:3},
+    {t:'Dạo chợ, chọn mẫu, kiểm size', a:4, b:14},
+    {t:'Giỏ hàng', a:15, b:19},
+    {t:'Chốt qua Zalo và nhận hàng', a:20, b:27}
+  ],
+  nodes:[
+    {id:'D1',l:0,c:0,t:'end',x:'Thấy link ở profile TikTok hoặc tin ghim nhóm Zalo, mở link'},
+    {id:'D2',l:1,c:1,t:'auto',x:'Màn hình vào chợ có linh vật Duu Duu'},
+    {id:'D3',l:0,c:2,t:'tay',note:1,x:'Nhập tên, cân nặng bé (kg), chiều cao bé (cm), bấm “Vào chợ”'},
+    {id:'D4',l:1,c:3,t:'auto',x:'Máy quay bay vào quảng trường'},
+    {id:'D5',l:0,c:4,t:'tay',x:'Dạo chợ tròn: 6 sạp vòng cung quanh bồn hoa, cột đèn lồng. Bấm tên sạp ở thanh dưới, hoặc kéo một ngón / chạm nền để đi'},
+    {id:'D6',l:1,c:5,t:'auto',x:'Nhân vật tự đi tới sạp, tự vòng qua bồn hoa'},
+    {id:'D7',l:1,c:6,t:'auto',x:'Đến gần sạp: hiện dải thẻ mẫu của sạp'},
+    {id:'D8',l:0,c:7,t:'tay',x:'Bấm vào một mẫu'},
+    {id:'D9',l:1,c:8,t:'auto',x:'Bảng chi tiết: ảnh thật vuốt ngang, mã, giá, đoạn chữ của shop'},
+    {id:'D10',l:0,c:9,t:'tay',x:'Chọn màu (chợ lật tới ảnh màu đó)'},
+    {id:'D11',l:0,c:10,t:'tay',x:'Chọn cân nặng bằng nút − / +'},
+    {id:'D12',l:1,c:11,t:'dec',x:'Size cho bé?'},
+    {id:'D13',l:1,c:11,r:1,t:'auto',note:2,x:'“Mẫu này chỉ có size X–Y” hoặc “Hết size”: khoá nút thêm vào giỏ'},
+    {id:'D14',l:0,c:12,t:'tay',x:'Tuỳ chọn: “Lấy rộng hơn (trừ hao)”, “Cho bé mặc thử”'},
+    {id:'D15',l:1,c:12,t:'auto',x:'Mặc thử: nhân vật mặc màu của mẫu'},
+    {id:'D16',l:0,c:13,t:'tay',x:'Thêm vào giỏ'},
+    {id:'D17',l:0,c:14,t:'dec',x:'Chọn thêm mẫu?'},
+    {id:'D18',l:0,c:15,t:'tay',x:'Mở giỏ: danh sách món, ô chiều cao bé, ô “Đã cọc trước”'},
+    {id:'D19',l:1,c:16,t:'auto',note:3,x:'Tự tính tiền hàng, ship dự kiến, cọc theo mốc, COD còn lại'},
+    {id:'D20',l:1,c:17,t:'dec',x:'Dưới 2 bộ và chưa cọc?'},
+    {id:'D21',l:1,c:17,r:1,t:'auto',note:4,x:'Khoá nút gửi, nhắc chọn thêm'},
+    {id:'D22',l:0,c:18,t:'tay',x:'Bấm “Chép tin và mở Zalo shop”'},
+    {id:'D23',l:1,c:19,t:'auto',note:5,x:'Chép tin chốt đơn, mở Zalo của shop. Giỏ vẫn lưu trên máy khách'},
+    {id:'D24',l:0,c:20,t:'tay',touch:['T1'],x:'Dán tin vào khung chat Zalo, bấm gửi'},
+    {id:'D25',l:2,c:21,t:'tay',touch:['T2'],x:'Shop xác nhận size và ship'},
+    {id:'D26',l:0,c:22,t:'tay',touch:['T3'],x:'Chuyển khoản cọc theo mã QR'},
+    {id:'D27',l:3,c:22,t:'ext',x:'Ngân hàng nhận tiền cọc'},
+    {id:'D28',l:0,c:23,t:'tay',x:'Gửi biên lai qua Zalo'},
+    {id:'D29',l:2,c:24,t:'tay',x:'Shop nhập đơn, gửi tin tổng tiền và mã vận đơn (Sơ đồ 1, giai đoạn C)'},
+    {id:'D30',l:0,c:25,t:'tay',touch:['T4','T5'],x:'Nhận tin tổng tiền và mã vận đơn'},
+    {id:'D31',l:3,c:26,t:'ext',x:'SPX giao hàng, thu COD'},
+    {id:'D32',l:0,c:27,t:'end',x:'Nhận hàng, trả COD, quay video bóc hàng'}
+  ],
+  edges:[
+    ['D1','D2'],['D2','D3'],['D3','D4'],['D4','D5'],['D5','D6'],['D6','D7'],['D7','D8'],['D8','D9'],['D9','D10'],['D10','D11'],['D11','D12'],
+    ['D12','D13',{label:'Chỉ có size X–Y / Hết size'}],
+    ['D13','D8',{route:'loopDown',kind:'loop',label:'chọn mẫu khác',laneBottom:16}],
+    ['D12','D14',{label:'Có size cho bé',lpSeg:1}],
+    ['D14','D15',{kind:'dash',label:'nếu mặc thử'}],
+    ['D14','D16'],['D16','D17'],
+    ['D17','D5',{route:'loopUp',kind:'loop',label:'Có: dạo tiếp',laneTop:12}],
+    ['D17','D18',{label:'Đủ rồi'}],['D18','D19'],['D19','D20'],
+    ['D20','D21',{label:'Đúng'}],
+    ['D21','D5',{route:'loopDown',kind:'loop',label:'chọn thêm',laneBottom:6,lpSeg:1,lpAt:.06}],
+    ['D20','D22',{label:'Không',lpSeg:1}],
+    ['D22','D23'],['D23','D24'],['D24','D25'],['D25','D26'],['D26','D27'],['D27','D28'],['D28','D29'],['D29','D30'],['D30','D31'],['D31','D32']
+  ],
+  notes:[
+    'Nhập cân nặng bé một lần lúc vào chợ, mẫu nào cũng tự báo có size cho bé hay không.',
+    'Lệch size hoặc hết size thì nút thêm vào giỏ tự khoá: khách không chốt nhầm, shop không phải nhắn báo hết.',
+    'Giỏ tự tính tiền hàng, ship (20k cho 1–3 bộ, 25k từ 4 bộ), cọc theo mốc 50k / 100k / 500k và COD còn lại. Khách biết trước số tiền, ít hỏi lại.',
+    'Dưới 2 bộ mà chưa cọc thì không gửi được, nên đơn tới tay shop đều đủ điều kiện đi đơn.',
+    'Tin chốt có dòng “Nguồn: Chợ 3D” để nhân viên ghi đúng nguồn. Giỏ lưu trên máy nên khách quay lại dồn thêm món dễ dàng.'
+  ]
+};
+
+const SD3 = {
+  id:'cv3', notesEl:'nt3',
+  lanes:['Khách (mẹ bé)','Kênh bán','Shop (Zalo) · Sơ đồ 1','Google Sheets','SPX / Ngân hàng'],
+  phases:[
+    {t:'Kênh bán', a:0, b:1},
+    {t:'Chốt đơn', a:2, b:4},
+    {t:'Bảng Gom đơn', a:5, b:7},
+    {t:'Giao hàng', a:8, b:9},
+    {t:'File tháng, Dashboard', a:10, b:12}
+  ],
+  nodes:[
+    {id:'E1',l:0,c:0,t:'end',x:'Mẹ có bé 7–30kg'},
+    {id:'E2',l:1,c:1,t:'tay',x:'Livestream · khoảng 100 đơn/ngày'},
+    {id:'E3',l:1,c:1,r:1,t:'tay',x:'Chợ Zalo · 10 nhóm, khoảng 10.000 thành viên · 10–15 đơn/ngày'},
+    {id:'E4',l:1,c:1,r:2,t:'auto',note:1,x:'Chợ 3D (mới): tự kiểm size, tự tính tiền → Sơ đồ 2'},
+    {id:'E5',l:2,c:2,t:'tay',warn:1,touch:['T1'],x:'Nhận tin chốt đơn qua Zalo (hàng trăm tin mỗi ngày)'},
+    {id:'E6',l:2,c:3,t:'tay',warn:1,touch:['T2'],x:'Xác nhận size (đi tìm trong kho), gửi quy định cọc'},
+    {id:'E7',l:0,c:4,t:'tay',touch:['T3'],x:'Chuyển khoản cọc + gửi biên lai'},
+    {id:'E8',l:3,c:5,t:'tay',note:2,x:'Gom đơn Duu Duu › Nhập đơn: mỗi món một dòng, ghi nguồn Live / Chợ Zalo / Chợ 3D'},
+    {id:'E9',l:3,c:6,t:'auto',note:3,x:'Gom theo khách: tự cộng dồn khi dồn đơn, tự ra tin tổng tiền'},
+    {id:'E11',l:0,c:7,t:'tay',touch:['T4'],x:'Nhận tin tổng tiền 129x5+89+59+25-100=718'},
+    {id:'E12',l:2,c:8,t:'tay',x:'Đóng gói, lên đơn SPX'},
+    {id:'E13',l:4,c:9,t:'ext',x:'SPX: mã vận đơn, giao hàng, thu COD, đối soát'},
+    {id:'E14',l:0,c:10,t:'tay',touch:['T5'],x:'Nhận mã vận đơn, nhận hàng, trả COD, quay video bóc hàng'},
+    {id:'E15',l:3,c:10,t:'tay',warn:1,x:'File tháng: dán 4 cột vào sheet ngày'},
+    {id:'E16',l:3,c:11,t:'auto',note:4,x:'Dashboard + tab “Theo nguồn” tự tổng hợp, đếm đơn chợ 3D'},
+    {id:'E17',l:2,c:12,t:'end',x:'Chủ shop xem số ngày, số tháng'}
+  ],
+  edges:[
+    ['E1','E2'],['E1','E3'],['E1','E4'],
+    ['E2','E5'],['E3','E5'],['E4','E5'],
+    ['E5','E6'],['E6','E7'],['E7','E8'],['E8','E9'],
+    ['E9','E8',{route:'loopDown',kind:'loop',label:'khách thêm món (dồn đơn)',laneBottom:8}],
+    ['E9','E11'],['E11','E12'],['E12','E13'],['E13','E14'],
+    ['E9','E15',{label:'cuối ngày: 4 cột'}],
+    ['E13','E15',{label:'đối soát COD',lpSeg:1}],
+    ['E15','E16'],['E16','E17']
+  ],
+  notes:[
+    'Chợ 3D lọc size và tính tiền trước khi khách nhắn, nên tin vào Zalo ngắn và đủ thông tin.',
+    'Ba kênh cùng nhập vào một bảng, mỗi dòng ghi rõ nguồn, nên so được kênh nào bán tốt.',
+    'Bảng tự cộng dồn khi khách thêm món và tự ra tin tổng tiền, thay cho tính tay.',
+    'Dashboard và tab “Theo nguồn” tự tổng hợp. Cuối tháng không phải cộng lại từ đầu.'
+  ]
+};
+
+/* ============ VẼ SWIMLANE ============ */
+const NS='http://www.w3.org/2000/svg';
+const G={colW:178,nodeW:150,decW:142,laneLabelW:112,phaseH:44,pad:14,stub:14,lineH:15.5};
+const BODY_FONT=getComputedStyle(document.documentElement).getPropertyValue('--f-body').trim()||'sans-serif';
+const mctx=document.createElement('canvas').getContext('2d');
+
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function wrap(text,maxW,font){
+  mctx.font=font;const lines=[];let cur='';
+  const words=[];text.split(' ').forEach(w=>{if(mctx.measureText(w).width<=maxW||w.indexOf('+')<0){words.push(w);return;}
+    let chunk='';w.split(/(?<=\+)/).forEach(part=>{if(chunk&&mctx.measureText(chunk+part).width>maxW){words.push(chunk);chunk=part;}else chunk+=part;});if(chunk)words.push(chunk);});
+  for(const w of words){const test=cur?cur+' '+w:w;if(mctx.measureText(test).width<=maxW||!cur)cur=test;else{lines.push(cur);cur=w;}}
+  if(cur)lines.push(cur);return lines;
+}
+function textBlock(parent,lines,cx,cy,cls,lh){
+  const t=el('text',{class:cls,'text-anchor':'middle'},parent);
+  const y0=cy-(lines.length-1)*lh/2;
+  lines.forEach((ln,i)=>{const s=el('tspan',{x:cx,y:(y0+i*lh).toFixed(1),'dominant-baseline':'central'},t);s.textContent=ln;});
+  return t;
+}
+
+function layout(sd){
+  const nodeFont='500 12px '+BODY_FONT, decFont='700 12px '+BODY_FONT;
+  const byId={};
+  sd.nodes.forEach(n=>{
+    n.r=n.r||0;
+    if(n.t==='dec'){n.w=G.decW;n.lines=wrap(n.x,G.decW-58,decFont);n.h=Math.max(78,n.lines.length*14+46);}
+    else{const pad=n.t==='ext'?30:20;n.w=G.nodeW;n.lines=wrap(n.x,G.nodeW-pad,nodeFont);n.h=Math.max(44,n.lines.length*G.lineH+24);}
+    byId[n.id]=n;
+  });
+  // chiều cao từng hàng trong mỗi làn
+  const rowH=sd.lanes.map(()=>[]);
+  sd.nodes.forEach(n=>{const a=rowH[n.l];a[n.r]=Math.max(a[n.r]||0,n.h+50);});
+  const laneGeo=[];let y=G.phaseH;
+  rowH.forEach((rows,li)=>{
+    if(!rows.length)rows[0]=90;
+    for(let i=0;i<rows.length;i++)rows[i]=Math.max(rows[i]||90,92);
+    const top=y;const h=rows.reduce((s,v)=>s+v,0);laneGeo.push({top,h,rows});y+=h;
+  });
+  const ncols=Math.max(...sd.nodes.map(n=>n.c))+1;
+  const x0=G.laneLabelW+G.pad;
+  sd.nodes.forEach(n=>{
+    const lg=laneGeo[n.l];let ry=lg.top;for(let i=0;i<n.r;i++)ry+=lg.rows[i];
+    n.cx=x0+G.colW*(n.c+.5);n.cy=ry+lg.rows[n.r]/2;
+  });
+  return {byId,laneGeo,ncols,W:x0+G.colW*ncols+G.pad,H:y+10,x0};
+}
+
+function anchor(n,side){const hw=n.w/2,hh=n.h/2;
+  return side==='left'?[n.cx-hw,n.cy]:side==='right'?[n.cx+hw,n.cy]:side==='top'?[n.cx,n.cy-hh]:[n.cx,n.cy+hh];}
+
+function route(e,s,t,L){
+  const o=e.off||0,S=G.stub;
+  if(e.route==='loopDown'||e.route==='loopUp'){
+    const d=e.route==='loopDown';const a=anchor(s,d?'bottom':'top'),b=anchor(t,d?'bottom':'top');
+    let y;
+    if(d&&e.laneBottom!=null){const lg=L.laneGeo[s.l];y=lg.top+lg.h-e.laneBottom;}
+    else if(!d&&e.laneTop!=null){y=L.laneGeo[s.l].top+e.laneTop;}
+    else y=d?Math.max(a[1],b[1])+16+o:Math.min(a[1],b[1])-16-o;
+    return [a,[a[0],y],[b[0],y],b];
+  }
+  if(e.route==='backLeft'){
+    const a=anchor(s,'left');const x=a[0]-S-o;
+    if(t.c===s.c){const b=anchor(t,'left');return [a,[x,a[1]],[x,b[1]],b];}
+    const b=anchor(t,'bottom');const yy=b[1]+16;return [a,[x,a[1]],[x,yy],[b[0],yy],b];
+  }
+  if(t.c>s.c){const a=anchor(s,'right'),b=anchor(t,'left');
+    if(Math.abs(a[1]-b[1])<.5)return [a,b];
+    const x=(e.late?b[0]-S:a[0]+S)+o;return [a,[x,a[1]],[x,b[1]],b];}
+  if(t.c===s.c){return t.cy>s.cy?[anchor(s,'bottom'),anchor(t,'top')]:[anchor(s,'top'),anchor(t,'bottom')];}
+  const a=anchor(s,'bottom'),b=anchor(t,'bottom');const y=Math.max(a[1],b[1])+16;return [a,[a[0],y],[b[0],y],b];
+}
+
+function draw(sd){
+  const L=layout(sd);const host=document.getElementById(sd.id);host.innerHTML='';
+  const svg=el('svg',{viewBox:`0 0 ${L.W} ${L.H}`,width:L.W,height:L.H,'aria-hidden':'true'},host);
+  const defs=el('defs',{},svg);
+  [['a','var(--line)'],['p','var(--purple)'],['m','var(--muted)']].forEach(([k,c])=>{
+    const m=el('marker',{id:`${sd.id}-${k}`,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:7,markerHeight:7,orient:'auto-start-reverse'},defs);
+    el('path',{d:'M0 0 10 5 0 10z',style:`fill:${c}`},m);
+  });
+  const gLanes=el('g',{},svg),gPh=el('g',{},svg),gE=el('g',{},svg),gN=el('g',{},svg),gLab=el('g',{},svg);
+
+  // làn
+  L.laneGeo.forEach((lg,i)=>{
+    el('rect',{x:0,y:lg.top,width:L.W,height:lg.h,style:`fill:var(${i%2?'--lane-b':'--lane-a'})`},gLanes);
+    el('rect',{x:0,y:lg.top,width:G.laneLabelW,height:lg.h,style:'fill:var(--lane-label)'},gLanes);
+    el('line',{x1:0,x2:L.W,y1:lg.top,y2:lg.top,style:'stroke:var(--rule);stroke-width:1.5'},gLanes);
+    textBlock(gLanes,wrap(sd.lanes[i],G.laneLabelW-20,'700 13px '+BODY_FONT),G.laneLabelW/2,lg.top+lg.h/2,'svg-lane',17);
+  });
+  el('line',{x1:0,x2:L.W,y1:L.H-10,y2:L.H-10,style:'stroke:var(--rule);stroke-width:1.5'},gLanes);
+  el('line',{x1:G.laneLabelW,x2:G.laneLabelW,y1:G.phaseH,y2:L.H-10,style:'stroke:var(--rule);stroke-width:1.5'},gLanes);
+
+  // giai đoạn
+  sd.phases.forEach((p,i)=>{
+    const xa=L.x0+G.colW*p.a+4, xb=L.x0+G.colW*(p.b+1)-4;
+    el('rect',{x:xa,y:8,width:xb-xa,height:G.phaseH-16,rx:8,style:`fill:var(${i%2?'--surface-2':'--auto-fill'})`},gPh);
+    el('rect',{x:xa,y:G.phaseH-12,width:xb-xa,height:3,rx:1.5,style:'fill:var(--yellow)'},gPh);
+    const t=el('text',{x:xa+12,y:G.phaseH/2-1,class:'svg-phase','dominant-baseline':'central'},gPh);t.textContent=p.t;
+    if(i>0){const x=L.x0+G.colW*p.a;el('line',{x1:x,x2:x,y1:G.phaseH,y2:L.H-10,style:'stroke:var(--muted);stroke-width:1;stroke-dasharray:3 5;opacity:.6'},gPh);}
+  });
+  el('text',{x:G.laneLabelW/2,y:G.phaseH/2,'text-anchor':'middle','dominant-baseline':'central',class:'svg-elabel'},gPh).textContent='Làn ↓  Thời gian →';
+
+  // cạnh
+  sd.edges.forEach(([f,to,e={}])=>{
+    const s=L.byId[f],t=L.byId[to];if(!s||!t){console.warn('thiếu nút',f,to);return;}
+    const pts=route(e,s,t,L);
+    const col=e.kind==='loop'?'var(--purple)':e.kind==='dash'?'var(--muted)':'var(--line)';
+    const mk=e.kind==='loop'?'p':e.kind==='dash'?'m':'a';
+    el('path',{d:'M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L'),style:`fill:none;stroke:${col};stroke-width:${e.kind==='loop'?1.7:1.5};${e.kind==='dash'?'stroke-dasharray:5 4;':''}stroke-linejoin:round`,'marker-end':`url(#${sd.id}-${mk})`},gE);
+    if(e.label){
+      let si=e.lpSeg;
+      if(si==null){let best=-1;for(let i=0;i<pts.length-1;i++){const l=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]);if(l>best){best=l;si=i;}}}
+      si=Math.min(si,pts.length-2);
+      const p1=pts[si],p2=pts[si+1];const f=e.lpAt==null?.5:e.lpAt;
+      const font='600 11px '+BODY_FONT;mctx.font=font;const w=mctx.measureText(e.label).width+10;
+      let mx=p1[0]+(p2[0]-p1[0])*f,my=p1[1]+(p2[1]-p1[1])*f;
+      if(Math.abs(p1[1]-p2[1])<.5&&Math.abs(p2[0]-p1[0])<w+8)my-=15;
+      el('rect',{x:mx-w/2,y:my-9,width:w,height:18,rx:9,style:`fill:var(--surface);stroke:${e.kind==='loop'?'var(--purple)':'var(--rule)'};stroke-width:1`},gLab);
+      const tx=el('text',{x:mx,y:my+.5,'text-anchor':'middle','dominant-baseline':'central',class:'svg-elabel'+(e.kind==='loop'?' loop':'')},gLab);tx.textContent=e.label;
+    }
+  });
+
+  // nút
+  sd.nodes.forEach(n=>{
+    const g=el('g',{},gN);const x=n.cx-n.w/2,y=n.cy-n.h/2;
+    if(n.t==='dec'){
+      el('path',{d:`M${n.cx} ${y} L${n.cx+n.w/2} ${n.cy} L${n.cx} ${y+n.h} L${x} ${n.cy}Z`,style:'fill:var(--yellow);stroke:var(--on-yellow);stroke-width:1.5;stroke-linejoin:round'},g);
+      textBlock(g,n.lines,n.cx,n.cy,'svg-node on-dec',14);
+    }else{
+      let st;
+      if(n.t==='tay')st=n.warn?'fill:var(--warn-fill);stroke:var(--warn);stroke-width:2.6':'fill:var(--surface);stroke:var(--ink);stroke-width:2.6';
+      else if(n.t==='auto')st=n.warn?'fill:var(--auto-fill);stroke:var(--warn);stroke-width:2.6':'fill:var(--auto-fill);stroke:var(--purple);stroke-width:1.3';
+      else if(n.t==='ext')st='fill:var(--surface);stroke:var(--muted);stroke-width:1.4;stroke-dasharray:5 4';
+      else st='fill:var(--end-fill);stroke:var(--end-fill);stroke-width:1.5';
+      const rx=n.t==='ext'?Math.min(20,n.h/2):n.t==='end'?n.h/2>26?22:n.h/2:8;
+      el('rect',{x,y,width:n.w,height:n.h,rx,style:st},g);
+      textBlock(g,n.lines,n.cx,n.cy,'svg-node'+(n.t==='end'?' on-end':''),G.lineH);
+    }
+    // biểu tượng tia sét
+    if(n.t==='auto'){const bx=x+3,by=y+3;
+      el('circle',{cx:bx,cy:by,r:9,style:'fill:var(--yellow);stroke:var(--on-yellow);stroke-width:1'},g);
+      el('path',{d:`M${bx+1.4} ${by-5.6} L${bx-3.6} ${by+1} H${bx-.4} L${bx-1.6} ${by+6} L${bx+3.8} ${by-1} H${bx+.6}Z`,style:'fill:#1B2458'},g);}
+    // cảnh báo
+    if(n.warn){const wx=x+n.w-6,wy=y-4;
+      el('path',{d:`M${wx} ${wy-8} L${wx+9} ${wy+8} L${wx-9} ${wy+8}Z`,style:'fill:var(--warn);stroke:var(--surface);stroke-width:1.5;stroke-linejoin:round'},g);
+      el('rect',{x:wx-.9,y:wy-3,width:1.8,height:6,style:'fill:#fff'},g);el('rect',{x:wx-.9,y:wy+4.4,width:1.8,height:1.8,style:'fill:#fff'},g);}
+    // điểm gặp nhau
+    if(n.touch){let tx=x+8;n.touch.forEach(tg=>{el('rect',{x:tx,y:y+n.h-8,width:26,height:16,rx:5,style:'fill:var(--ink);stroke:var(--surface);stroke-width:1.5'},g);
+      const tt=el('text',{x:tx+13,y:y+n.h+.5,'text-anchor':'middle','dominant-baseline':'central',class:'svg-tag'},g);tt.textContent=tg;tx+=30;});}
+    // ghi chú
+    if(n.note){const nx=x+n.w-2,ny=y+n.h-2;
+      el('circle',{cx:nx,cy:ny,r:9.5,style:'fill:var(--purple);stroke:var(--surface);stroke-width:1.5'},g);
+      el('text',{x:nx,y:ny+.5,'text-anchor':'middle','dominant-baseline':'central',class:'svg-nb'},g).textContent=n.note;}
+  });
+
+  // danh sách ghi chú
+  const ol=document.getElementById(sd.notesEl);
+  if(ol&&!ol.childElementCount)sd.notes.forEach((t,i)=>{const li=document.createElement('li');li.innerHTML=`<span class="nb">${i+1}</span><span></span>`;li.lastChild.textContent=t;ol.appendChild(li);});
+}
+
+function drawAll(){[SD1,SD2,SD3].forEach(draw);}
+drawAll();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawAll);
+
+/* Thu vừa màn hình */
+document.querySelectorAll('.fit-btn').forEach(b=>b.addEventListener('click',()=>{
+  const c=document.getElementById(b.dataset.target);const on=!c.classList.contains('fit');
+  c.classList.toggle('fit',on);b.setAttribute('aria-pressed',on);b.textContent=on?'Xem cỡ thật':'Thu vừa màn hình';
+}));
+/* Kéo để cuộn ngang bằng chuột */
+document.querySelectorAll('.canvas').forEach(c=>{
+  let sx=0,sl=0,down=false;
+  c.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;down=true;sx=e.clientX;sl=c.scrollLeft;c.classList.add('dragging');});
+  window.addEventListener('pointermove',e=>{if(!down)return;c.scrollLeft=sl-(e.clientX-sx);});
+  window.addEventListener('pointerup',()=>{down=false;c.classList.remove('dragging');});
+});
+/* Chép mã Mermaid */
+document.querySelectorAll('.copy-btn').forEach(b=>b.addEventListener('click',()=>{
+  const pre=document.getElementById(b.dataset.src);const txt=pre.textContent;
+  const done=()=>{b.textContent='Đã chép';setTimeout(()=>b.textContent='Chép mã',1600);};
+  const sel=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Đã chọn, bấm Ctrl+C';};
+  try{navigator.clipboard.writeText(txt).then(done,sel);}catch(err){sel();}
+}));
+</script>
+
+</body>
+</html>
