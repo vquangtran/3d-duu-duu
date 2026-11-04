@@ -24,10 +24,10 @@ flowchart LR
     D18["Mở giỏ: xem danh sách món,<br/>nhập chiều cao bé,<br/>ô “Đã cọc trước”"]
     D22["Bấm “Chép tin và mở Zalo shop”"]
     D24["🔗 T1 Dán tin vào khung chat Zalo,<br/>bấm gửi"]
-    D26["🔗 T3 Chuyển khoản cọc theo mã QR"]
+    D26["🔗 T3 Chuyển khoản cọc theo mã QR<br/>(chưa cọc thì shop không giữ hàng)"]
     D28["Gửi biên lai qua Zalo"]
-    D30["🔗 T4 🔗 T5 Nhận tin tổng tiền<br/>và mã vận đơn"]
-    D32(["Nhận hàng, trả COD,<br/>quay video bóc hàng"])
+    D30["🔗 T4 🔗 T5 Nhận tin tổng tiền<br/>và mã vận đơn<br/>(chuyển khoản hết thì COD 0đ)"]
+    D32(["Nhận hàng, trả COD,<br/>quay video bóc hàng<br/>(cần khi khiếu nại)"])
   end
 
   subgraph C["Chợ 3D"]
@@ -48,7 +48,7 @@ flowchart LR
 
   subgraph Z["Zalo shop"]
     direction LR
-    D25["🔗 T2 Shop xác nhận size và ship"]
+    D25["🔗 T2 Shop kiểm size trong kho,<br/>xác nhận size và ship"]
     D29["Shop nhập đơn, gửi tin tổng tiền<br/>và mã vận đơn (Sơ đồ 1, giai đoạn C)"]
   end
 

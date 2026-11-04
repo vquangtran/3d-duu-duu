@@ -2,7 +2,7 @@
 
 Ba sơ đồ quy trình bán hàng của shop:
 
-1. **Phía shop** (chủ shop và nhân viên): chuẩn bị hàng, trả lời khách, hoàn thành đơn, cuối ngày.
+1. **Phía shop** (chủ shop và nhân viên): chuẩn bị hàng, trả lời khách, hoàn thành đơn, cuối ngày, và khiếu nại / bom hàng khi có.
 2. **Phía khách mua trên chợ 3D**: từ lúc mở link đến khi nhận hàng.
 3. **Tổng quan một trang**: 3 kênh (Live, Chợ Zalo, Chợ 3D) cùng đổ về bảng Gom đơn, rồi sang file tháng và Dashboard. Các thẻ T1–T5 là 5 điểm khách và shop gặp nhau.
 
@@ -19,7 +19,8 @@ Bản vẽ swimlane đầy đủ (có chú thích, ghi chú tiết kiệm thời
 |---|---|
 | Ô viền đậm | Bước làm tay |
 | ⚡ | Bước chợ 3D hoặc Google Sheets tự làm |
-| ⚠️ | Điểm nghẽn tốn công nhất: đi tìm size trong kho, trả lời hàng trăm tin nhắn, tính tiền tay, nhập đơn vào sheet ngày |
+| ⚠️ viền đỏ | Tốn công nhất: đi tìm size trong kho, trả lời hàng trăm tin nhắn |
+| ⚠️ viền cam | Tốn công vừa: tính tiền từng khách, dán đơn vào sheet ngày |
 | Hình thoi | Rẽ nhánh |
 | Hình bình hành / ô nét đứt | Tin hoặc tiền gửi tới từ khách, ngân hàng, SPX |
 | 🔗 T1–T5 | Điểm gặp nhau: T1 tin chốt đơn Zalo · T2 xác nhận size · T3 chuyển khoản cọc · T4 tin báo tổng tiền · T5 mã vận đơn |
@@ -29,14 +30,17 @@ Bản vẽ swimlane đầy đủ (có chú thích, ghi chú tiết kiệm thời
 ```mermaid
 flowchart LR
   %% SƠ ĐỒ 1 — PHÍA SHOP DUU DUU (chủ shop và nhân viên)
-  %% Mỗi subgraph là một làn. Đọc từ trái sang phải: A chuẩn bị hàng → B trả lời khách → C hoàn thành đơn.
-  %% Ký hiệu: viền đậm = làm tay · ⚡ = chợ 3D hoặc Google Sheets tự làm · ⚠️ = điểm nghẽn tốn công
+  %% Mỗi subgraph là một làn. Đọc từ trái sang phải: A chuẩn bị hàng → B trả lời khách → C hoàn thành đơn
+%% → D khiếu nại, bom hàng (chỉ khi có).
+  %% Ký hiệu: viền đậm = làm tay · ⚡ = chợ 3D hoặc Google Sheets tự làm
+%%          ⚠️ viền đỏ = tốn công nhất (tìm size, trả lời tin) · ⚠️ viền cam = tốn công vừa
   %%          hình bình hành = tin/tiền từ khách hoặc sàn gửi tới · 🔗 T1–T5 = điểm gặp khách (xem Sơ đồ 3)
 
   classDef tay fill:#FFFFFF,stroke:#1B2458,stroke-width:3px,color:#1B2458
   classDef tudong fill:#EFE9FF,stroke:#8B5CF6,stroke-width:1.5px,color:#1B2458
   classDef nghen fill:#FFECEB,stroke:#E5484D,stroke-width:3px,color:#1B2458
-  classDef tudongnghen fill:#EFE9FF,stroke:#E5484D,stroke-width:3px,color:#1B2458
+  classDef nghen2 fill:#FFF3E0,stroke:#E07B00,stroke-width:3px,color:#1B2458
+  classDef tudongnghen2 fill:#EFE9FF,stroke:#E07B00,stroke-width:3px,color:#1B2458
   classDef quyetdinh fill:#FFC93C,stroke:#1B2458,stroke-width:1.5px,color:#1B2458
   classDef ngoai fill:#FFFFFF,stroke:#5A6190,stroke-width:1.5px,stroke-dasharray:5 4,color:#1B2458
   classDef ketthuc fill:#1B2458,stroke:#1B2458,color:#FFC93C
@@ -46,31 +50,42 @@ flowchart LR
     A1["Nhận hàng từ nguồn hàng"]
     A2["Chụp hoặc lấy ảnh mẫu<br/>(ảnh trải sàn + ảnh bé mặc)"]
     A3["Bán trên livestream trước<br/>~100 đơn/ngày"]
-    A4["Live xong, đăng chợ Zalo:<br/>mỗi mẫu 1 album + 1 đoạn chữ<br/>(dải kg, giá, size thiếu),<br/>đăng giống nhau vào 10 nhóm"]
+    A4["Live xong, đăng chợ Zalo:<br/>mỗi mẫu 1 album + 1 đoạn chữ<br/>(luôn có size, giá, mô tả),<br/>đăng giống nhau vào 10 nhóm"]
     A5["Bỏ ảnh vào thư mục anh/,<br/>dán nguyên đoạn chữ Zalo<br/>vào data/san-pham.js"]
-    A6["Đẩy lên GitHub"]
-    B1[/"Tin từ chợ Zalo: khách gửi lại<br/>ảnh mẫu + cân nặng, chiều cao bé"/]
-    B3["⚠️ 🔗 T1 Đọc và trả lời tin Zalo<br/>(hàng trăm tin mỗi ngày)"]
+    A6["Chủ shop đẩy lên GitHub"]
+    B0[/"Tin từ live: khách đã bình luận mã,<br/>nhắn shop để cọc và chốt<br/>(đã chọn sẵn mẫu + size)"/]
+    B1[/"Tin từ chợ Zalo: ảnh mẫu + cân nặng,<br/>chiều cao bé, shop phải tư vấn size"/]
+    B3["⚠️ 🔗 T1 Đọc và trả lời tin Zalo:<br/>chủ shop + nhân viên cùng trả lời<br/>(hàng trăm tin mỗi ngày)"]
     B5{"Còn size<br/>không?"}
     B6["Báo khách hết,<br/>gợi ý size hoặc mẫu khác"]
     B8{"Đủ 2 bộ<br/>chưa?"}
     B9["Nhắc khách chọn thêm"]
-    B10["🔗 T2 Báo còn size, gửi quy định cọc<br/>kèm số tài khoản + mã QR<br/>(50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ)"]
+    B10["🔗 T2 Báo còn size, gửi quy định cọc<br/>kèm số tài khoản + mã QR<br/>(50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ)<br/>Chưa cọc thì không giữ hàng"]
     B11[/"🔗 T3 Khách chuyển khoản cọc,<br/>gửi biên lai"/]
     C1{"Khách<br/>thêm món?"}
-    C5["🔗 T4 Gửi tin tổng tiền cho khách"]
+    C5["🔗 T4 Gửi tin tổng tiền cho khách<br/>(khách chuyển khoản hết thì COD 0đ)"]
     C8["🔗 T5 Gửi khách link mã vận đơn<br/>+ lưu ý quay video bóc hàng<br/>+ “đã có mã vận đơn thì<br/>không chuyển khoản nữa”"]
-    C12["Nhập tiền khách chuyển khoản,<br/>đối soát COD của sàn"]
+    C12["Ghi tiền khách chuyển khoản<br/>vào file theo dõi.<br/>Đối soát COD tự động, không kiểm lại"]
     C14(["Xem tab “Theo nguồn”:<br/>chợ 3D mang về bao nhiêu đơn"])
+    K1[/"Khách báo khiếu nại"/]
+    K2{"Có video<br/>bóc hàng?"}
+    K3["Không giải quyết"]
+    K4{"Thiếu hàng<br/>hay hàng lỗi?"}
+    K5{"Còn hàng<br/>để bù?"}
+    K6["Gửi bù, freeship"]
+    K7["Hoàn tiền"]
+    K9["Bù tiền theo tỷ lệ lỗi"]
+    K10["Ghi nhớ khách bom hàng:<br/>lần sau không bán nữa"]
   end
 
-  subgraph L2["Nhân viên"]
+  subgraph L2["Nhân viên · 2 full-time, 2 part-time"]
     direction LR
-    B4["⚠️ Đi tìm size trong kho"]
+    B4["⚠️ 2 nhân viên đi tìm size trong kho.<br/>Còn size thì nhanh, hết size thì lâu<br/>(50 đơn chợ: tìm size + lên đơn ~2 tiếng)"]
     B12["Nhập từng món vào tab “Nhập đơn”:<br/>ngày, nguồn (Live / Chợ Zalo / Chợ 3D),<br/>tên khách, mã mẫu, size, màu, SL, giá"]
     B14["Ghi “Đã cọc” + trạng thái<br/>ở tab “Gom theo khách”"]
     C2["Thêm dòng vào “Nhập đơn”"]
     C6["Đóng gói"]
+    C6b["Đã cọc mà hết hàng:<br/>khách chọn hoàn cọc hoặc đổi mẫu"]
     C9["Cập nhật “Đã đi đơn”<br/>+ mã vận đơn"]
     C10["⚠️ Cuối ngày: dán 4 cột<br/>(Tên khách, SL, Doanh thu, Cọc)<br/>vào sheet ngày của file tháng"]
   end
@@ -87,14 +102,15 @@ flowchart LR
     direction LR
     A7["⚡ Chợ tự đọc giá, dải size,<br/>size thiếu, combo (99k/4 quần)"]
     A8["⚡ Trang chợ tự cập nhật<br/>sau 1–2 phút"]
-    B2[/"⚡ Tin chốt soạn sẵn từ chợ 3D:<br/>mã, size, màu, tiền hàng, ship,<br/>cọc, COD + “Nguồn: Chợ 3D”"/]
-    B7["Ghi “ko có size X” hoặc het: true<br/>vào file dữ liệu, đẩy GitHub"]
+    B2[/"⚡ Tin chốt soạn sẵn từ chợ 3D:<br/>mã, size, màu, tiền hàng, ship,<br/>cọc, COD + “Nguồn: Chợ 3D”<br/>(giống đơn live: đã có mẫu + size)"/]
+    B7["Chủ shop ghi “ko có size X” hoặc het: true<br/>vào file dữ liệu, đẩy GitHub"]
   end
 
   subgraph L5["SPX"]
     direction LR
-    C7["Lên đơn SPX, lấy mã vận đơn"]
-    C11[/"Tiền COD về<br/>+ bảng đối soát của sàn"/]
+    C7["Lên đơn SPX, lấy mã vận đơn.<br/>Khách đã chuyển khoản hết<br/>thì ghi COD 0đ"]
+    C11[/"SPX trả tiền COD<br/>vào thứ 2, 4, 6"/]
+    K8[/"Khách không nhận hàng (bom hàng),<br/>SPX hoàn về"/]
   end
 
   %% Giai đoạn A — chuẩn bị hàng mỗi ngày
@@ -103,9 +119,10 @@ flowchart LR
   %% Giai đoạn B — trả lời khách
   A4 -. khách xem chợ Zalo .-> B1
   A8 -. khách đặt trên chợ 3D .-> B2
+  B0 --> B3
   B1 --> B3
   B2 --> B3
-  B3 -->|hỏi size| B4 --> B5
+  B3 -->|kiểm size| B4 --> B5
   B5 -->|Hết| B6 --> B7
   B6 -->|khách chọn lại| B3
   B5 -->|Còn| B8
@@ -116,18 +133,30 @@ flowchart LR
   %% Giai đoạn C — hoàn thành đơn (vòng lặp dồn đơn)
   B14 --> C1
   C1 -->|Có| C2 --> C3
-  C3 -->|lặp đến khi chốt| C1
-  C1 -->|Chốt đi đơn| C4 --> C5 --> C6 --> C7 --> C8 --> C9 --> C10
+  C3 -->|dồn đơn, tối đa 1 tuần| C1
+  C1 -->|Khách bảo đi đơn| C4 --> C5 --> C6 --> C7 --> C8 --> C9 --> C10
   C10 --> C12
   C11 --> C12
+  C6 -. hết hàng .-> C6b
   C12 --> C13 --> C14
 
-  class A1,A2,A3,A4,A5,A6,B6,B7,B9,B10,B12,B14,C2,C5,C6,C7,C8,C9,C12 tay
+  %% Giai đoạn D — khiếu nại, bom hàng (chỉ khi có)
+  K1 --> K2
+  K2 -->|Không| K3
+  K2 -->|Có| K4
+  K4 -->|Lỗi| K9
+  K4 -->|Thiếu| K5
+  K5 -->|Còn| K6
+  K5 -->|Hết| K7
+  K8 --> K10
+
+  class A1,A2,A3,A4,A5,A6,B6,B7,B9,B10,B12,B14,C2,C5,C6,C6b,C7,C8,C9,C12,K3,K6,K7,K9,K10 tay
   class A7,A8,B2,B13,C3,C13 tudong
-  class B3,B4,C10 nghen
-  class C4 tudongnghen
-  class B5,B8,C1 quyetdinh
-  class B1,B11,C11 ngoai
+  class B3,B4 nghen
+  class C10 nghen2
+  class C4 tudongnghen2
+  class B5,B8,C1,K2,K4,K5 quyetdinh
+  class B0,B1,B11,C11,K1,K8 ngoai
   class C14 ketthuc
 ```
 
@@ -160,10 +189,10 @@ flowchart LR
     D18["Mở giỏ: xem danh sách món,<br/>nhập chiều cao bé,<br/>ô “Đã cọc trước”"]
     D22["Bấm “Chép tin và mở Zalo shop”"]
     D24["🔗 T1 Dán tin vào khung chat Zalo,<br/>bấm gửi"]
-    D26["🔗 T3 Chuyển khoản cọc theo mã QR"]
+    D26["🔗 T3 Chuyển khoản cọc theo mã QR<br/>(chưa cọc thì shop không giữ hàng)"]
     D28["Gửi biên lai qua Zalo"]
-    D30["🔗 T4 🔗 T5 Nhận tin tổng tiền<br/>và mã vận đơn"]
-    D32(["Nhận hàng, trả COD,<br/>quay video bóc hàng"])
+    D30["🔗 T4 🔗 T5 Nhận tin tổng tiền<br/>và mã vận đơn<br/>(chuyển khoản hết thì COD 0đ)"]
+    D32(["Nhận hàng, trả COD,<br/>quay video bóc hàng<br/>(cần khi khiếu nại)"])
   end
 
   subgraph C["Chợ 3D"]
@@ -184,7 +213,7 @@ flowchart LR
 
   subgraph Z["Zalo shop"]
     direction LR
-    D25["🔗 T2 Shop xác nhận size và ship"]
+    D25["🔗 T2 Shop kiểm size trong kho,<br/>xác nhận size và ship"]
     D29["Shop nhập đơn, gửi tin tổng tiền<br/>và mã vận đơn (Sơ đồ 1, giai đoạn C)"]
   end
 
@@ -221,11 +250,12 @@ flowchart LR
   %% 3 kênh bán cùng đổ về bảng “Gom đơn Duu Duu”, rồi sang file tháng và Dashboard.
   %% 🔗 T1–T5 là 5 điểm khách (Sơ đồ 2) và shop (Sơ đồ 1) gặp nhau:
   %%   T1 tin chốt đơn Zalo · T2 xác nhận size · T3 chuyển khoản cọc · T4 tin báo tổng tiền · T5 mã vận đơn
-  %% Ký hiệu: viền đậm = làm tay · ⚡ = tự động · ⚠️ = điểm nghẽn tốn công
+  %% Ký hiệu: viền đậm = làm tay · ⚡ = tự động · ⚠️ viền đỏ = tốn công nhất · ⚠️ viền cam = tốn công vừa
 
   classDef tay fill:#FFFFFF,stroke:#1B2458,stroke-width:3px,color:#1B2458
   classDef tudong fill:#EFE9FF,stroke:#8B5CF6,stroke-width:1.5px,color:#1B2458
   classDef nghen fill:#FFECEB,stroke:#E5484D,stroke-width:3px,color:#1B2458
+  classDef nghen2 fill:#FFF3E0,stroke:#E07B00,stroke-width:3px,color:#1B2458
   classDef ngoai fill:#FFFFFF,stroke:#5A6190,stroke-width:1.5px,stroke-dasharray:5 4,color:#1B2458
   classDef ketthuc fill:#1B2458,stroke:#1B2458,color:#FFC93C
 
@@ -239,16 +269,17 @@ flowchart LR
 
   subgraph KB["Kênh bán"]
     direction LR
-    E2["Livestream<br/>~100 đơn/ngày"]
+    E2["Livestream<br/>~100 đơn/ngày<br/>khách bình luận mã,<br/>đã chọn sẵn size"]
     E3["Chợ Zalo: 10 nhóm,<br/>~10.000 thành viên<br/>10–15 đơn/ngày"]
-    E4["⚡ Chợ 3D (mới): tự kiểm size,<br/>tự tính tiền → Sơ đồ 2"]
+    E4["⚡ Chợ 3D (mới): tự kiểm size,<br/>tự tính tiền → Sơ đồ 2<br/>(tin chốt giống đơn live)"]
   end
 
   subgraph S["Shop (Zalo) — Sơ đồ 1"]
     direction LR
-    E5["⚠️ 🔗 T1 Nhận tin chốt đơn<br/>(hàng trăm tin mỗi ngày)"]
-    E6["⚠️ 🔗 T2 Xác nhận size (đi kho),<br/>gửi quy định cọc"]
+    E5["⚠️ 🔗 T1 Chủ shop + nhân viên<br/>trả lời tin chốt đơn<br/>(hàng trăm tin mỗi ngày)"]
+    E6["⚠️ 🔗 T2 2 nhân viên tìm size<br/>trong kho, rồi gửi quy định cọc"]
     E12["Đóng gói, lên đơn SPX"]
+    E18["Khiếu nại có video: gửi bù,<br/>hoàn tiền hoặc bù theo tỷ lệ lỗi.<br/>Bom hàng: không bán nữa"]
     E17(["Chủ shop xem số ngày, số tháng"])
   end
 
@@ -262,7 +293,7 @@ flowchart LR
 
   subgraph SB["SPX / Ngân hàng"]
     direction LR
-    E13[/"SPX: mã vận đơn, giao hàng,<br/>thu COD, đối soát"/]
+    E13[/"SPX: mã vận đơn, giao hàng,<br/>thu COD, trả tiền thứ 2, 4, 6"/]
   end
 
   E1 --> E2 & E3 & E4
@@ -272,11 +303,13 @@ flowchart LR
   E9 --> E11 --> E12 --> E13 --> E14
   E9 -->|cuối ngày: 4 cột| E15
   E13 -->|đối soát COD| E15
+  E14 -. khi có .-> E18
   E15 --> E16 --> E17
 
-  class E2,E3,E7,E8,E11,E12,E14 tay
+  class E2,E3,E7,E8,E11,E12,E14,E18 tay
   class E4,E9,E16 tudong
-  class E5,E6,E15 nghen
+  class E5,E6 nghen
+  class E15 nghen2
   class E13 ngoai
   class E1,E17 ketthuc
 ```
