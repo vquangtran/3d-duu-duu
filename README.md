@@ -10,12 +10,14 @@ Khu chợ đêm 3D cho các mẹ dẫn bé đi dạo sạp, xem ảnh thật c�
 index.html          # Khung giao diện: thanh trên cùng, bảng mẫu, giỏ hàng, màn hình vào chợ
 data/san-pham.js    # Danh sách mẫu, các sạp, quy định ship và cọc. Sửa mỗi ngày.
 anh/                # Ảnh thật của các mẫu
+anh/thuong-hieu/    # Logo, linh vật Duu Duu, icon
 src/style.css       # Toàn bộ CSS
 src/main.js         # Dựng cảnh 3D, nhân vật, sạp, bảng mẫu, giỏ hàng
 ```
 
 ## Cách chợ hoạt động
 
+- **Chợ tròn:** 6 sạp xếp vòng cung quanh bồn hoa và cột đèn lồng giữa sân, quay mặt vào giữa; cổng ở phía nam, cửa hàng ở phía bắc, sân khấu và cây đa hai bên. Bấm tên sạp thì nhân vật tự đi tới, đi vòng qua bồn hoa nếu cần.
 - **Sạp** được dựng từ danh sách `khu` và trường `khu` của từng mẫu. Ảnh đầu tiên của mẫu được treo lên sạp, kèm giá.
 - **Giá và size** được đọc tự động từ đoạn chữ đã đăng Zalo (`chu`): `10-30kg 129k`, `ko có size 18-19`, `chỉ còn size 9-15kg`, `99k/4quần`.
 - **Kiểm tra size:** khách nhập cân nặng bé, chợ báo mẫu có size cho bé hay không.

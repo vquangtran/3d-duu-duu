@@ -84,6 +84,7 @@ Danh sách `khu` ở đầu file là các sạp, theo thứ tự. Chợ có 6 ch
 
 ```
 Chốt đơn chợ Duu Duu
+Nguồn: Chợ 3D
 Tên: Mẹ Bống
 Bé cao: 98cm
 1. YN-A42 Set áo dạ nơ kẻ, chân váy · 14kg · 129k
@@ -96,3 +97,10 @@ Còn lại khi nhận hàng (COD): 158k
 ```
 
 Tin nhắn chỉ là đơn khách chọn. Shop vẫn đi kiểm tra size còn hàng như bình thường rồi xác nhận với khách.
+
+## Bảng gom đơn (Google Sheets)
+
+Đơn từ live, chợ Zalo và chợ 3D cùng nhập vào bảng **Gom đơn Duu Duu (live + chợ)** trên Google Drive:
+- Tab **Nhập đơn**: mỗi dòng một món khách chốt, chọn đúng **Nguồn** (Live / Chợ Zalo / Chợ 3D).
+- Tab **Gom theo khách**: tự cộng theo khách, tự tính ship, cọc, COD và ra tin báo khách kiểu `129x5+89+59+25-100=718`. Bốn cột tím cuối dán thẳng vào sheet ngày.
+- Tab **Theo nguồn**: biết chợ 3D mang về bao nhiêu khách, bao nhiêu bộ.
