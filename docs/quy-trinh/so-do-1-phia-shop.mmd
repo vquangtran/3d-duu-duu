@@ -26,13 +26,14 @@ flowchart LR
     B0[/"Tin từ live: khách đã bình luận mã,<br/>nhắn shop để cọc và chốt<br/>(đã chọn sẵn mẫu + size)"/]
     B1[/"Tin từ chợ Zalo: ảnh mẫu + cân nặng,<br/>chiều cao bé, shop phải tư vấn size"/]
     B3["⚠️ 🔗 T1 Đọc và trả lời tin Zalo:<br/>chủ shop + nhân viên cùng trả lời<br/>(hàng trăm tin mỗi ngày)"]
+    Bq{"Cần kiểm<br/>size?"}
     B5{"Còn size<br/>không?"}
     B6["Báo khách hết,<br/>gợi ý size hoặc mẫu khác"]
     B8{"Đủ 2 bộ<br/>chưa?"}
     B9["Nhắc khách chọn thêm"]
-    B10["🔗 T2 Báo còn size, gửi quy định cọc<br/>kèm số tài khoản + mã QR<br/>(50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ)<br/>Chưa cọc thì không giữ hàng"]
+    B10["🔗 T2 Xác nhận đơn, gửi quy định cọc<br/>kèm số tài khoản + mã QR<br/>(50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ)<br/>Chưa cọc thì không giữ hàng"]
     B11[/"🔗 T3 Khách chuyển khoản cọc,<br/>gửi biên lai"/]
-    C1{"Khách<br/>thêm món?"}
+    C1{"Khách thêm món?<br/>(còn hạn dồn)"}
     C5["🔗 T4 Gửi tin tổng tiền cho khách<br/>(khách chuyển khoản hết thì COD 0đ)"]
     C8["🔗 T5 Gửi khách link mã vận đơn<br/>+ lưu ý quay video bóc hàng<br/>+ “đã có mã vận đơn thì<br/>không chuyển khoản nữa”"]
     C12["Ghi tiền khách chuyển khoản<br/>vào file theo dõi.<br/>Đối soát COD tự động, không kiểm lại"]
@@ -92,7 +93,10 @@ flowchart LR
   B0 --> B3
   B1 --> B3
   B2 --> B3
-  B3 -->|kiểm size| B4 --> B5
+  B3 --> Bq
+  Bq -->|"Có: chợ Zalo, chợ 3D,<br/>live khi khách yêu cầu"| B4
+  Bq -->|"Không: đơn live<br/>(thường không cần kiểm)"| B8
+  B4 --> B5
   B5 -->|Hết| B6 --> B7
   B6 -->|khách chọn lại| B3
   B5 -->|Còn| B8
@@ -103,8 +107,9 @@ flowchart LR
   %% Giai đoạn C — hoàn thành đơn (vòng lặp dồn đơn)
   B14 --> C1
   C1 -->|Có| C2 --> C3
-  C3 -->|dồn đơn, tối đa 1 tuần| C1
-  C1 -->|Khách bảo đi đơn| C4 --> C5 --> C6 --> C7 --> C8 --> C9 --> C10
+  %% Dồn đơn: tối đa 2 lần chốt hoặc 1 tuần, cái nào đến trước. Shop muốn chốt 1 lần đi đơn luôn.
+  C3 -->|dồn tối đa 2 lần chốt / 1 tuần| C1
+  C1 -->|"Khách bảo đi đơn,<br/>hoặc hết hạn dồn"| C4 --> C5 --> C6 --> C7 --> C8 --> C9 --> C10
   C10 --> C12
   C11 --> C12
   C6 -. hết hàng .-> C6b
@@ -125,6 +130,6 @@ flowchart LR
   class B3,B4 nghen
   class C10 nghen2
   class C4 tudongnghen2
-  class B5,B8,C1,K2,K4,K5 quyetdinh
+  class Bq,B5,B8,C1,K2,K4,K5 quyetdinh
   class B0,B1,B11,C11,K1,K8 ngoai
   class C14 ketthuc

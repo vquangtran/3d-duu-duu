@@ -204,13 +204,14 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
     B0[/"Tin từ live: khách đã bình luận mã,&lt;br/&gt;nhắn shop để cọc và chốt&lt;br/&gt;(đã chọn sẵn mẫu + size)"/]
     B1[/"Tin từ chợ Zalo: ảnh mẫu + cân nặng,&lt;br/&gt;chiều cao bé, shop phải tư vấn size"/]
     B3["⚠️ 🔗 T1 Đọc và trả lời tin Zalo:&lt;br/&gt;chủ shop + nhân viên cùng trả lời&lt;br/&gt;(hàng trăm tin mỗi ngày)"]
+    Bq{"Cần kiểm&lt;br/&gt;size?"}
     B5{"Còn size&lt;br/&gt;không?"}
     B6["Báo khách hết,&lt;br/&gt;gợi ý size hoặc mẫu khác"]
     B8{"Đủ 2 bộ&lt;br/&gt;chưa?"}
     B9["Nhắc khách chọn thêm"]
-    B10["🔗 T2 Báo còn size, gửi quy định cọc&lt;br/&gt;kèm số tài khoản + mã QR&lt;br/&gt;(50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ)&lt;br/&gt;Chưa cọc thì không giữ hàng"]
+    B10["🔗 T2 Xác nhận đơn, gửi quy định cọc&lt;br/&gt;kèm số tài khoản + mã QR&lt;br/&gt;(50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ)&lt;br/&gt;Chưa cọc thì không giữ hàng"]
     B11[/"🔗 T3 Khách chuyển khoản cọc,&lt;br/&gt;gửi biên lai"/]
-    C1{"Khách&lt;br/&gt;thêm món?"}
+    C1{"Khách thêm món?&lt;br/&gt;(còn hạn dồn)"}
     C5["🔗 T4 Gửi tin tổng tiền cho khách&lt;br/&gt;(khách chuyển khoản hết thì COD 0đ)"]
     C8["🔗 T5 Gửi khách link mã vận đơn&lt;br/&gt;+ lưu ý quay video bóc hàng&lt;br/&gt;+ “đã có mã vận đơn thì&lt;br/&gt;không chuyển khoản nữa”"]
     C12["Ghi tiền khách chuyển khoản&lt;br/&gt;vào file theo dõi.&lt;br/&gt;Đối soát COD tự động, không kiểm lại"]
@@ -270,7 +271,10 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
   B0 --&gt; B3
   B1 --&gt; B3
   B2 --&gt; B3
-  B3 --&gt;|kiểm size| B4 --&gt; B5
+  B3 --&gt; Bq
+  Bq --&gt;|"Có: chợ Zalo, chợ 3D,&lt;br/&gt;live khi khách yêu cầu"| B4
+  Bq --&gt;|"Không: đơn live&lt;br/&gt;(thường không cần kiểm)"| B8
+  B4 --&gt; B5
   B5 --&gt;|Hết| B6 --&gt; B7
   B6 --&gt;|khách chọn lại| B3
   B5 --&gt;|Còn| B8
@@ -281,8 +285,9 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
   %% Giai đoạn C — hoàn thành đơn (vòng lặp dồn đơn)
   B14 --&gt; C1
   C1 --&gt;|Có| C2 --&gt; C3
-  C3 --&gt;|dồn đơn, tối đa 1 tuần| C1
-  C1 --&gt;|Khách bảo đi đơn| C4 --&gt; C5 --&gt; C6 --&gt; C7 --&gt; C8 --&gt; C9 --&gt; C10
+  %% Dồn đơn: tối đa 2 lần chốt hoặc 1 tuần, cái nào đến trước. Shop muốn chốt 1 lần đi đơn luôn.
+  C3 --&gt;|dồn tối đa 2 lần chốt / 1 tuần| C1
+  C1 --&gt;|"Khách bảo đi đơn,&lt;br/&gt;hoặc hết hạn dồn"| C4 --&gt; C5 --&gt; C6 --&gt; C7 --&gt; C8 --&gt; C9 --&gt; C10
   C10 --&gt; C12
   C11 --&gt; C12
   C6 -. hết hàng .-&gt; C6b
@@ -303,7 +308,7 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
   class B3,B4 nghen
   class C10 nghen2
   class C4 tudongnghen2
-  class B5,B8,C1,K2,K4,K5 quyetdinh
+  class Bq,B5,B8,C1,K2,K4,K5 quyetdinh
   class B0,B1,B11,C11,K1,K8 ngoai
   class C14 ketthuc</pre>
       </div>
@@ -479,7 +484,7 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
   subgraph S["Shop (Zalo) — Sơ đồ 1"]
     direction LR
     E5["⚠️ 🔗 T1 Chủ shop + nhân viên&lt;br/&gt;trả lời tin chốt đơn&lt;br/&gt;(hàng trăm tin mỗi ngày)"]
-    E6["⚠️ 🔗 T2 2 nhân viên tìm size&lt;br/&gt;trong kho, rồi gửi quy định cọc"]
+    E6["⚠️ 🔗 T2 2 nhân viên tìm size&lt;br/&gt;trong kho (đơn live thường bỏ qua),&lt;br/&gt;rồi gửi quy định cọc"]
     E12["Đóng gói, lên đơn SPX"]
     E18["Khiếu nại có video: gửi bù,&lt;br/&gt;hoàn tiền hoặc bù theo tỷ lệ lỗi.&lt;br/&gt;Bom hàng: không bán nữa"]
     E17(["Chủ shop xem số ngày, số tháng"])
@@ -501,7 +506,7 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
   E1 --&gt; E2 &amp; E3 &amp; E4
   E2 &amp; E3 &amp; E4 --&gt; E5
   E5 --&gt; E6 --&gt; E7 --&gt; E8 --&gt; E9
-  E9 --&gt;|khách thêm món: dồn đơn| E8
+  E9 --&gt;|dồn tối đa 2 lần chốt / 1 tuần| E8
   E9 --&gt; E11 --&gt; E12 --&gt; E13 --&gt; E14
   E9 --&gt;|cuối ngày: 4 cột| E15
   E13 --&gt;|đối soát COD| E15
@@ -531,10 +536,10 @@ const SD1 = {
   lanes:['Chủ shop','Nhân viên · 2 full-time, 2 part-time','Google Sheets','Chợ 3D / GitHub','SPX'],
   phases:[
     {t:'A · Chuẩn bị hàng mỗi ngày', a:0, b:6},
-    {t:'B · Trả lời khách', a:7, b:15},
-    {t:'C · Hoàn thành đơn', a:16, b:22},
-    {t:'C · Cuối ngày', a:23, b:26},
-    {t:'D · Khiếu nại, bom hàng (khi có)', a:27, b:31}
+    {t:'B · Trả lời khách', a:7, b:16},
+    {t:'C · Hoàn thành đơn', a:17, b:23},
+    {t:'C · Cuối ngày', a:24, b:27},
+    {t:'D · Khiếu nại, bom hàng (khi có)', a:28, b:32}
   ],
   nodes:[
     {id:'A1',l:0,c:0,t:'tay',x:'Nhận hàng từ nguồn hàng'},
@@ -547,54 +552,58 @@ const SD1 = {
     {id:'A8',l:3,c:6,t:'auto',x:'Trang chợ tự cập nhật sau 1–2 phút'},
 
     {id:'B0',l:0,c:7,t:'ext',x:'Tin từ live: khách đã bình luận mã, nhắn shop để cọc và chốt (đã chọn sẵn mẫu + size)'},
+    {id:'Bq',l:0,c:9,t:'dec',x:'Cần kiểm size?'},
     {id:'B1',l:0,c:7,r:1,t:'ext',x:'Tin từ chợ Zalo: ảnh mẫu + cân nặng, chiều cao bé, shop phải tư vấn size'},
     {id:'B2',l:3,c:7,t:'auto',note:2,x:'Khách đặt trên chợ 3D, gửi tin chốt soạn sẵn: mã, size, màu, tiền hàng, ship, cọc, COD + “Nguồn: Chợ 3D”'},
     {id:'B3',l:0,c:8,t:'tay',warn:1,touch:['T1'],x:'Đọc và trả lời tin Zalo: chủ shop + nhân viên cùng trả lời (hàng trăm tin mỗi ngày)'},
-    {id:'B4',l:1,c:9,t:'tay',warn:1,note:3,x:'2 nhân viên đi tìm size trong kho. Còn size thì nhanh, hết size thì lâu'},
-    {id:'B5',l:0,c:10,t:'dec',x:'Còn size không?'},
-    {id:'B6',l:0,c:10,r:1,t:'tay',x:'Báo khách hết, gợi ý size hoặc mẫu khác'},
-    {id:'B7',l:3,c:10,t:'tay',note:4,x:'Chủ shop ghi “ko có size X” hoặc het: true vào file dữ liệu, đẩy GitHub'},
-    {id:'B8',l:0,c:11,t:'dec',x:'Đủ 2 bộ chưa?'},
-    {id:'B9',l:0,c:11,r:1,t:'tay',x:'Nhắc khách chọn thêm'},
-    {id:'B10',l:0,c:12,t:'tay',touch:['T2'],x:'Báo còn size, gửi quy định cọc kèm số tài khoản + mã QR (50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ). Chưa cọc thì không giữ hàng'},
-    {id:'B11',l:0,c:13,t:'ext',touch:['T3'],x:'Khách chuyển khoản cọc, gửi biên lai'},
-    {id:'B12',l:1,c:14,t:'tay',x:'Nhập từng món vào tab “Nhập đơn”: ngày, nguồn (Live / Chợ Zalo / Chợ 3D), tên khách, mã, size, màu, SL, giá'},
-    {id:'B13',l:2,c:14,t:'auto',x:'Bảng tự gom các món theo khách'},
-    {id:'B14',l:1,c:15,t:'tay',x:'Ghi “Đã cọc” + trạng thái ở tab “Gom theo khách”'},
+    {id:'B4',l:1,c:10,t:'tay',warn:1,note:3,x:'2 nhân viên đi tìm size trong kho. Còn size thì nhanh, hết size thì lâu'},
+    {id:'B5',l:0,c:11,t:'dec',x:'Còn size không?'},
+    {id:'B6',l:0,c:11,r:1,t:'tay',x:'Báo khách hết, gợi ý size hoặc mẫu khác'},
+    {id:'B7',l:3,c:11,t:'tay',note:4,x:'Chủ shop ghi “ko có size X” hoặc het: true vào file dữ liệu, đẩy GitHub'},
+    {id:'B8',l:0,c:12,t:'dec',x:'Đủ 2 bộ chưa?'},
+    {id:'B9',l:0,c:12,r:1,t:'tay',x:'Nhắc khách chọn thêm'},
+    {id:'B10',l:0,c:13,t:'tay',touch:['T2'],x:'Xác nhận đơn, gửi quy định cọc kèm số tài khoản + mã QR (50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ). Chưa cọc thì không giữ hàng'},
+    {id:'B11',l:0,c:14,t:'ext',touch:['T3'],x:'Khách chuyển khoản cọc, gửi biên lai'},
+    {id:'B12',l:1,c:15,t:'tay',x:'Nhập từng món vào tab “Nhập đơn”: ngày, nguồn (Live / Chợ Zalo / Chợ 3D), tên khách, mã, size, màu, SL, giá'},
+    {id:'B13',l:2,c:15,t:'auto',x:'Bảng tự gom các món theo khách'},
+    {id:'B14',l:1,c:16,t:'tay',x:'Ghi “Đã cọc” + trạng thái ở tab “Gom theo khách”'},
 
-    {id:'C1',l:0,c:16,t:'dec',x:'Khách thêm món?'},
-    {id:'C2',l:1,c:16,t:'tay',x:'Thêm dòng vào “Nhập đơn”'},
-    {id:'C3',l:2,c:16,t:'auto',note:5,x:'Bảng tự cộng dồn vào đơn của khách'},
-    {id:'C4',l:2,c:17,t:'auto',warn:2,note:6,x:'Bảng tự ra tin báo khách: 129x5+89+59+25-100=718 (giá × số bộ + ship − cọc = COD), thay cho tính tay'},
-    {id:'C5',l:0,c:18,t:'tay',touch:['T4'],x:'Gửi tin tổng tiền cho khách (khách chuyển khoản hết thì COD 0đ)'},
-    {id:'C6',l:1,c:19,t:'tay',x:'Đóng gói'},
-    {id:'C6b',l:1,c:19,r:1,t:'tay',x:'Đã cọc mà hết hàng: khách chọn hoàn cọc hoặc đổi mẫu'},
-    {id:'C7',l:4,c:20,t:'tay',x:'Lên đơn SPX, lấy mã vận đơn. Khách đã chuyển khoản hết thì ghi COD 0đ'},
-    {id:'C8',l:0,c:21,t:'tay',touch:['T5'],x:'Gửi khách link mã vận đơn + lưu ý quay video bóc hàng + “đã có mã vận đơn thì không chuyển khoản nữa”'},
-    {id:'C9',l:1,c:22,t:'tay',x:'Cập nhật “Đã đi đơn” + mã vận đơn'},
-    {id:'C10',l:1,c:23,t:'tay',warn:2,note:7,x:'Dán 4 cột (Tên khách, SL, Doanh thu, Cọc) vào sheet ngày của file tháng'},
-    {id:'C11',l:4,c:23,t:'ext',x:'SPX trả tiền COD vào thứ 2, 4, 6'},
-    {id:'C12',l:0,c:24,t:'tay',note:8,x:'Ghi tiền khách chuyển khoản vào file theo dõi. Đối soát COD tự động, không kiểm lại'},
-    {id:'C13',l:2,c:25,t:'auto',x:'Dashboard tự tổng hợp'},
-    {id:'C14',l:0,c:26,t:'end',note:9,x:'Xem tab “Theo nguồn”: chợ 3D mang về bao nhiêu đơn'},
+    {id:'C1',l:0,c:17,t:'dec',x:'Khách thêm món? (còn hạn dồn)'},
+    {id:'C2',l:1,c:17,t:'tay',x:'Thêm dòng vào “Nhập đơn”'},
+    {id:'C3',l:2,c:17,t:'auto',note:5,x:'Bảng tự cộng dồn vào đơn của khách'},
+    {id:'C4',l:2,c:18,t:'auto',warn:2,note:6,x:'Bảng tự ra tin báo khách: 129x5+89+59+25-100=718 (giá × số bộ + ship − cọc = COD), thay cho tính tay'},
+    {id:'C5',l:0,c:19,t:'tay',touch:['T4'],x:'Gửi tin tổng tiền cho khách (khách chuyển khoản hết thì COD 0đ)'},
+    {id:'C6',l:1,c:20,t:'tay',x:'Đóng gói'},
+    {id:'C6b',l:1,c:20,r:1,t:'tay',x:'Đã cọc mà hết hàng: khách chọn hoàn cọc hoặc đổi mẫu'},
+    {id:'C7',l:4,c:21,t:'tay',x:'Lên đơn SPX, lấy mã vận đơn. Khách đã chuyển khoản hết thì ghi COD 0đ'},
+    {id:'C8',l:0,c:22,t:'tay',touch:['T5'],x:'Gửi khách link mã vận đơn + lưu ý quay video bóc hàng + “đã có mã vận đơn thì không chuyển khoản nữa”'},
+    {id:'C9',l:1,c:23,t:'tay',x:'Cập nhật “Đã đi đơn” + mã vận đơn'},
+    {id:'C10',l:1,c:24,t:'tay',warn:2,note:7,x:'Dán 4 cột (Tên khách, SL, Doanh thu, Cọc) vào sheet ngày của file tháng'},
+    {id:'C11',l:4,c:24,t:'ext',x:'SPX trả tiền COD vào thứ 2, 4, 6'},
+    {id:'C12',l:0,c:25,t:'tay',note:8,x:'Ghi tiền khách chuyển khoản vào file theo dõi. Đối soát COD tự động, không kiểm lại'},
+    {id:'C13',l:2,c:26,t:'auto',x:'Dashboard tự tổng hợp'},
+    {id:'C14',l:0,c:27,t:'end',note:9,x:'Xem tab “Theo nguồn”: chợ 3D mang về bao nhiêu đơn'},
 
-    {id:'K1',l:0,c:27,t:'ext',x:'Khách báo khiếu nại'},
-    {id:'K2',l:0,c:28,t:'dec',x:'Có video bóc hàng?'},
-    {id:'K3',l:0,c:28,r:1,t:'tay',x:'Không giải quyết'},
-    {id:'K10',l:0,c:28,r:2,t:'tay',x:'Ghi nhớ khách bom hàng: lần sau không bán nữa'},
-    {id:'K4',l:0,c:29,t:'dec',x:'Thiếu hàng hay hàng lỗi?'},
-    {id:'K9',l:0,c:29,r:1,t:'tay',x:'Bù tiền theo tỷ lệ lỗi'},
-    {id:'K5',l:0,c:30,t:'dec',x:'Còn hàng để bù?'},
-    {id:'K7',l:0,c:30,r:1,t:'tay',x:'Hoàn tiền'},
-    {id:'K6',l:0,c:31,t:'tay',x:'Gửi bù, freeship'},
-    {id:'K8',l:4,c:27,t:'ext',x:'Khách không nhận hàng (bom hàng), SPX hoàn về'}
+    {id:'K1',l:0,c:28,t:'ext',x:'Khách báo khiếu nại'},
+    {id:'K2',l:0,c:29,t:'dec',x:'Có video bóc hàng?'},
+    {id:'K3',l:0,c:29,r:1,t:'tay',x:'Không giải quyết'},
+    {id:'K10',l:0,c:29,r:2,t:'tay',x:'Ghi nhớ khách bom hàng: lần sau không bán nữa'},
+    {id:'K4',l:0,c:30,t:'dec',x:'Thiếu hàng hay hàng lỗi?'},
+    {id:'K9',l:0,c:30,r:1,t:'tay',x:'Bù tiền theo tỷ lệ lỗi'},
+    {id:'K5',l:0,c:31,t:'dec',x:'Còn hàng để bù?'},
+    {id:'K7',l:0,c:31,r:1,t:'tay',x:'Hoàn tiền'},
+    {id:'K6',l:0,c:32,t:'tay',x:'Gửi bù, freeship'},
+    {id:'K8',l:4,c:28,t:'ext',x:'Khách không nhận hàng (bom hàng), SPX hoàn về'}
   ],
   edges:[
     ['A1','A2'],['A2','A3'],['A3','A4'],['A4','A5'],['A5','A6'],['A6','A7'],['A7','A8'],
     ['A4','B1',{kind:'dash',label:'khách xem chợ Zalo',lpSeg:2}],
     ['A8','B2',{kind:'dash'}],
     ['B0','B3'],['B1','B3'],['B2','B3'],
-    ['B3','B4',{label:'kiểm size'}],['B4','B5'],
+    ['B3','Bq'],
+    ['Bq','B4',{label:'Có: chợ Zalo, chợ 3D, live khi khách yêu cầu',lpSeg:1}],
+    ['Bq','B8',{route:'loopUp',label:'Không: đơn live (thường không cần kiểm)',laneTop:16}],
+    ['B4','B5'],
     ['B5','B6',{label:'Hết'}],['B6','B7'],
     ['B6','B3',{route:'backLeft',kind:'loop',label:'khách chọn lại',off:8,lpSeg:3,lpAt:.15}],
     ['B5','B8',{label:'Còn'}],
@@ -603,8 +612,8 @@ const SD1 = {
     ['B8','B10',{label:'Đủ'}],['B10','B11'],['B11','B12'],['B12','B13'],['B13','B14'],
     ['B14','C1'],
     ['C1','C2',{label:'Có'}],['C2','C3'],
-    ['C3','C1',{route:'backLeft',kind:'loop',label:'dồn đơn, tối đa 1 tuần',off:-8,lpSeg:1}],
-    ['C1','C4',{label:'Khách bảo đi đơn',lpSeg:1}],
+    ['C3','C1',{route:'backLeft',kind:'loop',label:'dồn tối đa 2 lần chốt / 1 tuần',off:-8,lpSeg:1}],
+    ['C1','C4',{label:'Khách bảo đi đơn, hoặc hết hạn dồn',lpSeg:1}],
     ['C4','C5'],['C5','C6'],['C6','C7'],['C7','C8'],['C8','C9'],['C9','C10'],
     ['C6','C6b',{kind:'dash',label:'hết hàng'}],
     ['C10','C12'],['C11','C12'],['C12','C13'],['C13','C14'],
@@ -615,10 +624,10 @@ const SD1 = {
   ],
   notes:[
     'Đoạn chữ đăng chợ Zalo luôn có size, giá, mô tả, nên dán nguyên vào là chợ 3D tự đọc ra giá, dải size, size thiếu, combo. Không phải gõ lại.',
-    'Tin từ chợ 3D giống đơn live: khách đã chọn sẵn mẫu và size. Shop không phải tư vấn size theo cân nặng như đơn chợ Zalo, chỉ còn kiểm hàng trong kho.',
+    'Tin từ chợ 3D đã có sẵn mẫu và size như đơn live. Shop không phải tư vấn size theo cân nặng như đơn chợ Zalo, chỉ còn kiểm hàng trong kho. Đơn live thì thường bỏ qua luôn bước kiểm.',
     'Hiện 50 đơn chợ mất khoảng 2 tiếng cho tìm size và lên đơn, chậm nhất là lúc hết size. Chợ 3D không cho khách chọn size đã ghi là hết, nên bớt được những lần đi tìm lâu nhất.',
     'Ghi “ko có size X” một lần thì mọi khách sau trên chợ 3D đều thấy và nút thêm vào giỏ tự khoá. Bớt tin hỏi size, bớt chuyến đi kho.',
-    'Khách dồn đơn trong tối đa 1 tuần: chỉ thêm dòng, bảng Gom đơn tự cộng. Không phải lật lại tin cũ để cộng tay.',
+    'Shop muốn khách chốt 1 lần rồi đi đơn luôn. Nếu khách dồn thì tối đa 2 lần chốt hoặc 1 tuần, cái nào đến trước. Khi dồn chỉ cần thêm dòng, bảng Gom đơn tự cộng, không phải lật lại tin cũ để cộng tay.',
     'Tin tổng tiền tự ra theo công thức giá × số bộ + ship − cọc. Thay cho việc tính tay cho khoảng 117 khách mỗi ngày.',
     'Tab “Gom theo khách” có sẵn 4 cột Tên khách, SL, Doanh thu, Cọc. Cuối ngày dán một lần thay vì gõ lại từng đơn vào sheet ngày.',
     'Đối soát COD đang không kiểm lại vì quá nhiều đơn. Bảng Gom đơn đã có số COD của từng khách, nên nếu cần có thể so nhanh với tiền SPX trả vào thứ 2, 4, 6.',
@@ -688,7 +697,7 @@ const SD2 = {
     'Lệch size hoặc hết size thì nút thêm vào giỏ tự khoá: khách không chốt nhầm, shop không phải nhắn báo hết.',
     'Giỏ tự tính tiền hàng, ship dự kiến, cọc theo mốc 50k / 100k / 500k và COD còn lại. Khách biết trước số tiền, ít hỏi lại.',
     'Dưới 2 bộ mà chưa cọc thì không gửi được, nên đơn tới tay shop đều đủ điều kiện đi đơn.',
-    'Tin chốt có dòng “Nguồn: Chợ 3D” để nhân viên ghi đúng nguồn. Giỏ lưu trên máy nên khách quay lại dồn thêm món trong tuần dễ dàng.'
+    'Tin chốt có dòng “Nguồn: Chợ 3D” để nhân viên ghi đúng nguồn. Giỏ cho khách gom đủ món rồi chốt 1 lần, đúng ý shop muốn đi đơn luôn. Giỏ vẫn lưu trên máy nếu khách cần dồn (tối đa 2 lần chốt hoặc 1 tuần).'
   ]
 };
 
@@ -708,7 +717,7 @@ const SD3 = {
     {id:'E3',l:1,c:1,r:1,t:'tay',x:'Chợ Zalo · 10 nhóm, khoảng 10.000 thành viên · 10–15 đơn/ngày'},
     {id:'E4',l:1,c:1,r:2,t:'auto',note:1,x:'Chợ 3D (mới): tự kiểm size, tự tính tiền → Sơ đồ 2'},
     {id:'E5',l:2,c:2,t:'tay',warn:1,touch:['T1'],x:'Chủ shop + nhân viên trả lời tin chốt đơn (hàng trăm tin mỗi ngày)'},
-    {id:'E6',l:2,c:3,t:'tay',warn:1,touch:['T2'],x:'2 nhân viên tìm size trong kho, rồi gửi quy định cọc'},
+    {id:'E6',l:2,c:3,t:'tay',warn:1,touch:['T2'],x:'2 nhân viên tìm size trong kho (đơn live thường bỏ qua), rồi gửi quy định cọc'},
     {id:'E7',l:0,c:4,t:'tay',touch:['T3'],x:'Chuyển khoản cọc + gửi biên lai'},
     {id:'E8',l:3,c:5,t:'tay',note:2,x:'Gom đơn Duu Duu › Nhập đơn: mỗi món một dòng, ghi nguồn Live / Chợ Zalo / Chợ 3D'},
     {id:'E9',l:3,c:6,t:'auto',note:3,x:'Gom theo khách: tự cộng dồn khi dồn đơn, tự ra tin tổng tiền'},
@@ -725,7 +734,7 @@ const SD3 = {
     ['E1','E2'],['E1','E3'],['E1','E4'],
     ['E2','E5'],['E3','E5'],['E4','E5'],
     ['E5','E6'],['E6','E7'],['E7','E8'],['E8','E9'],
-    ['E9','E8',{route:'loopDown',kind:'loop',label:'khách thêm món (dồn đơn)',laneBottom:8}],
+    ['E9','E8',{route:'loopDown',kind:'loop',label:'dồn tối đa 2 lần chốt / 1 tuần',laneBottom:8}],
     ['E9','E11'],['E11','E12'],['E12','E13'],['E13','E14'],
     ['E9','E15',{label:'cuối ngày: 4 cột'}],
     ['E13','E15',{label:'đối soát COD',lpSeg:1}],

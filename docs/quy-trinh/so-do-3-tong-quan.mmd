@@ -30,7 +30,7 @@ flowchart LR
   subgraph S["Shop (Zalo) — Sơ đồ 1"]
     direction LR
     E5["⚠️ 🔗 T1 Chủ shop + nhân viên<br/>trả lời tin chốt đơn<br/>(hàng trăm tin mỗi ngày)"]
-    E6["⚠️ 🔗 T2 2 nhân viên tìm size<br/>trong kho, rồi gửi quy định cọc"]
+    E6["⚠️ 🔗 T2 2 nhân viên tìm size<br/>trong kho (đơn live thường bỏ qua),<br/>rồi gửi quy định cọc"]
     E12["Đóng gói, lên đơn SPX"]
     E18["Khiếu nại có video: gửi bù,<br/>hoàn tiền hoặc bù theo tỷ lệ lỗi.<br/>Bom hàng: không bán nữa"]
     E17(["Chủ shop xem số ngày, số tháng"])
@@ -52,7 +52,7 @@ flowchart LR
   E1 --> E2 & E3 & E4
   E2 & E3 & E4 --> E5
   E5 --> E6 --> E7 --> E8 --> E9
-  E9 -->|khách thêm món: dồn đơn| E8
+  E9 -->|dồn tối đa 2 lần chốt / 1 tuần| E8
   E9 --> E11 --> E12 --> E13 --> E14
   E9 -->|cuối ngày: 4 cột| E15
   E13 -->|đối soát COD| E15
