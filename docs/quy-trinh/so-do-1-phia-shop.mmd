@@ -54,7 +54,7 @@ flowchart LR
     B4["⚠️ 2 nhân viên đi tìm size trong kho.<br/>Còn size thì nhanh, hết size thì lâu<br/>(50 đơn chợ: tìm size + lên đơn ~2 tiếng)"]
     B12["Nhập từng món vào tab “Nhập đơn”:<br/>ngày, nguồn (Live / Chợ Zalo / Chợ 3D),<br/>tên khách, mã mẫu, size, màu, SL, giá"]
     B14["Ghi “Đã cọc” + trạng thái<br/>ở tab “Gom theo khách”"]
-    C2["Thêm dòng vào “Nhập đơn”"]
+    C2["Thêm dòng vào “Nhập đơn”<br/>(tin chợ 3D ghi “DỒN ĐƠN”,<br/>cọc thêm theo tổng số bộ cả đơn)"]
     C6["Đóng gói"]
     C6b["Đã cọc mà hết hàng:<br/>khách chọn hoàn cọc hoặc đổi mẫu"]
     C9["Cập nhật “Đã đi đơn”<br/>+ mã vận đơn"]
@@ -73,8 +73,8 @@ flowchart LR
     direction LR
     A7["⚡ Chợ tự đọc giá, dải size,<br/>size thiếu, combo (99k/4 quần)"]
     A8["⚡ Trang chợ tự cập nhật<br/>sau 1–2 phút"]
-    B2[/"⚡ Tin chốt soạn sẵn từ chợ 3D:<br/>mã, size, màu, tiền hàng, ship,<br/>cọc, COD + “Nguồn: Chợ 3D”<br/>(giống đơn live: đã có mẫu + size)"/]
-    B7["Chủ shop ghi “ko có size X” hoặc het: true<br/>vào file dữ liệu, đẩy GitHub"]
+    B2[/"⚡ Tin chốt soạn sẵn từ chợ 3D:<br/>“Nguồn: Chợ 3D”, tên Zalo,<br/>mỗi món: mã · size · màu · SL · giá,<br/>tiền hàng, ship, cọc, COD + dòng “Tính”<br/>(giống đơn live: đã có mẫu + size)"/]
+    B7["Chủ shop ghi “ko có size X” hoặc het: true<br/>vào file dữ liệu, đẩy GitHub.<br/>Giỏ nào đã có món đó cũng báo và khoá gửi"]
   end
 
   subgraph L5["SPX"]

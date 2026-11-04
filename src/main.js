@@ -1,7 +1,11 @@
 (function(){
 'use strict';
 const $=s=>document.querySelector(s);
-if(!window.THREE){$('#load').textContent='Chưa tải được phần 3D. Anh kiểm tra mạng rồi mở lại giúp em.';return;}
+/* Báo lỗi cho khách bằng lời của shop, kèm số Zalo nếu đọc được file dữ liệu */
+function baoLoi(t){const z=String(((window.DUU_CHO||{}).shop||{}).zalo||'').replace(/\D/g,''),e=$('#load');e.textContent=t;
+  if(z){const a=document.createElement('a');a.href='https://zalo.me/'+z;a.target='_blank';a.rel='noopener';a.textContent='Nhắn Zalo shop '+z;e.append(document.createElement('br'),a);}}
+if(!window.DUU_CHO){const l=window.DUU_LOI;baoLoi('Chợ đang cập nhật hàng, mẹ quay lại sau ít phút nha.'+(l?` (Chủ shop: file data/san-pham.js bị lỗi ở dòng ${l.dong}. Thường do thiếu dấu phẩy giữa hai mẫu, hoặc thiếu dấu nháy ở đầu/cuối đoạn chữ.)`:''));return;}
+if(!window.THREE){baoLoi('Chưa tải được phần 3D. Mẹ kiểm tra mạng rồi mở lại giúp em nha.');return;}
 const T=THREE, V3=T.Vector3, PI=Math.PI;
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)), lerp=(a,b,t)=>a+(b-a)*t;
 const angLerp=(a,b,t)=>{let d=(b-a+PI)%(2*PI);if(d<0)d+=2*PI;return a+(d-PI)*t;};
@@ -15,14 +19,16 @@ const DATA=window.DUU_CHO||{};
 const SHOP=Object.assign({ten:'Duu Duu',zalo:'',ship:{he:[{tu:1,tien:20}],dong:[{tu:1,tien:20},{tu:4,tien:25},{tu:10,tien:30}]},muaMacDinh:'dong',donToiThieu:2,coc:[{tu:20,tien:500},{tu:4,tien:100},{tu:2,tien:50}]},DATA.shop||{});
 /* Đọc giá, dải cân nặng, size thiếu từ đoạn chữ đã đăng Zalo */
 function docChu(t){
-  const s=String(t||'').toLowerCase().replace(/[–—]/g,'-'),o={};
+  /* normalize: chữ dán từ Zalo đôi khi là dạng dấu tách rời; 129.000đ hiểu như 129k */
+  const s=String(t||'').normalize('NFC').toLowerCase().replace(/[–—]/g,'-').replace(/(\d{2,3})[.,]?000\s*(?:vnđ|vnd|đ|d)(?!\p{L})/gu,'$1k'),o={};
   let m=s.match(/(\d{2,3})\s*k\s*\/\s*(\d+)\s*([^\s\d,.!]*)/);
   if(m){o.gia=+m[1];o.combo=+m[2];o.comboDv=m[3]||'cái';}
   else{const all=[...s.matchAll(/(\d{2,3})\s?k(?!g)/g)];if(all.length)o.gia=+all[all.length-1][1];}
   m=s.match(/còn\s*(?:size\s*)?(\d{1,2})\s*-\s*(\d{1,2})\s*kg/)||s.match(/(\d{1,2})\s*-\s*(\d{1,2})\s*kg/);
   if(m){o.tu=+m[1];o.den=+m[2];}
-  m=s.match(/(?:ko|không|k|hết)\s*(?:có\s*)?size\s*(\d{1,2})(?:\s*-\s*(\d{1,2}))?/);
-  if(m){const a=+m[1],b=m[2]?+m[2]:a;o.thieu=[];for(let k=a;k<=b;k++)o.thieu.push(k);}
+  /* "ko có size 18-19", "hết size 13", ghi nhiều chỗ cũng được. Chữ k phải đứng riêng (không phải chữ k trong 129k) */
+  for(const x of s.matchAll(/(?:^|[^\p{L}\d])(?:ko|k|không|khong|hết|het)\s*(?:c[oó]\s*)?size\s*(\d{1,2})(?:\s*-\s*(\d{1,2}))?/gu)){
+    const a=+x[1],b=x[2]?+x[2]:a;o.thieu=o.thieu||[];for(let k=a;k<=b;k++)if(!o.thieu.includes(k))o.thieu.push(k);}
   if(/lẻ size/.test(s))o.tinhTrang='le';else if(/vài ri|sale nốt|sắp hết/.test(s))o.tinhTrang='it';
   return o;
 }
@@ -40,18 +46,21 @@ const chuanMua=v=>{v=String(v||'').toLowerCase();return /h[eè]/.test(v)?'he':/[
 const muaKhu=ten=>{const k=(DATA.khu||[]).find(k=>k&&k.ten===ten);return k?chuanMua(k.mua):'';};
 const P=[],byId={};
 (DATA.sanPham||[]).forEach((x,i)=>{
-  if(!x||x.an===true)return;const d=docChu(x.chu);
+  if(!x||(x.an&&x.an!=='false'))return;const d=docChu(x.chu);
   let id=String(x.ma||('mau-'+i)).toLowerCase().replace(/[^a-z0-9]+/g,'-');if(byId[id])id+='-'+i;
   const p={id,ma:x.ma||'',name:x.ten||x.ma||('Mẫu '+(i+1)),price:x.gia??d.gia??0,combo:x.combo??d.combo??0,comboDv:x.comboDv||d.comboDv||'cái',
-    tu:x.tu??d.tu??10,den:x.den??d.den??28,thieu:x.thieu||d.thieu||[],tinhTrang:x.het?'het':(x.tinhTrang||d.tinhTrang||'con'),
+    tu:x.tu??d.tu??10,den:x.den??d.den??28,thieu:x.thieu||d.thieu||[],tinhTrang:(x.het&&x.het!=='false')?'het':(x.tinhTrang||d.tinhTrang||'con'),
     khu:x.khu||'Hàng mới về',mua:chuanMua(x.mua)||muaKhu(x.khu)||chuanMua(SHOP.muaMacDinh)||'dong',chu:x.chu||'',anh:(x.anh||[]).filter(Boolean),mau:(x.mau||[]).map(m=>typeof m==='string'?{ten:m}:m),look:2+(i*7)%9};
+  if(!p.price)console.warn('data/san-pham.js: chưa đọc được giá của mẫu',x.ma||x.ten,'- ghi giá dạng 129k trong đoạn chữ, hoặc thêm gia: 129');
   Object.assign(p,veMau(p,i));P.push(p);byId[id]=p;
 });
-if(!P.length){$('#load').textContent='Chưa có mẫu nào trong data/san-pham.js';throw new Error('no products');}
-const giaChu=p=>p.combo?`${p.price}k/${p.combo} ${p.comboDv}`:`${p.price}k`;
+if(!P.length){baoLoi('Chợ đang cập nhật hàng, mẹ quay lại sau ít phút nha.');return;}
+const giaChu=p=>!p.price?'Hỏi giá':p.combo?`${p.price}k/${p.combo} ${p.comboDv}`:`${p.price}k`;
+/* Size hết viết gọn: [18,19] → 18–19kg, [9,11] → 9kg, 11kg */
+const thieuChu=p=>{const a=[...p.thieu].sort((x,y)=>x-y),r=[];a.forEach(k=>{const l=r[r.length-1];if(l&&k===l[1]+1)l[1]=k;else r.push([k,k]);});return r.map(([x,y])=>x===y?`${x}kg`:`${x}–${y}kg`).join(', ');};
 const dayKg=p=>p.tu===p.den?`${p.tu}kg`:`${p.tu}–${p.den}kg`;
 /* Bé nặng kg này có mặc được mẫu không */
-function hopSize(p,kg){if(p.tinhTrang==='het')return'het';if(kg<p.tu||kg>p.den)return'ngoai';if(p.thieu.includes(kg))return'thieu';return'ok';}
+function hopSize(p,kg){if(p.tinhTrang==='het')return'het';if(!p.price)return'gia';if(kg<p.tu||kg>p.den)return'ngoai';if(p.thieu.includes(kg))return'thieu';return'ok';}
 /* Gom mẫu theo khu (sạp) */
 const KHU_MAU=['#FF6F9F','#3E8BFF','#FF8A3D','#7B6CF0','#2FBFA0','#E5484D'];
 function nhomKhu(){
@@ -558,7 +567,7 @@ const scenes={};
 let cur,player;
 const NAMES=[['Mẹ Tít','#7EC4FF','#4A2C20','short','xanh'],['Mẹ Bin','#FFD866','#2B1B17','bun','heo'],['Mẹ Na','#FF8FB3','#2B1B17','long','gau'],['Mẹ Cún','#6FE0C4','#6A4028','short','phao'],['Mẹ Mít','#B9A8FF','#2B1B17','bun','sao'],['Mẹ Gạo','#FFA45C','#4A2C20','short','cam'],['Mẹ Bơ','#7EC4FF','#2B1B17','long','do'],['Mẹ Nấm','#E5484D','#6A4028','bun','yem'],['Mẹ Tôm','#FFFFFF','#2B1B17','short','somi']];
 const CHAT=['Mẫu này đẹp quá','Còn size 16kg không ạ?','Vải mềm ghê','Bé nhà em mặc vừa in','Chốt một bộ nha','Giá sốc thật đấy','Lấy màu hồng cho bé','Sạp này đông quá'];
-const OWNER=[...P.slice(0,5).map(p=>`${p.name} ${giaChu(p)}, size ${dayKg(p)}${p.thieu.length?' (hết '+p.thieu[0]+(p.thieu.length>1?'–'+p.thieu[p.thieu.length-1]:'')+'kg)':''}, các mẹ ghé sạp ${p.khu} nha!`),
+const OWNER=[...P.slice(0,5).map(p=>`${p.name} ${giaChu(p)}, size ${dayKg(p)}${p.thieu.length?' (hết '+thieuChu(p)+')':''}, các mẹ ghé sạp ${p.khu} nha!`),
   `Shop đi đơn từ ${SHOP.donToiThieu} bộ, cọc ${SHOP.coc[SHOP.coc.length-1].tien}k khi chốt từ ${SHOP.coc[SHOP.coc.length-1].tu} bộ ạ`,'Mẹ nào cần tư vấn size cứ hỏi em nha, nhắn cân nặng chiều cao của bé là được','Cảm ơn các mẹ đã ghé chợ Duu Duu'];
 function populate(s,n,seedShift){
   for(let i=0;i<n;i++){const d=NAMES[(i+seedShift)%NAMES.length],c=new Char({name:d[0],top:d[1],hair:d[2],style:d[3],outfit:P[(i+seedShift)%P.length].id,scale:1.08});s.root.add(c.g);
@@ -570,7 +579,7 @@ function build(){
   scenes.cho=buildMarket();scenes.tiem=buildShop();
   populate(scenes.cho,LOW?5:9,0);populate(scenes.tiem,LOW?3:6,3);
   owner(scenes.cho,-7.500,.57,-25.200,.25);owner(scenes.tiem,0,0,-23.200,0);
-  player=new Char({name:$('#who').value||'Bé Bống',top:'#FFD866',pant:'#3E8BFF',hair:'#2B1B17',style:'short',me:true,ring:true,scale:1,shoe:'#FF8FB3'});
+  player=new Char({name:($('#who').value.trim()||'Mẹ bé').slice(0,16),top:'#FFD866',pant:'#3E8BFF',hair:'#2B1B17',style:'short',me:true,ring:true,scale:1,shoe:'#FF8FB3'});
   player.tag.style.display='none';
   go('cho',false);
 }
@@ -618,12 +627,21 @@ $('#room').addEventListener('click',()=>{$('#roomWrap').hidden=false;state.lock=
 
 /* ---------- Lưu trên máy khách (giỏ, thông tin bé) ---------- */
 const store={get(k,d){try{const v=localStorage.getItem('duu.'+k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem('duu.'+k,JSON.stringify(v));}catch(e){}}};
-const BE=Object.assign({kg:0,cao:0},store.get('be',{}));
+const BE=Object.assign({kg:0,cao:0,ten:''},store.get('be',{}));
 const saveBe=()=>store.set('be',BE);
-let GIO=store.get('gio',[]).filter(l=>byId[l.id]);
-const saveGio=()=>{store.set('gio',GIO);$('#cartN').textContent=GIO.length;};
-$('#cartN').textContent=GIO.length;
-if(BE.kg)$('#beKg').value=BE.kg;if(BE.cao)$('#beCao').value=BE.cao;
+/* Mỗi dòng giỏ là một mẫu cùng size, cùng màu, cùng trừ hao; sl là số bộ. Giỏ cũ (mỗi bộ một dòng) được gộp lại. */
+const khoaDong=l=>[l.id,l.kg,l.mau||'',l.hao?1:0].join('|');
+function gopGio(list){
+  const out=[],idx={};
+  (Array.isArray(list)?list:[]).forEach(l=>{if(!l||!byId[l.id])return;const sl=Math.max(1,parseInt(l.sl,10)||1),k=khoaDong(l);
+    if(idx[k]!==undefined)out[idx[k]].sl+=sl;else{idx[k]=out.length;out.push({id:l.id,kg:l.kg,mau:l.mau||'',hao:!!l.hao,sl});}});
+  return out;
+}
+let GIO=gopGio(store.get('gio',[]));
+const soBo=()=>GIO.reduce((t,l)=>t+l.sl,0);
+const saveGio=()=>{store.set('gio',GIO);$('#cartN').textContent=soBo();};
+$('#cartN').textContent=soBo();
+if(BE.kg)$('#beKg').value=BE.kg;if(BE.cao)$('#beCao').value=BE.cao;if(BE.ten)$('#who').value=BE.ten;
 
 /* ---------- Bảng chi tiết mẫu ---------- */
 let openP=null,pickKg=14,pickMau=0;
@@ -637,7 +655,7 @@ function galFor(p){
 function openSheet(p){
   openP=p;state.lock=1;state.tgt=null;marker.visible=false;
   $('#sName').textContent=p.name;$('#sPrice').textContent=giaChu(p);
-  const meta=[p.ma,'Size '+dayKg(p)];if(p.thieu.length)meta.push('hết '+(p.thieu.length>1?p.thieu[0]+'–'+p.thieu[p.thieu.length-1]:p.thieu[0])+'kg');
+  const meta=[p.ma,'Size '+dayKg(p)];if(p.thieu.length)meta.push('hết '+thieuChu(p));
   if(p.tinhTrang==='le')meta.push('lẻ size');if(p.tinhTrang==='it')meta.push('còn vài ri');meta.push(p.look+' mẹ đang xem');
   $('#sMeta').textContent=meta.filter(Boolean).join(' · ');
   $('#sCap').textContent=p.chu;$('#sCap').hidden=!p.chu;
@@ -650,89 +668,170 @@ function renderMau(){
   p.mau.forEach((m,i)=>{const b=document.createElement('button');b.textContent=m.ten;b.setAttribute('aria-pressed',i===pickMau);
     b.addEventListener('click',()=>{pickMau=i;renderMau();if(m.anh!==undefined){const im=$('#sGal').children[m.anh];if(im)$('#sGal').scrollTo({left:im.offsetLeft-$('#sGal').offsetLeft,behavior:REDUCED?'auto':'smooth'});}});w.appendChild(b);});
 }
+const LOI_SIZE=(p,kg)=>({ngoai:`Mẫu này chỉ có size ${dayKg(p)}, chưa có cho bé ${kg}kg`,thieu:`Mẫu này hết size ${thieuChu(p)} rồi mẹ ơi`,het:'Mẫu này đã hết hàng',gia:'Shop chưa ghi giá mẫu này, mẹ nhắn shop hỏi giúp em nha'});
 function renderKg(){
   const p=openP,f=hopSize(p,pickKg);$('#kgVal').textContent=pickKg+'kg';
   $('#kgMinus').disabled=pickKg<=3;$('#kgPlus').disabled=pickKg>=50;
-  const thieu=p.thieu.length>1?`${p.thieu[0]}–${p.thieu[p.thieu.length-1]}kg`:`${p.thieu[0]}kg`;
-  const msg={ok:`Mẫu này có size cho bé ${pickKg}kg`+(p.tinhTrang==='le'?'. Hàng lẻ size, shop sẽ nhắn lại nếu hết.':''),
-    ngoai:`Mẫu này chỉ có size ${dayKg(p)}, chưa có cho bé ${pickKg}kg`,thieu:`Mẫu này hết size ${thieu} rồi mẹ ơi`,het:'Mẫu này đã hết hàng'}[f];
+  const msg=f==='ok'?`Mẫu này có size cho bé ${pickKg}kg`+(p.tinhTrang==='le'?'. Hàng lẻ size, shop sẽ nhắn lại nếu hết.':''):LOI_SIZE(p,pickKg)[f];
   const e=$('#sFit');e.textContent=msg;e.dataset.ok=f==='ok';
   $('#buy').disabled=f!=='ok';$('#buy').textContent=f==='ok'?`Thêm ${pickKg}kg vào giỏ`:'Chưa có size này';
 }
 $('#kgMinus').addEventListener('click',()=>{pickKg=Math.max(3,pickKg-1);renderKg();});
 $('#kgPlus').addEventListener('click',()=>{pickKg=Math.min(50,pickKg+1);renderKg();});
-$('#tryOn').addEventListener('click',()=>{const p=openP;close();player.wear(p);player.dance=1.6;ticker(`${player.o.name} đang mặc thử ${p.name}`);});
+$('#tryOn').addEventListener('click',()=>{const p=openP;close();player.wear(p);player.dance=1.6;ticker(`${player.o.name} đang mặc thử ${p.name}. Ưng thì mẹ chạm lại mẫu để thêm vào giỏ nha`);});
 $('#buy').addEventListener('click',()=>{const p=openP;if(hopSize(p,pickKg)!=='ok')return;
-  const m=p.mau[pickMau];GIO.push({id:p.id,kg:pickKg,mau:m?m.ten:'',hao:$('#sHao').checked});saveGio();
+  const m=p.mau[pickMau],l={id:p.id,kg:pickKg,mau:m?m.ten:'',hao:$('#sHao').checked,sl:1};
+  const cu=GIO.find(x=>khoaDong(x)===khoaDong(l));if(cu)cu.sl++;else GIO.push(l);saveGio();
   if(!BE.kg){BE.kg=pickKg;saveBe();}
-  close();player.wear(p);player.dance=2.2;burst();
-  ticker(`Đã thêm ${p.name} ${pickKg}kg vào giỏ (${GIO.length} bộ)`);if(cur.owner)cur.owner.say(GIO.length<SHOP.donToiThieu?`Shop đi đơn từ ${SHOP.donToiThieu} bộ, mẹ chọn thêm nha!`:'Cảm ơn mẹ nha, mở giỏ để gửi đơn cho shop ạ!',4000);});
+  close();player.wear(p);player.dance=2.2;burst();const n=soBo();
+  ticker(`Đã thêm ${p.name} ${pickKg}kg vào giỏ${cu?`, mẫu này giờ là ${cu.sl} bộ`:''} (giỏ có ${n} bộ)`);
+  if(cur.owner)cur.owner.say(n<SHOP.donToiThieu?`Shop đi đơn từ ${SHOP.donToiThieu} bộ, mẹ chọn thêm nha!`:'Cảm ơn mẹ nha, mẹ chọn đủ rồi thì mở giỏ gửi đơn cho shop 1 lần luôn ạ!',4000);});
 
 /* ---------- Giỏ hàng và tin chốt đơn ---------- */
 const theoMoc=(moc,n)=>{for(const r of [...moc].sort((a,b)=>b.tu-a.tu))if(n>=r.tu)return r.tien;return 0;};
 const cocCan=n=>theoMoc(SHOP.coc,n);
 const TEN_MUA={he:'hàng hè',dong:'hàng đông'};
 /* Ship dự kiến: đơn có món hàng đông thì tính theo bảng hàng đông (gói nặng hơn), toàn hàng hè thì theo bảng hàng hè */
-function shipTinh(){
-  const n=GIO.length,s=SHOP.ship;if(!n)return{tien:0,mua:''};
+function shipTinh(n){
+  const s=SHOP.ship;if(!n)return{tien:0,mua:''};
   if(typeof s==='number')return{tien:s,mua:''};
   if(Array.isArray(s))return{tien:theoMoc(s,n),mua:''};
   const mua=GIO.some(l=>byId[l.id].mua==='dong')?'dong':'he';
   return{tien:theoMoc(s[mua]||s.dong||s.he||[],n),mua};
 }
 const nhanShip=t=>'Ship dự kiến'+(t.shipMua?' ('+TEN_MUA[t.shipMua]+')':'');
+const so=id=>Math.max(0,parseInt($(id).value,10)||0);
+/* Tiền hàng viết như tin báo của shop: 129x2+69 (gộp các bộ cùng giá) */
+function congThucHang(){const g=new Map();GIO.forEach(l=>{const pr=byId[l.id].price;g.set(pr,(g.get(pr)||0)+l.sl);});return[...g].map(([pr,sl])=>sl>1?`${pr}x${sl}`:`${pr}`).join('+');}
 function tinhGio(){
-  const n=GIO.length,hang=GIO.reduce((t,l)=>t+byId[l.id].price,0),sh=shipTinh(),ship=sh.tien,tong=hang+ship;
-  const daCoc=Math.max(0,parseInt($('#cDaCoc').value,10)||0),can=cocCan(n),them=Math.max(0,can-daCoc),cod=Math.max(0,tong-daCoc-them);
-  return{n,hang,ship,shipMua:sh.mua,tong,daCoc,can,them,cod};
+  const n=soBo(),hang=GIO.reduce((t,l)=>t+byId[l.id].price*l.sl,0),ck=$('#cCk').checked;
+  const hong=GIO.filter(l=>hopSize(byId[l.id],l.kg)!=='ok');
+  /* Dồn đơn: gộp vào đơn đã cọc trước đó. Cọc tính theo tổng số bộ cả đơn.
+     Ship và COD của cả đơn do shop cộng (bảng Gom theo khách), vì chợ không biết tiền hàng đơn trước. */
+  const daCoc=$('#cDon').checked?so('#cDaCoc'):0;
+  if(daCoc){
+    const truoc=so('#cTruoc'),tongBo=truoc?truoc+n:0,can=tongBo?cocCan(tongBo):null,them=can===null?null:Math.max(0,can-daCoc);
+    return{n,hang,ck,hong,don:true,daCoc,truoc,tongBo,can,them,thieu:false};
+  }
+  const sh=shipTinh(n),ship=sh.tien,tong=hang+ship,coc=cocCan(n);
+  return{n,hang,ck,hong,don:false,ship,shipMua:sh.mua,tong,coc,cod:ck?0:Math.max(0,tong-coc),thieu:n<SHOP.donToiThieu};
 }
+const tenZalo=()=>$('#cTen').value.trim();
 function tinNhan(t){
-  const L=[`Chốt đơn chợ ${SHOP.ten}`,`Tên: ${player.o.name}`];
-  const cao=parseInt($('#cCao').value,10);if(cao)L.push(`Bé cao: ${cao}cm`);
-  GIO.forEach((l,i)=>{const p=byId[l.id];L.push(`${i+1}. ${p.ma?p.ma+' ':''}${p.name}${l.mau?' ('+l.mau+')':''} · ${l.kg}kg${l.hao?' (trừ hao)':''} · ${giaChu(p)}`);});
-  L.push(`Tiền hàng: ${t.hang}k`,`${nhanShip(t)}: ${t.ship}k`,`Tổng: ${t.tong}k`);
-  if(t.daCoc)L.push(`Đã cọc trước: ${t.daCoc}k`);
-  if(t.them)L.push(`${t.daCoc?'Cọc thêm':'Cọc'}: ${t.them}k (chuyển khoản)`);
-  L.push(`Còn lại khi nhận hàng (COD): ${t.cod}k`);
+  const L=[`Chốt đơn Chợ 3D ${SHOP.ten}`,'Nguồn: Chợ 3D',`Tên Zalo: ${tenZalo()||'(mẹ chưa ghi)'}`];
+  const cao=parseInt($('#cCao').value,10),be=[BE.kg?BE.kg+'kg':'',cao?'cao '+cao+'cm':''].filter(Boolean).join(', ');if(be)L.push(`Bé: ${be}`);
+  if(t.don)L.push(`DỒN ĐƠN: gộp vào đơn trước của mẹ (${t.truoc?'đơn trước '+t.truoc+' bộ, ':''}đã cọc ${t.daCoc}k)`);
+  GIO.forEach((l,i)=>{const p=byId[l.id];
+    L.push(`${i+1}. `+[p.ma||p.name,l.kg+'kg'+(l.hao?' (trừ hao)':''),l.mau,'SL '+l.sl,giaChu(p)].filter(Boolean).join(' · ')+(p.ma?` · ${p.name}`:''));});
+  if(t.don){
+    const ctH=congThucHang();L.push(`Lần này: ${t.n} bộ, tiền hàng ${t.hang}k`+(/[x+]/.test(ctH)?` (${ctH})`:''));
+    if(t.tongBo)L.push(`Cả đơn: ${t.tongBo} bộ, cọc cần ${t.can}k, đã cọc ${t.daCoc}k`,t.them?`Cọc thêm: ${t.them}k (chuyển khoản sau khi shop xác nhận)`:'Cọc thêm: 0k (đã cọc đủ)');
+    else L.push('Cọc thêm: mẹ chưa ghi đơn trước mấy bộ, shop báo lại giúp mẹ');
+    L.push(t.ck?'Thanh toán: mẹ chuyển khoản hết (COD 0đ). Shop cộng với đơn trước rồi báo số tiền cần chuyển':'Ship và COD: shop cộng với đơn trước rồi báo tổng tiền');
+    return L.join('\n');
+  }
+  L.push(`Tổng: ${t.n} bộ`,`Tiền hàng: ${t.hang}k`,`${nhanShip(t)}: ${t.ship}k`);
+  const ct=congThucHang()+(t.ship?'+'+t.ship:'');
+  if(t.ck)L.push(`Thanh toán: chuyển khoản hết ${t.tong}k (đã gồm cọc), COD 0đ`,`Tính: ${ct}=${t.tong}`);
+  else{if(t.coc)L.push(`Cọc: ${t.coc}k (chuyển khoản sau khi shop xác nhận)`);
+    L.push(`COD khi nhận hàng: ${t.cod}k`,`Tính: ${ct}${t.coc?'-'+t.coc:''}=${t.cod}`);}
   return L.join('\n');
 }
+function nut(txt,label,fn){const b=document.createElement('button');b.type='button';b.textContent=txt;b.setAttribute('aria-label',label);b.addEventListener('click',fn);return b;}
 function renderGio(){
   const box=$('#cList');box.innerHTML='';const has=GIO.length>0;
-  $('#cEmpty').hidden=has;['#cFields','#cSum','#cMsgWrap','#cSend','#cHow','#cClear'].forEach(s=>$(s).hidden=!has);
-  GIO.forEach((l,i)=>{const p=byId[l.id],li=document.createElement('li');
+  $('#cEmpty').hidden=has;['#cFields','#cOpts','#cSum','#cMsgWrap','#cSend','#cHow','#cClear'].forEach(s=>$(s).hidden=!has);
+  if(!has)$('#cDone').hidden=true;
+  $('#cDonF').hidden=!$('#cDon').checked;
+  GIO.forEach((l,i)=>{const p=byId[l.id],li=document.createElement('li'),f=hopSize(p,l.kg);
     const mm=p.mau.find(m=>m.ten===l.mau),im=document.createElement('img');im.src=mm&&mm.anh!==undefined&&p.anh[mm.anh]?p.anh[mm.anh]:thumbOf(p);im.alt='';
     const d=document.createElement('div');const b=document.createElement('b');b.textContent=p.name;const sm=document.createElement('small');
     sm.textContent=[p.ma,l.kg+'kg'+(l.hao?' (trừ hao)':''),l.mau].filter(Boolean).join(' · ');d.append(b,sm);
-    const pr=document.createElement('span');pr.className='pr';pr.textContent=giaChu(p);
+    if(f!=='ok'){const e=document.createElement('small');e.className='err';e.textContent=LOI_SIZE(p,l.kg)[f]+', mẹ bỏ ra giúp em nha';d.append(e);}
+    const q=document.createElement('div');q.className='qty';const o=document.createElement('output');o.textContent=l.sl;o.setAttribute('aria-label','Số lượng');
+    q.append(nut('−',`Bớt 1 bộ ${p.name}`,()=>{if(l.sl>1)l.sl--;else GIO.splice(i,1);saveGio();renderGio();}),o,
+      nut('+',`Thêm 1 bộ ${p.name}`,()=>{l.sl++;saveGio();renderGio();}));
+    if(f!=='ok')q.lastChild.disabled=true;
+    d.append(q);
+    const pr=document.createElement('span');pr.className='pr';pr.textContent=l.sl>1?`${p.price*l.sl}k`:giaChu(p);
+    if(l.sl>1){const x=document.createElement('small');x.textContent=`${giaChu(p)} × ${l.sl}`;pr.append(x);}
     const x=document.createElement('button');x.className='rm';x.setAttribute('aria-label','Bỏ '+p.name+' '+l.kg+'kg');x.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
     x.addEventListener('click',()=>{GIO.splice(i,1);saveGio();renderGio();});
     li.append(im,d,pr,x);box.appendChild(li);});
   if(!has)return;
   const t=tinhGio(),sum=$('#cSum');sum.innerHTML='';
   const row=(k,v,cls)=>{const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;if(cls){dt.className=dd.className=cls;}sum.append(dt,dd);};
-  row(`Tiền hàng (${t.n} bộ)`,t.hang+'k');row(nhanShip(t),t.ship+'k');row('Tổng',t.tong+'k','big');
-  if(t.daCoc)row('Đã cọc trước','−'+t.daCoc+'k');
-  if(t.them)row(t.daCoc?'Cọc thêm (chuyển khoản)':'Cọc (chuyển khoản)',t.them+'k','hl');
-  row('Còn lại khi nhận hàng',t.cod+'k','big');
-  const thieu=t.n<SHOP.donToiThieu&&!t.daCoc,w=$('#cWarn');
-  w.hidden=!thieu;w.textContent=`Shop đi đơn từ ${SHOP.donToiThieu} bộ, mẹ chọn thêm ${SHOP.donToiThieu-t.n} bộ nữa nha. Nếu đã có đơn cọc trước đó, mẹ điền số tiền đã cọc ở trên.`;
-  $('#cSend').disabled=thieu;
+  if(t.don){
+    row(`Lần này (${t.n} bộ)`,t.hang+'k');
+    if(t.tongBo){row(`Cả đơn ${t.tongBo} bộ, cọc cần`,t.can+'k');row('Mẹ đã cọc',t.daCoc+'k');row('Cọc thêm (chuyển khoản)',t.them?t.them+'k':'0k, đã đủ',t.them?'hl':'');}
+    else row('Cọc thêm','mẹ ghi số bộ đơn trước');
+    row(t.ck?'Chuyển khoản hết':'Ship và COD','shop cộng với đơn trước rồi báo');
+  }else{
+    row(`Tiền hàng (${t.n} bộ)`,t.hang+'k');row(nhanShip(t),t.ship+'k');row('Tổng',t.tong+'k','big');
+    if(t.ck){row('Chuyển khoản hết (gồm cọc)',t.tong+'k','hl');row('Còn lại khi nhận hàng','0đ','big');}
+    else{if(t.coc)row('Cọc (chuyển khoản)',t.coc+'k','hl');row('Còn lại khi nhận hàng (COD)',t.cod+'k','big');}
+  }
+  const w=$('#cWarn'),loi=[];
+  if(t.thieu)loi.push(`Shop đi đơn từ ${SHOP.donToiThieu} bộ, mẹ chọn thêm ${SHOP.donToiThieu-t.n} bộ nữa nha. Nếu mẹ đang dồn vào đơn đã cọc trước đó, mẹ bấm ô “Mẹ đang dồn đơn” rồi ghi số tiền đã cọc.`);
+  if($('#cDon').checked&&!t.daCoc)loi.push('Mẹ ghi số tiền đã cọc ở đơn trước giúp em nha. Chưa cọc thì đơn trước chưa được giữ, mẹ chốt như đơn mới.');
+  if(t.hong.length)loi.push('Trong giỏ có mẫu vừa hết size, mẹ bỏ ra hoặc chọn size khác giúp em nha.');
+  w.hidden=!loi.length;w.textContent=loi.join(' ');
+  $('#cSend').disabled=t.thieu||t.hong.length>0;
   $('#cMsg').value=tinNhan(t);
-  $('#cHow').textContent=(SHOP.zalo?'Chợ sẽ chép sẵn tin nhắn. Khi Zalo mở ra, mẹ dán vào khung chat với shop rồi gửi. ':'Chợ sẽ chép sẵn tin nhắn, mẹ dán vào Zalo của shop rồi gửi. ')+'Shop kiểm tra lại size còn hàng và báo phí ship chính xác, mẹ chuyển khoản cọc sau khi shop xác nhận nha.';
 }
-['#cCao','#cDaCoc'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='#cCao'){BE.cao=parseInt($('#cCao').value,10)||0;saveBe();}renderGio();}));
-async function chep(text){
-  try{await navigator.clipboard.writeText(text);return true;}catch(e){}
-  const ta=$('#cMsg');$('#cMsgWrap').open=true;ta.focus();ta.select();try{return document.execCommand('copy');}catch(e){return false;}
+/* Lưu ý của shop, hiện ngay trên nút gửi */
+(function(){
+  const coc=[...SHOP.coc].sort((a,b)=>a.tu-b.tu).map(r=>`${r.tien}k từ ${r.tu} bộ`).join(', ');
+  const L=[`Gửi tin xong, shop kiểm size trong kho rồi nhắn mẹ xác nhận size và ship. Mẹ chuyển khoản cọc (${coc}) sau khi shop xác nhận. <b>Chưa cọc thì shop chưa giữ hàng</b> nha mẹ.`,
+    'Shop mong mẹ <b>chốt 1 lần rồi đi đơn luôn</b>. Nếu mẹ cần dồn đơn thì tối đa 2 lần chốt hoặc 1 tuần, cái nào đến trước. Hết hạn dồn shop đi đơn luôn ạ.',
+    'Nhận hàng mẹ nhớ <b>quay video lúc bóc hàng</b>. Có video thì shop mới giải quyết được khi thiếu hàng hoặc hàng lỗi.'];
+  $('#cHow').innerHTML='';L.forEach(h=>{const li=document.createElement('li');li.innerHTML=h;$('#cHow').appendChild(li);});
+})();
+['#cCao','#cDaCoc','#cTruoc','#cTen'].forEach(id=>$(id).addEventListener('input',()=>{
+  if(id==='#cCao'){BE.cao=parseInt($('#cCao').value,10)||0;saveBe();}
+  if(id==='#cTen'){BE.ten=tenZalo();saveBe();}
+  renderGio();}));
+['#cDon','#cCk'].forEach(id=>$(id).addEventListener('change',()=>{renderGio();if(id==='#cDon'&&$('#cDon').checked)$('#cDaCoc').focus();}));
+
+/* Chép tin và mở Zalo. Trình duyệt trong Zalo, TikTok hay chặn navigator.clipboard,
+   nên chép ngay trong lúc bấm bằng ô chữ tạm (chạy được cả trên iPhone), không được mới thử cách khác. */
+const ZALO=String(SHOP.zalo||'').replace(/\D/g,''),ZALO_URL=ZALO?'https://zalo.me/'+ZALO:'';
+const ZALO_DEP=ZALO.replace(/^(\d{4})(\d{3})(\d+)$/,'$1 $2 $3');
+const UA=navigator.userAgent||'',TRONG_TIKTOK=/musical_ly|tiktok|bytedance/i.test(UA);
+function chepNgay(text){
+  const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');
+  ta.style.cssText='position:fixed;left:0;top:0;width:2px;height:2px;padding:0;border:0;opacity:0;font-size:16px';
+  document.body.appendChild(ta);let ok=false;
+  try{ta.focus({preventScroll:true});ta.select();ta.setSelectionRange(0,text.length);ok=document.execCommand('copy');}catch(e){ok=false;}
+  ta.remove();return ok;
 }
-$('#cSend').addEventListener('click',async()=>{
-  const ok=await chep($('#cMsg').value);
-  ticker(ok?'Đã chép tin chốt đơn. Mẹ dán vào Zalo của shop rồi gửi nha':'Chưa chép được, mẹ giữ tay vào ô tin nhắn để chép giúp em');
-  if(ok&&SHOP.zalo)setTimeout(()=>{window.open('https://zalo.me/'+String(SHOP.zalo).replace(/\D/g,''),'_blank','noopener');},350);
-  if(!ok)$('#cMsgWrap').open=true;
+function chepTay(){const ta=$('#cMsg');$('#cMsgWrap').open=true;ta.focus();ta.select();try{ta.setSelectionRange(0,ta.value.length);}catch(e){}}
+function daGui(ok){
+  const tip=[];
+  if(TRONG_TIKTOK)tip.push('Mẹ đang mở chợ trong TikTok. Bấm “Mở Zalo shop” mà Zalo không mở thì mẹ bấm dấu ⋯ ở góc trên, chọn mở bằng trình duyệt, hoặc mở Zalo và tìm số '+ZALO_DEP+'.');
+  else if(ZALO)tip.push('Zalo không tự mở thì mẹ bấm nút trên, hoặc mở Zalo và tìm số '+ZALO_DEP+' rồi dán tin.');
+  tip.push('Dán mà không ra chữ thì mẹ mở “Xem tin nhắn sẽ gửi”, giữ tay vào ô tin để chép.');
+  $('#cDoneT').textContent=ok?(ZALO?'Đã chép tin chốt đơn. Mẹ mở Zalo shop, dán vào khung chat rồi bấm gửi nha.':'Đã chép tin chốt đơn. Mẹ dán vào Zalo của shop rồi gửi nha.')
+    :'Máy chưa cho chép tự động. Mẹ giữ tay vào ô tin nhắn ở trên, chọn Chép (Copy), rồi mở Zalo shop dán vào nha.';
+  $('#cZaloTip').textContent=tip.join(' ');
+  const a=$('#cZalo');a.hidden=!ZALO_URL;if(ZALO_URL){a.href=ZALO_URL;a.textContent='Mở Zalo shop · '+ZALO_DEP;}
+  $('#cDone').hidden=false;$('#cDone').dataset.ok=ok;
+  if(!ok)chepTay();
+  ticker(ok?'Đã chép tin chốt đơn':'Mẹ giữ tay vào ô tin nhắn để chép giúp em');
+  requestAnimationFrame(()=>$('#cDone').scrollIntoView({block:'nearest',behavior:REDUCED?'auto':'smooth'}));
+}
+$('#cSend').addEventListener('click',()=>{
+  if(!tenZalo()){const w=$('#cWarn');w.hidden=false;w.textContent='Mẹ ghi tên Zalo giúp shop nha, để shop tìm đúng tin nhắn của mẹ.';$('#cTen').focus();return;}
+  renderGio();if($('#cSend').disabled)return;
+  const text=$('#cMsg').value,ok=chepNgay(text);
+  if(ok)daGui(true);
+  else if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(text).then(()=>daGui(true),()=>daGui(false));
+  else daGui(false);
+  /* Mở Zalo ngay trong lúc bấm để trình duyệt không chặn. Trong TikTok thì để mẹ tự bấm nút “Mở Zalo shop”. */
+  if(ok&&ZALO_URL&&!TRONG_TIKTOK){try{window.open(ZALO_URL,'_blank','noopener');}catch(e){}}
 });
 $('#cClear').addEventListener('click',()=>{if(!confirm('Xoá hết các mẫu trong giỏ?'))return;GIO=[];saveGio();renderGio();});
-function openCart(){$('#cCao').value=BE.cao||'';renderGio();$('#cartWrap').hidden=false;state.lock=1;state.tgt=null;marker.visible=false;}
+function openCart(){$('#cCao').value=BE.cao||'';if(!tenZalo())$('#cTen').value=BE.ten||'';$('#cDone').hidden=true;renderGio();$('#cartWrap').hidden=false;state.lock=1;state.tgt=null;marker.visible=false;}
 function burst(){for(let i=0;i<9;i++)setTimeout(()=>heart(player),i*70);}
 const HEART='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-8-5-8-11a4.600 4.600 0 0 1 8-3 4.600 4.600 0 0 1 8 3c0 6-8 11-8 11z"/></svg>';
 function heart(c){const v=project({x:c.g.position.x,y:1.900,z:c.g.position.z}),d=document.createElement('div');d.className='hrt';d.innerHTML=HEART;d.style.left=v.x-13+(Math.random()-.5)*50+'px';d.style.top=v.y+'px';d.style.setProperty('--dx',(Math.random()-.5)*80+'px');$('#tags').appendChild(d);setTimeout(()=>d.remove(),1600);}
@@ -741,7 +840,7 @@ document.querySelectorAll('#acts button').forEach(b=>b.addEventListener('click',
   if(a==='wave')player.wave=1.400;
   if(a==='heart')for(let i=0;i<5;i++)setTimeout(()=>heart(player),i*90);
   if(a==='dance')player.dance=2.400;
-  if(a==='ask'){player.say(`Còn size ${BE.kg||16}kg không ạ?`);if(cur.owner)setTimeout(()=>cur.owner.say('Còn ạ, mẹ chạm vào mẫu để xem size nha',3600),1100);}
+  if(a==='ask'){player.say(`Còn size ${BE.kg||16}kg không ạ?`);if(cur.owner)setTimeout(()=>cur.owner.say('Mẹ chạm vào mẫu, chợ báo ngay có size cho bé không ạ',3600),1100);}
 }));
 $('#cart').addEventListener('click',openCart);
 function portal(id,door){
@@ -788,7 +887,7 @@ function tap(x,y){
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;state.keys[e.code]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();if(e.code==='Escape')close();});
 addEventListener('keyup',e=>{state.keys[e.code]=false;});
 
-$('#enter').addEventListener('submit',e=>{e.preventDefault();const n=($('#who').value||'').trim()||'Bé Bống';BE.kg=parseInt($('#beKg').value,10)||BE.kg||0;BE.cao=parseInt($('#beCao').value,10)||BE.cao||0;saveBe();player.o.name=n;player.tag.querySelector('.nm').textContent=n;
+$('#enter').addEventListener('submit',e=>{e.preventDefault();const ten=($('#who').value||'').trim(),n=(ten||'Mẹ bé').slice(0,16);if(ten)BE.ten=ten;BE.kg=parseInt($('#beKg').value,10)||BE.kg||0;BE.cao=parseInt($('#beCao').value,10)||BE.cao||0;saveBe();player.o.name=n;player.tag.querySelector('.nm').textContent=n;
   $('#intro').style.opacity=0;setTimeout(()=>$('#intro').remove(),600);
   cam.from.copy(camera.position);cam.fromLook.copy(cam.look);cam.t=REDUCED?1:0;state.mode='fly';$('#hud').hidden=false;
   $('#hint').textContent=matchMedia('(hover:hover) and (pointer:fine)').matches?'Bấm xuống nền để đi, kéo chuột để nhìn quanh. Bấm tên sạp ở dưới để tự đi tới.':'Kéo một ngón để đi. Chạm tên sạp ở dưới để tự đi tới.';setTimeout(hideHint,8000);

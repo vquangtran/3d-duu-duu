@@ -13,16 +13,16 @@ flowchart LR
   subgraph K["Khách (mẹ bé)"]
     direction LR
     D1(["Thấy link ở profile TikTok<br/>hoặc tin ghim nhóm Zalo, mở link"])
-    D3["Nhập tên, cân nặng bé (kg),<br/>chiều cao bé (cm), bấm “Vào chợ”"]
-    D5["Dạo chợ tròn: 6 sạp vòng cung<br/>quanh bồn hoa và cột đèn lồng.<br/>Bấm tên sạp ở thanh dưới,<br/>hoặc kéo một ngón / chạm nền để đi"]
+    D3["Nhập tên Zalo, cân nặng bé (kg),<br/>chiều cao bé (cm), bấm “Vào chợ”"]
+    D5["Dạo phố chợ đêm: 6 sạp hai bên phố,<br/>sân khấu, gốc đa, cuối phố là cửa hàng.<br/>Bấm tên sạp ở thanh dưới,<br/>hoặc kéo một ngón / chạm nền để đi"]
     D8["Bấm vào một mẫu"]
     D10["Chọn màu<br/>(chợ lật tới ảnh màu đó)"]
     D11["Chọn cân nặng bằng nút − / +"]
     D14["Tuỳ chọn: “Lấy rộng hơn (trừ hao)”,<br/>“Cho bé mặc thử”"]
     D16["Thêm vào giỏ"]
     D17{"Chọn thêm<br/>mẫu?"}
-    D18["Mở giỏ: xem danh sách món,<br/>nhập chiều cao bé,<br/>ô “Đã cọc trước”"]
-    D22["Bấm “Chép tin và mở Zalo shop”"]
+    D18["Mở giỏ: xem món, sửa số lượng,<br/>tên Zalo, chiều cao bé.<br/>Tuỳ chọn: chuyển khoản hết (COD 0đ),<br/>dồn đơn (đã cọc bao nhiêu, đơn trước mấy bộ).<br/>Đọc lưu ý: chưa cọc chưa giữ hàng,<br/>chốt 1 lần, quay video bóc hàng"]
+    D22["Bấm “Chép tin và mở Zalo shop”<br/>(chưa ghi tên Zalo thì chợ nhắc ghi)"]
     D24["🔗 T1 Dán tin vào khung chat Zalo,<br/>bấm gửi"]
     D26["🔗 T3 Chuyển khoản cọc theo mã QR<br/>(chưa cọc thì shop không giữ hàng)"]
     D28["Gửi biên lai qua Zalo"]
@@ -32,18 +32,18 @@ flowchart LR
 
   subgraph C["Chợ 3D"]
     direction LR
-    D2["⚡ Màn hình vào chợ<br/>có linh vật Duu Duu"]
-    D4["⚡ Máy quay bay vào quảng trường"]
-    D6["⚡ Nhân vật tự đi tới sạp,<br/>tự vòng qua bồn hoa"]
+    D2["⚡ Màn hình vào chợ,<br/>phía sau là chợ đêm quay chậm"]
+    D4["⚡ Máy quay bay vào cổng chợ"]
+    D6["⚡ Nhân vật tự đi tới sạp,<br/>quay mặt vào sạp"]
     D7["⚡ Đến gần sạp:<br/>hiện dải thẻ mẫu của sạp"]
     D9["⚡ Bảng chi tiết: ảnh thật vuốt ngang,<br/>mã, giá, đoạn chữ của shop"]
     D12{"Size<br/>cho bé?"}
     D13["⚡ 🔒 “Mẫu này chỉ có size X–Y”<br/>hoặc “Hết size”:<br/>khoá nút thêm vào giỏ"]
-    D15["⚡ Mặc thử: nhân vật<br/>mặc màu của mẫu"]
-    D19["⚡ Tự tính tiền hàng, ship dự kiến,<br/>cọc theo mốc, COD còn lại"]
-    D20{"Dưới 2 bộ<br/>và chưa cọc?"}
-    D21["⚡ 🔒 Khoá nút gửi,<br/>nhắc chọn thêm"]
-    D23["⚡ Chép tin chốt đơn,<br/>mở Zalo của shop.<br/>Giỏ vẫn lưu trên máy khách"]
+    D15["⚡ Mặc thử: đóng bảng, nhân vật<br/>mặc màu của mẫu<br/>(ưng thì chạm lại mẫu để thêm)"]
+    D19["⚡ Gộp món giống nhau thành số lượng.<br/>Tự tính tiền hàng, ship dự kiến,<br/>cọc theo mốc, COD còn lại<br/>(dồn đơn: cọc thêm theo tổng số bộ,<br/>ship và COD cả đơn để shop cộng)"]
+    D20{"Dưới 2 bộ và chưa cọc,<br/>hoặc có món vừa hết size?"}
+    D21["⚡ 🔒 Khoá nút gửi,<br/>nhắc chọn thêm hoặc bỏ món hết size"]
+    D23["⚡ Chép tin chốt đơn (có “Nguồn: Chợ 3D”),<br/>mở Zalo của shop.<br/>Chép không được: mở ô tin để giữ tay chép.<br/>Zalo không tự mở: nút “Mở Zalo shop” + số Zalo.<br/>Giỏ vẫn lưu trên máy khách"]
   end
 
   subgraph Z["Zalo shop"]

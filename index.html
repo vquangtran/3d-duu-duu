@@ -57,15 +57,28 @@
       <h2 id="cTitle">Giỏ của mẹ</h2>
       <p class="empty" id="cEmpty">Giỏ đang trống. Chạm vào quần áo trên sạp để xem và thêm vào giỏ nha.</p>
       <ul class="lines" id="cList"></ul>
-      <div class="fields" id="cFields">
+      <div class="fields wide" id="cFields">
+        <label>Tên Zalo của mẹ<input id="cTen" type="text" maxlength="40" autocomplete="name" placeholder="Để shop tìm đúng tin"></label>
         <label>Bé cao (cm)<input id="cCao" type="number" inputmode="numeric" min="40" max="180" placeholder="Không bắt buộc"></label>
-        <label>Đã cọc trước (k)<input id="cDaCoc" type="number" inputmode="numeric" min="0" step="10" placeholder="0"></label>
+      </div>
+      <div class="opts" id="cOpts">
+        <label class="tick"><input type="checkbox" id="cCk"> Mẹ chuyển khoản hết, không thu COD</label>
+        <label class="tick"><input type="checkbox" id="cDon"> Mẹ đang dồn đơn (đã chốt và cọc trước đó)</label>
+        <div class="fields" id="cDonF" hidden>
+          <label>Đã cọc (k)<input id="cDaCoc" type="number" inputmode="numeric" min="0" step="10" placeholder="VD: 50"></label>
+          <label>Đơn trước mấy bộ<input id="cTruoc" type="number" inputmode="numeric" min="1" max="500" placeholder="VD: 2"></label>
+        </div>
       </div>
       <dl class="sum" id="cSum"></dl>
       <p class="warn" id="cWarn" hidden></p>
-      <details class="msg" id="cMsgWrap"><summary>Xem tin nhắn sẽ gửi</summary><textarea id="cMsg" readonly rows="9"></textarea></details>
+      <ul class="note" id="cHow" aria-label="Lưu ý của shop"></ul>
+      <details class="msg" id="cMsgWrap"><summary>Xem tin nhắn sẽ gửi</summary><textarea id="cMsg" readonly rows="12"></textarea></details>
       <button class="btn main" id="cSend">Chép tin và mở Zalo shop</button>
-      <p class="sub" id="cHow"></p>
+      <div class="done" id="cDone" hidden role="status">
+        <p id="cDoneT"></p>
+        <a class="btn main" id="cZalo" target="_blank" rel="noopener" hidden>Mở Zalo shop</a>
+        <p class="sub" id="cZaloTip"></p>
+      </div>
       <button class="link" id="cClear">Xoá giỏ</button>
     </section>
   </div>
@@ -82,7 +95,7 @@
     <form id="enter">
       <h1>Duu Duu họp chợ</h1>
       <p>Dẫn bé đi dạo chợ đêm, ghé từng sạp và vào cửa hàng xem đồ mới.</p>
-      <label>Tên hiện trong chợ<input id="who" type="text" maxlength="16" value="Bé Bống" autocomplete="off"></label>
+      <label>Tên Zalo của mẹ<input id="who" type="text" maxlength="40" autocomplete="name" placeholder="VD: Mẹ Bống"><small>Shop dùng tên này để tìm đúng tin nhắn chốt đơn của mẹ</small></label>
       <div class="two">
         <label>Bé nặng (kg)<input id="beKg" type="number" inputmode="numeric" min="3" max="50" placeholder="VD: 14"></label>
         <label>Bé cao (cm)<input id="beCao" type="number" inputmode="numeric" min="40" max="180" placeholder="VD: 98"></label>
@@ -94,6 +107,8 @@
   <div id="load">Đang dựng chợ…</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>/* Nếu file dữ liệu gõ sai (thiếu dấu phẩy, dấu nháy), ghi lại dòng bị lỗi để chợ báo cho chủ shop */
+addEventListener('error',function(e){if(e.filename&&/san-pham\.js/.test(e.filename))window.DUU_LOI={dong:e.lineno,loi:e.message};});</script>
 <script src="data/san-pham.js"></script>
 <script src="src/main.js"></script>
 </body>

@@ -156,3 +156,25 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-of
 .msg textarea{width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:2px solid var(--soft);border-radius:12px;font:500 13px/1.5 var(--body);color:var(--sun-ink);background:#FAFAFD;resize:vertical;user-select:text;-webkit-user-select:text}
 #cSend{flex:none}
 .link{align-self:center;min-height:44px;padding:0 12px;font-size:13.5px;font-weight:600;color:var(--dim);text-decoration:underline}
+
+/* ---------- Giỏ: số lượng, lựa chọn thanh toán, dồn đơn, lưu ý, sau khi chép tin ---------- */
+.fields.wide{grid-template-columns:1.5fr 1fr}
+.opts{display:flex;flex-direction:column;gap:2px}
+.opts .tick{font-size:13.5px;line-height:1.35}
+.opts .fields{margin:2px 0 6px 32px}
+.lines .qty{display:flex;align-items:center;gap:4px;margin-top:6px}
+.lines .qty button{width:40px;height:36px;border-radius:10px;background:#E9EBF6;font-family:var(--display);font-size:20px;font-weight:800;line-height:1;color:var(--sun-ink)}
+.lines .qty button:disabled{opacity:.4;cursor:not-allowed}
+.lines .qty output{min-width:28px;text-align:center;font-family:var(--display);font-size:17px;font-weight:800}
+.lines .pr{text-align:right}
+.lines .pr small{display:block;font-family:var(--body);font-size:11.5px;font-weight:600;color:var(--dim);margin-top:2px;white-space:nowrap}
+.lines small.err{color:#A3172A;font-weight:600}
+.note{margin:0;padding:10px 12px 10px 30px;border-radius:12px;background:#F4F5FB;font-size:13px;line-height:1.5;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+.note b{color:var(--sun-ink)}
+.done{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:#DDF6EE;color:#0E6B53}
+.done[data-ok="false"]{background:#FFF4D1;color:#7A5200}
+.done p{margin:0;font-size:14px;font-weight:700;line-height:1.45}
+.done .sub{font-weight:500;color:inherit}
+.done a.btn{text-decoration:none;display:flex;align-items:center;justify-content:center}
+#intro label small{font-size:12px;font-weight:500;color:var(--dim);line-height:1.35}
+#load a{color:inherit;font-weight:700}

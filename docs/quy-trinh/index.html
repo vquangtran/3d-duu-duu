@@ -232,7 +232,7 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
     B4["⚠️ 2 nhân viên đi tìm size trong kho.&lt;br/&gt;Còn size thì nhanh, hết size thì lâu&lt;br/&gt;(50 đơn chợ: tìm size + lên đơn ~2 tiếng)"]
     B12["Nhập từng món vào tab “Nhập đơn”:&lt;br/&gt;ngày, nguồn (Live / Chợ Zalo / Chợ 3D),&lt;br/&gt;tên khách, mã mẫu, size, màu, SL, giá"]
     B14["Ghi “Đã cọc” + trạng thái&lt;br/&gt;ở tab “Gom theo khách”"]
-    C2["Thêm dòng vào “Nhập đơn”"]
+    C2["Thêm dòng vào “Nhập đơn”&lt;br/&gt;(tin chợ 3D ghi “DỒN ĐƠN”,&lt;br/&gt;cọc thêm theo tổng số bộ cả đơn)"]
     C6["Đóng gói"]
     C6b["Đã cọc mà hết hàng:&lt;br/&gt;khách chọn hoàn cọc hoặc đổi mẫu"]
     C9["Cập nhật “Đã đi đơn”&lt;br/&gt;+ mã vận đơn"]
@@ -251,8 +251,8 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
     direction LR
     A7["⚡ Chợ tự đọc giá, dải size,&lt;br/&gt;size thiếu, combo (99k/4 quần)"]
     A8["⚡ Trang chợ tự cập nhật&lt;br/&gt;sau 1–2 phút"]
-    B2[/"⚡ Tin chốt soạn sẵn từ chợ 3D:&lt;br/&gt;mã, size, màu, tiền hàng, ship,&lt;br/&gt;cọc, COD + “Nguồn: Chợ 3D”&lt;br/&gt;(giống đơn live: đã có mẫu + size)"/]
-    B7["Chủ shop ghi “ko có size X” hoặc het: true&lt;br/&gt;vào file dữ liệu, đẩy GitHub"]
+    B2[/"⚡ Tin chốt soạn sẵn từ chợ 3D:&lt;br/&gt;“Nguồn: Chợ 3D”, tên Zalo,&lt;br/&gt;mỗi món: mã · size · màu · SL · giá,&lt;br/&gt;tiền hàng, ship, cọc, COD + dòng “Tính”&lt;br/&gt;(giống đơn live: đã có mẫu + size)"/]
+    B7["Chủ shop ghi “ko có size X” hoặc het: true&lt;br/&gt;vào file dữ liệu, đẩy GitHub.&lt;br/&gt;Giỏ nào đã có món đó cũng báo và khoá gửi"]
   end
 
   subgraph L5["SPX"]
@@ -348,16 +348,16 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
   subgraph K["Khách (mẹ bé)"]
     direction LR
     D1(["Thấy link ở profile TikTok&lt;br/&gt;hoặc tin ghim nhóm Zalo, mở link"])
-    D3["Nhập tên, cân nặng bé (kg),&lt;br/&gt;chiều cao bé (cm), bấm “Vào chợ”"]
-    D5["Dạo chợ tròn: 6 sạp vòng cung&lt;br/&gt;quanh bồn hoa và cột đèn lồng.&lt;br/&gt;Bấm tên sạp ở thanh dưới,&lt;br/&gt;hoặc kéo một ngón / chạm nền để đi"]
+    D3["Nhập tên Zalo, cân nặng bé (kg),&lt;br/&gt;chiều cao bé (cm), bấm “Vào chợ”"]
+    D5["Dạo phố chợ đêm: 6 sạp hai bên phố,&lt;br/&gt;sân khấu, gốc đa, cuối phố là cửa hàng.&lt;br/&gt;Bấm tên sạp ở thanh dưới,&lt;br/&gt;hoặc kéo một ngón / chạm nền để đi"]
     D8["Bấm vào một mẫu"]
     D10["Chọn màu&lt;br/&gt;(chợ lật tới ảnh màu đó)"]
     D11["Chọn cân nặng bằng nút − / +"]
     D14["Tuỳ chọn: “Lấy rộng hơn (trừ hao)”,&lt;br/&gt;“Cho bé mặc thử”"]
     D16["Thêm vào giỏ"]
     D17{"Chọn thêm&lt;br/&gt;mẫu?"}
-    D18["Mở giỏ: xem danh sách món,&lt;br/&gt;nhập chiều cao bé,&lt;br/&gt;ô “Đã cọc trước”"]
-    D22["Bấm “Chép tin và mở Zalo shop”"]
+    D18["Mở giỏ: xem món, sửa số lượng,&lt;br/&gt;tên Zalo, chiều cao bé.&lt;br/&gt;Tuỳ chọn: chuyển khoản hết (COD 0đ),&lt;br/&gt;dồn đơn (đã cọc bao nhiêu, đơn trước mấy bộ).&lt;br/&gt;Đọc lưu ý: chưa cọc chưa giữ hàng,&lt;br/&gt;chốt 1 lần, quay video bóc hàng"]
+    D22["Bấm “Chép tin và mở Zalo shop”&lt;br/&gt;(chưa ghi tên Zalo thì chợ nhắc ghi)"]
     D24["🔗 T1 Dán tin vào khung chat Zalo,&lt;br/&gt;bấm gửi"]
     D26["🔗 T3 Chuyển khoản cọc theo mã QR&lt;br/&gt;(chưa cọc thì shop không giữ hàng)"]
     D28["Gửi biên lai qua Zalo"]
@@ -367,18 +367,18 @@ footer{margin-top:56px;padding-top:16px;border-top:2px solid var(--rule);color:v
 
   subgraph C["Chợ 3D"]
     direction LR
-    D2["⚡ Màn hình vào chợ&lt;br/&gt;có linh vật Duu Duu"]
-    D4["⚡ Máy quay bay vào quảng trường"]
-    D6["⚡ Nhân vật tự đi tới sạp,&lt;br/&gt;tự vòng qua bồn hoa"]
+    D2["⚡ Màn hình vào chợ,&lt;br/&gt;phía sau là chợ đêm quay chậm"]
+    D4["⚡ Máy quay bay vào cổng chợ"]
+    D6["⚡ Nhân vật tự đi tới sạp,&lt;br/&gt;quay mặt vào sạp"]
     D7["⚡ Đến gần sạp:&lt;br/&gt;hiện dải thẻ mẫu của sạp"]
     D9["⚡ Bảng chi tiết: ảnh thật vuốt ngang,&lt;br/&gt;mã, giá, đoạn chữ của shop"]
     D12{"Size&lt;br/&gt;cho bé?"}
     D13["⚡ 🔒 “Mẫu này chỉ có size X–Y”&lt;br/&gt;hoặc “Hết size”:&lt;br/&gt;khoá nút thêm vào giỏ"]
-    D15["⚡ Mặc thử: nhân vật&lt;br/&gt;mặc màu của mẫu"]
-    D19["⚡ Tự tính tiền hàng, ship dự kiến,&lt;br/&gt;cọc theo mốc, COD còn lại"]
-    D20{"Dưới 2 bộ&lt;br/&gt;và chưa cọc?"}
-    D21["⚡ 🔒 Khoá nút gửi,&lt;br/&gt;nhắc chọn thêm"]
-    D23["⚡ Chép tin chốt đơn,&lt;br/&gt;mở Zalo của shop.&lt;br/&gt;Giỏ vẫn lưu trên máy khách"]
+    D15["⚡ Mặc thử: đóng bảng, nhân vật&lt;br/&gt;mặc màu của mẫu&lt;br/&gt;(ưng thì chạm lại mẫu để thêm)"]
+    D19["⚡ Gộp món giống nhau thành số lượng.&lt;br/&gt;Tự tính tiền hàng, ship dự kiến,&lt;br/&gt;cọc theo mốc, COD còn lại&lt;br/&gt;(dồn đơn: cọc thêm theo tổng số bộ,&lt;br/&gt;ship và COD cả đơn để shop cộng)"]
+    D20{"Dưới 2 bộ và chưa cọc,&lt;br/&gt;hoặc có món vừa hết size?"}
+    D21["⚡ 🔒 Khoá nút gửi,&lt;br/&gt;nhắc chọn thêm hoặc bỏ món hết size"]
+    D23["⚡ Chép tin chốt đơn (có “Nguồn: Chợ 3D”),&lt;br/&gt;mở Zalo của shop.&lt;br/&gt;Chép không được: mở ô tin để giữ tay chép.&lt;br/&gt;Zalo không tự mở: nút “Mở Zalo shop” + số Zalo.&lt;br/&gt;Giỏ vẫn lưu trên máy khách"]
   end
 
   subgraph Z["Zalo shop"]
@@ -554,12 +554,12 @@ const SD1 = {
     {id:'B0',l:0,c:7,t:'ext',x:'Tin từ live: khách đã bình luận mã, nhắn shop để cọc và chốt (đã chọn sẵn mẫu + size)'},
     {id:'Bq',l:0,c:9,t:'dec',x:'Cần kiểm size?'},
     {id:'B1',l:0,c:7,r:1,t:'ext',x:'Tin từ chợ Zalo: ảnh mẫu + cân nặng, chiều cao bé, shop phải tư vấn size'},
-    {id:'B2',l:3,c:7,t:'auto',note:2,x:'Khách đặt trên chợ 3D, gửi tin chốt soạn sẵn: mã, size, màu, tiền hàng, ship, cọc, COD + “Nguồn: Chợ 3D”'},
+    {id:'B2',l:3,c:7,t:'auto',note:2,x:'Khách đặt trên chợ 3D, gửi tin chốt soạn sẵn: “Nguồn: Chợ 3D”, tên Zalo, mỗi món mã · size · màu · SL · giá, rồi tiền hàng, ship, cọc, COD + dòng “Tính”'},
     {id:'B3',l:0,c:8,t:'tay',warn:1,touch:['T1'],x:'Đọc và trả lời tin Zalo: chủ shop + nhân viên cùng trả lời (hàng trăm tin mỗi ngày)'},
     {id:'B4',l:1,c:10,t:'tay',warn:1,note:3,x:'2 nhân viên đi tìm size trong kho. Còn size thì nhanh, hết size thì lâu'},
     {id:'B5',l:0,c:11,t:'dec',x:'Còn size không?'},
     {id:'B6',l:0,c:11,r:1,t:'tay',x:'Báo khách hết, gợi ý size hoặc mẫu khác'},
-    {id:'B7',l:3,c:11,t:'tay',note:4,x:'Chủ shop ghi “ko có size X” hoặc het: true vào file dữ liệu, đẩy GitHub'},
+    {id:'B7',l:3,c:11,t:'tay',note:4,x:'Chủ shop ghi “ko có size X” hoặc het: true vào file dữ liệu, đẩy GitHub. Giỏ nào đã có món đó cũng báo và khoá gửi'},
     {id:'B8',l:0,c:12,t:'dec',x:'Đủ 2 bộ chưa?'},
     {id:'B9',l:0,c:12,r:1,t:'tay',x:'Nhắc khách chọn thêm'},
     {id:'B10',l:0,c:13,t:'tay',touch:['T2'],x:'Xác nhận đơn, gửi quy định cọc kèm số tài khoản + mã QR (50k từ 2 bộ · 100k từ 4 bộ · 500k sỉ từ 20 bộ). Chưa cọc thì không giữ hàng'},
@@ -569,7 +569,7 @@ const SD1 = {
     {id:'B14',l:1,c:16,t:'tay',x:'Ghi “Đã cọc” + trạng thái ở tab “Gom theo khách”'},
 
     {id:'C1',l:0,c:17,t:'dec',x:'Khách thêm món? (còn hạn dồn)'},
-    {id:'C2',l:1,c:17,t:'tay',x:'Thêm dòng vào “Nhập đơn”'},
+    {id:'C2',l:1,c:17,t:'tay',x:'Thêm dòng vào “Nhập đơn” (tin chợ 3D ghi “DỒN ĐƠN”, cọc thêm theo tổng số bộ cả đơn)'},
     {id:'C3',l:2,c:17,t:'auto',note:5,x:'Bảng tự cộng dồn vào đơn của khách'},
     {id:'C4',l:2,c:18,t:'auto',warn:2,note:6,x:'Bảng tự ra tin báo khách: 129x5+89+59+25-100=718 (giá × số bộ + ship − cọc = COD), thay cho tính tay'},
     {id:'C5',l:0,c:19,t:'tay',touch:['T4'],x:'Gửi tin tổng tiền cho khách (khách chuyển khoản hết thì COD 0đ)'},
@@ -624,7 +624,7 @@ const SD1 = {
   ],
   notes:[
     'Đoạn chữ đăng chợ Zalo luôn có size, giá, mô tả, nên dán nguyên vào là chợ 3D tự đọc ra giá, dải size, size thiếu, combo. Không phải gõ lại.',
-    'Tin từ chợ 3D đã có sẵn mẫu và size như đơn live. Shop không phải tư vấn size theo cân nặng như đơn chợ Zalo, chỉ còn kiểm hàng trong kho. Đơn live thì thường bỏ qua luôn bước kiểm.',
+    'Tin từ chợ 3D đã có sẵn mẫu và size như đơn live. Shop không phải tư vấn size theo cân nặng như đơn chợ Zalo, chỉ còn kiểm hàng trong kho. Đơn live thì thường bỏ qua luôn bước kiểm. Mỗi món trong tin ghi đúng thứ tự cột của tab “Nhập đơn” (mã, size, màu, SL, giá), món trùng đã gộp số lượng, nhập sheet không phải dò.',
     'Hiện 50 đơn chợ mất khoảng 2 tiếng cho tìm size và lên đơn, chậm nhất là lúc hết size. Chợ 3D không cho khách chọn size đã ghi là hết, nên bớt được những lần đi tìm lâu nhất.',
     'Ghi “ko có size X” một lần thì mọi khách sau trên chợ 3D đều thấy và nút thêm vào giỏ tự khoá. Bớt tin hỏi size, bớt chuyến đi kho.',
     'Shop muốn khách chốt 1 lần rồi đi đơn luôn. Nếu khách dồn thì tối đa 2 lần chốt hoặc 1 tuần, cái nào đến trước. Khi dồn chỉ cần thêm dòng, bảng Gom đơn tự cộng, không phải lật lại tin cũ để cộng tay.',
@@ -646,11 +646,11 @@ const SD2 = {
   ],
   nodes:[
     {id:'D1',l:0,c:0,t:'end',x:'Thấy link ở profile TikTok hoặc tin ghim nhóm Zalo, mở link'},
-    {id:'D2',l:1,c:1,t:'auto',x:'Màn hình vào chợ có linh vật Duu Duu'},
-    {id:'D3',l:0,c:2,t:'tay',note:1,x:'Nhập tên, cân nặng bé (kg), chiều cao bé (cm), bấm “Vào chợ”'},
-    {id:'D4',l:1,c:3,t:'auto',x:'Máy quay bay vào quảng trường'},
-    {id:'D5',l:0,c:4,t:'tay',x:'Dạo chợ tròn: 6 sạp vòng cung quanh bồn hoa, cột đèn lồng. Bấm tên sạp ở thanh dưới, hoặc kéo một ngón / chạm nền để đi'},
-    {id:'D6',l:1,c:5,t:'auto',x:'Nhân vật tự đi tới sạp, tự vòng qua bồn hoa'},
+    {id:'D2',l:1,c:1,t:'auto',x:'Màn hình vào chợ, phía sau là chợ đêm quay chậm'},
+    {id:'D3',l:0,c:2,t:'tay',note:1,x:'Nhập tên Zalo, cân nặng bé (kg), chiều cao bé (cm), bấm “Vào chợ”'},
+    {id:'D4',l:1,c:3,t:'auto',x:'Máy quay bay vào cổng chợ'},
+    {id:'D5',l:0,c:4,t:'tay',x:'Dạo phố chợ đêm: 6 sạp hai bên phố, sân khấu, gốc đa, cuối phố là cửa hàng. Bấm tên sạp ở thanh dưới, hoặc kéo một ngón / chạm nền để đi'},
+    {id:'D6',l:1,c:5,t:'auto',x:'Nhân vật tự đi tới sạp, quay mặt vào sạp'},
     {id:'D7',l:1,c:6,t:'auto',x:'Đến gần sạp: hiện dải thẻ mẫu của sạp'},
     {id:'D8',l:0,c:7,t:'tay',x:'Bấm vào một mẫu'},
     {id:'D9',l:1,c:8,t:'auto',x:'Bảng chi tiết: ảnh thật vuốt ngang, mã, giá, đoạn chữ của shop'},
@@ -659,15 +659,15 @@ const SD2 = {
     {id:'D12',l:1,c:11,t:'dec',x:'Size cho bé?'},
     {id:'D13',l:1,c:11,r:1,t:'auto',note:2,x:'“Mẫu này chỉ có size X–Y” hoặc “Hết size”: khoá nút thêm vào giỏ'},
     {id:'D14',l:0,c:12,t:'tay',x:'Tuỳ chọn: “Lấy rộng hơn (trừ hao)”, “Cho bé mặc thử”'},
-    {id:'D15',l:1,c:12,t:'auto',x:'Mặc thử: nhân vật mặc màu của mẫu'},
+    {id:'D15',l:1,c:12,t:'auto',x:'Mặc thử: đóng bảng, nhân vật mặc màu của mẫu (ưng thì chạm lại mẫu để thêm)'},
     {id:'D16',l:0,c:13,t:'tay',x:'Thêm vào giỏ'},
     {id:'D17',l:0,c:14,t:'dec',x:'Chọn thêm mẫu?'},
-    {id:'D18',l:0,c:15,t:'tay',x:'Mở giỏ: danh sách món, ô chiều cao bé, ô “Đã cọc trước”'},
-    {id:'D19',l:1,c:16,t:'auto',note:3,x:'Tự tính tiền hàng, ship dự kiến, cọc theo mốc, COD còn lại'},
-    {id:'D20',l:1,c:17,t:'dec',x:'Dưới 2 bộ và chưa cọc?'},
-    {id:'D21',l:1,c:17,r:1,t:'auto',note:4,x:'Khoá nút gửi, nhắc chọn thêm'},
-    {id:'D22',l:0,c:18,t:'tay',x:'Bấm “Chép tin và mở Zalo shop”'},
-    {id:'D23',l:1,c:19,t:'auto',note:5,x:'Chép tin chốt đơn, mở Zalo của shop. Giỏ vẫn lưu trên máy khách'},
+    {id:'D18',l:0,c:15,t:'tay',x:'Mở giỏ: xem món, sửa số lượng, tên Zalo, chiều cao bé. Tuỳ chọn: chuyển khoản hết (COD 0đ), dồn đơn (đã cọc bao nhiêu, đơn trước mấy bộ). Đọc lưu ý: chưa cọc chưa giữ hàng, chốt 1 lần, quay video bóc hàng'},
+    {id:'D19',l:1,c:16,t:'auto',note:3,x:'Gộp món giống nhau thành số lượng. Tự tính tiền hàng, ship dự kiến, cọc theo mốc, COD còn lại (dồn đơn: cọc thêm theo tổng số bộ, ship và COD cả đơn để shop cộng)'},
+    {id:'D20',l:1,c:17,t:'dec',x:'Dưới 2 bộ và chưa cọc, hoặc có món vừa hết size?'},
+    {id:'D21',l:1,c:17,r:1,t:'auto',note:4,x:'Khoá nút gửi, nhắc chọn thêm hoặc bỏ món hết size'},
+    {id:'D22',l:0,c:18,t:'tay',x:'Bấm “Chép tin và mở Zalo shop” (chưa ghi tên Zalo thì chợ nhắc ghi)'},
+    {id:'D23',l:1,c:19,t:'auto',note:5,x:'Chép tin chốt đơn (có “Nguồn: Chợ 3D”), mở Zalo của shop. Chép không được: mở ô tin để giữ tay chép. Zalo không tự mở: nút “Mở Zalo shop” + số Zalo. Giỏ vẫn lưu trên máy khách'},
     {id:'D24',l:0,c:20,t:'tay',touch:['T1'],x:'Dán tin vào khung chat Zalo, bấm gửi'},
     {id:'D25',l:2,c:21,t:'tay',touch:['T2'],x:'Shop kiểm size trong kho, xác nhận size và ship'},
     {id:'D26',l:0,c:22,t:'tay',touch:['T3'],x:'Chuyển khoản cọc theo mã QR (chưa cọc thì shop không giữ hàng)'},
@@ -695,9 +695,9 @@ const SD2 = {
   notes:[
     'Nhập cân nặng bé một lần lúc vào chợ, mẫu nào cũng tự báo có size cho bé hay không.',
     'Lệch size hoặc hết size thì nút thêm vào giỏ tự khoá: khách không chốt nhầm, shop không phải nhắn báo hết.',
-    'Giỏ tự tính tiền hàng, ship dự kiến, cọc theo mốc 50k / 100k / 500k và COD còn lại. Khách biết trước số tiền, ít hỏi lại.',
-    'Dưới 2 bộ mà chưa cọc thì không gửi được, nên đơn tới tay shop đều đủ điều kiện đi đơn.',
-    'Tin chốt có dòng “Nguồn: Chợ 3D” để nhân viên ghi đúng nguồn. Giỏ cho khách gom đủ món rồi chốt 1 lần, đúng ý shop muốn đi đơn luôn. Giỏ vẫn lưu trên máy nếu khách cần dồn (tối đa 2 lần chốt hoặc 1 tuần).'
+    'Giỏ tự tính tiền hàng, ship dự kiến, cọc theo mốc 50k / 100k / 500k và COD còn lại. Khách chọn chuyển khoản hết thì tin ghi luôn COD 0đ. Khách biết trước số tiền, ít hỏi lại.',
+    'Dưới 2 bộ mà chưa cọc thì không gửi được, nên đơn tới tay shop đều đủ điều kiện đi đơn. Món shop vừa ghi hết size cũng không gửi được.',
+    'Tin chốt có dòng “Nguồn: Chợ 3D” và tên Zalo để nhân viên ghi đúng nguồn, đúng khách. Giỏ nhắc khách chốt 1 lần rồi đi đơn luôn, dồn tối đa 2 lần chốt hoặc 1 tuần. Trình duyệt trong TikTok, Zalo hay chặn chép và mở link, nên luôn có ô tin để giữ tay chép và số Zalo để tự tìm.'
   ]
 };
 
