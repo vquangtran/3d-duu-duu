@@ -496,7 +496,7 @@ const okLook=l=>{const o=Object.assign({},LOOK0);if(l)for(const k of['dang','da'
 function randLook(r=Math.random){const p=a=>a[Math.floor(r()*a.length)][0],ao=p(AV.mau);let duoi=p(AV.mau);if(duoi===ao)duoi=AV.mau[(AV.mau.findIndex(v=>v[0]===ao)+5)%AV.mau.length][0];
   return{dang:p(AV.dang),da:p(AV.da),toc:p(AV.toc),mauToc:p(AV.mauToc.slice(0,5)),do:p(AV.do),ao,duoi};}
 
-const HR=.17;                                 /* bán kính đầu */
+const HR=.155;                                /* bán kính đầu */
 const DANG={thap:.54,vua:.64,cao:.76};         /* chiều dài chân theo dáng */
 const TORSO=[[0,-.075],[.08,-.07],[.115,-.03],[.122,.03],[.11,.11],[.095,.18],[.1,.25],[.107,.3],[.098,.34],[.072,.37],[.042,.39],[.027,.403],[0,.408]];
 const BAND=[[0,-.088],[.07,-.086],[.11,-.06],[.124,-.025],[.128,.02],[.123,.075]];
@@ -506,35 +506,13 @@ function rod(r1,r2,len,seg=10){const p=[];for(let i=0;i<=4;i++){const a=-PI/2+i/
 function merge(parts){const pos=[],nor=[];for(const[g,m]of parts){const x=g.index?g.toNonIndexed():g.clone();x.applyMatrix4(m);const a=x.attributes.position.array,n=x.attributes.normal.array;for(let i=0;i<a.length;i++){pos.push(a[i]);nor.push(n[i]);}}
   const b=new T.BufferGeometry();b.setAttribute('position',new T.Float32BufferAttribute(pos,3));b.setAttribute('normal',new T.Float32BufferAttribute(nor,3));return b;}
 const gc={},gget=(k,f)=>gc[k]||(gc[k]=f());
-/* Tóc là một khối gộp: chỏm, phần sau, mái lệch và búi */
-function hairGeo(st){return gget('h'+st,()=>{
-  const R=HR,P=[],add=(g,m)=>P.push([g,m]);
-  const sph=(r,ps,pl,ts,tl,ws=30,hs=12)=>new T.SphereGeometry(r,ws,hs,ps,pl,ts,tl);
-  const ball=(r,x,y,z,sx=1,sy=1,sz=1,rx=0,rz=0,ry=0)=>add(new T.SphereGeometry(r,16,12),mat(x,y,z,ry,rx,rz,sx,sy,sz));
-  const cap=(t,r=1.075)=>add(sph(R*r,0,2*PI,0,PI*t,32,12),mat(0,.004,-.004,0,.06,.16,1.03,1,1.05));
-  const back=(t1,r=1.095,o=.98)=>add(sph(R*r,PI/2+o,2*PI-2*o,PI*.18,PI*(t1-.18)),mat(0,0,-.006,0,0,0,1.03,1,1.05));
-  const bang=()=>{ball(R*.56,-R*.3,R*.6,R*.68,1.35,.42,.55,-.3,.5);ball(R*.42,R*.32,R*.66,R*.64,1.15,.4,.5,-.35,-.45);};
-  if(st==='tem'){cap(.43,1.06);back(.55,1.075,1.08);ball(R*.5,-R*.22,R*.66,R*.66,1.3,.4,.5,-.35,.45);ball(R*.4,R*.3,R*.84,R*.1,1.1,.45,1);}
-  else{
-    cap(.45);
-    if(st==='bob'){back(.74,1.11);add(sph(R*1.15,PI/2+1.02,2*PI-2.04,PI*.6,PI*.17,30,4),mat(0,0,-.006,0,0,0,1.03,1,1.05));}
-    else if(st==='dai'){back(.72,1.1);ball(R,0,-R*1.15,-R*.74,1.02,1.75,.5);}
-    else back(.62);
-    bang();
-    if(st==='buithap'){ball(R*.42,-R*.45,-R*.3,-R*.8);ball(R*.3,-R*.24,-R*.52,-R*.84);ball(R*.4,-R*.3,R*.8,-R*.1,1,.5,1);ball(R*.4,R*.33,R*.78,-R*.22,1,.5,1);}
-    if(st==='bob'){ball(R*.42,-R*.3,R*.8,-R*.05,1,.5,1);ball(R*.4,R*.35,R*.76,-R*.2,1,.5,1);}
-    if(st==='duoi')ball(R*.15,0,R*.5,-R*1.0);
-    if(st==='haibui')for(const k of[-1,1]){ball(R*.38,k*R*.6,R*.74,-R*.2);ball(R*.13,k*R*.44,R*.6,-R*.14);}
-    if(st==='dai')for(const k of[-1,1])ball(R*.3,k*R*.86,-R*.7,-R*.05,.9,2.2,.85);
-  }
-  return merge(P);});}
 function skirtGeo(kind,L){return gget('sk'+kind+L,()=>{
   const top=kind==='dam'?[.097,.19]:[.106,.135],hy=-.06-L*(kind==='dam'?.44:.36),hr=.2+L*.07,p=[[hr-.014,hy+.014]];
   for(let i=0;i<=10;i++){const t=i/10;p.push([lerp(hr,top[0],Math.pow(t,.85)),lerp(hy,top[1],t)]);}
   return lathe(p,24);});}
 function initCharGeo(){
-  GEO.ctorso=lathe(TORSO,22);GEO.band=lathe(BAND,22);GEO.neck=new T.CylinderGeometry(.03,.036,.13,12);
-  GEO.chead=new T.SphereGeometry(HR,32,22);GEO.nose=new T.SphereGeometry(HR*.13,12,8);
+  GEO.ctorso=lathe(TORSO,22);GEO.band=lathe(BAND,22);GEO.neck=new T.CylinderGeometry(.029,.035,.15,12);
+  initHeadGeo();
   GEO.upper=rod(.032,.028,.22);GEO.fore=rod(.028,.023,.2);GEO.hand=new T.SphereGeometry(.037,10,8);GEO.hand.scale(.8,1.15,.6);
   GEO.foot=new T.SphereGeometry(.046,12,8);GEO.foot.scale(1,.6,1.9);GEO.foot.translate(0,0,.035);
   GEO.tail=merge([[new T.SphereGeometry(HR*.3,14,10),mat(0,-HR*.62,0,0,0,0,1,2.3,1)],[new T.SphereGeometry(HR*.2,12,8),mat(0,-HR*1.25,-HR*.03,0,0,0,1,1.5,1)]]);
@@ -542,21 +520,64 @@ function initCharGeo(){
 }
 const thighG=L=>gget('th'+L,()=>rod(.06,.045,L*.5,12)),shinG=L=>gget('sh'+L,()=>rod(.045,.033,L*.5,12));
 const mix=(a,b,t)=>'#'+new T.Color(a).lerp(new T.Color(b),t).getHexString();
-/* Mặt vẽ lên quả cầu đầu: mắt, mày, má hồng, miệng cười. Mũi là một khối nhỏ riêng. */
+/* Đầu hơi thuôn (cao hơn bề ngang một chút). Mặt, tóc, tai đều đặt theo cùng tỉ lệ này. */
+const HS=[.96,1.02,.97];
+const hdir=(th,a)=>new V3(Math.sin(th)*Math.sin(a),Math.cos(th),Math.sin(th)*Math.cos(a));
+/* Ma trận đặt một chi tiết lên mặt đầu: trục z của chi tiết hướng ra ngoài */
+function onHead(th,a,d,sx=1,sy=1,sz=1,roll=0){
+  const v=hdir(th,a),p=new V3(v.x*HS[0],v.y*HS[1],v.z*HS[2]).multiplyScalar(HR*d),n=new V3(v.x/HS[0],v.y/HS[1],v.z/HS[2]).normalize();
+  const up=Math.abs(n.y)>.97?new V3(0,0,-1):new V3(0,1,0),m=new T.Matrix4().lookAt(n,new V3(),up);
+  if(roll)m.multiply(new T.Matrix4().makeRotationZ(roll));m.scale(new V3(sx,sy,sz));m.setPosition(p);return m;}
+/* Nét cong mảnh (lông mày, miệng): cung tròn uốn theo mặt */
+function arcGeo(rad,tube,arc,mid){const g=new T.TorusGeometry(rad,tube,8,32,arc);g.rotateZ(mid-arc/2);g.translate(-rad*Math.cos(mid),-rad*Math.sin(mid),0);
+  const p=g.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i);p.setZ(i,p.getZ(i)-(x*x+y*y)/(2*HR));}g.computeVertexNormals();return g;}
+/* Tóc: chỏm, phần sau, các lọn gợn sóng cho bồng, mái lệch, búi */
+function hairGeo(st){return gget('h'+st,()=>{
+  const R=HR,P=[],add=(g,m)=>P.push([g,m]);
+  const shell=(r,ps,pl,ts,tl,rx=0,rz=0,hs=12)=>add(new T.SphereGeometry(R*r,32,hs,ps,pl,ts,tl),mat(0,0,0,0,rx,rz,HS[0],HS[1],HS[2]));
+  const cap=(t=.37,r=1.06)=>shell(r,0,2*PI,0,PI*t,.08,.1);
+  const back=(t1,r=1.07,o=1.05)=>shell(r,PI/2+o,2*PI-2*o,PI*.16,PI*(t1-.16));
+  const nape=(r=1.055)=>shell(r,PI/2+1.85,2*PI-3.7,PI*.6,PI*.24);
+  const lump=(th,a,r,d=.87,f=.62,sx=1,roll=0)=>add(new T.SphereGeometry(R*r,16,12),onHead(th,a,d,sx,1,f,roll));
+  const waves=(full=1)=>{lump(.04*PI,0,.36,.84);
+    for(let i=0;i<6;i++)lump(.2*PI,-2.6+i*1.04,.34,.86);
+    if(full)for(let i=0;i<5;i++)lump(.36*PI,1.55+i*.8,.32,.88);};
+  const bang=()=>{lump(.34*PI,-.42,.4,.93,.5,1.45,.5);lump(.3*PI,.32,.33,.93,.5,1.3,-.35);lump(.38*PI,-.92,.3,.95,.55,1,.9);};
+  if(st==='tem'){cap(.38,1.05);back(.64,1.05,1.12);nape(1.045);waves(0);for(let i=0;i<4;i++)lump(.36*PI,1.9+i*.83,.28,.88);lump(.33*PI,-.35,.32,.93,.45,1.4,.5);}
+  else if(st==='bob'){cap();back(.7,1.1,.92);shell(1.13,PI/2+.98,2*PI-1.96,PI*.56,PI*.18,0,0,4);waves();bang();}
+  else if(st==='dai'){cap();back(.7,1.1,.92);waves();bang();add(new T.SphereGeometry(R,20,14),mat(0,-R*1.2,-R*.72,0,0,0,1.0,1.8,.5));
+    for(const k of[-1,1])add(new T.SphereGeometry(R*.3,14,10),mat(k*R*.84,-R*.75,-R*.08,0,0,0,.9,2.2,.85));}
+  else{cap();back(.66,1.06,1.08);nape();waves();bang();
+    if(st==='buithap'){lump(.68*PI,-2.3,.4,1.12,.85);lump(.76*PI,-2.5,.3,1.08,.85);}
+    if(st==='duoi')lump(.34*PI,PI,.16,1.05,1);
+    if(st==='haibui')for(const k of[-1,1]){lump(.22*PI,k*1.5,.38,1.12,.95);lump(.3*PI,k*1.45,.14,1.0,1);}
+  }
+  return merge(P);});}
+const EARS={buithap:1,duoi:1,haibui:1,tem:1};
+function initHeadGeo(){
+  const g=new T.SphereGeometry(HR,40,28);g.scale(HS[0],HS[1],HS[2]);
+  /* cằm nhỏ lại một chút */
+  const p=g.attributes.position;for(let i=0;i<p.count;i++){const y=p.getY(i)/(HR*HS[1]);if(y<0){const k=1-.07*y*y;p.setX(i,p.getX(i)*k);p.setZ(i,p.getZ(i)*(1-.04*y*y));}}
+  g.computeVertexNormals();GEO.chead=g;
+  const eye=new T.SphereGeometry(HR*.09,16,12);
+  GEO.face=merge([
+    [eye,onHead(.5*PI,-.35,.985,.66,1,.45)],[eye,onHead(.5*PI,.35,.985,.66,1,.45)],
+    [arcGeo(HR*.15,HR*.024,1.15,PI/2),onHead(.425*PI,-.37,1.012,1,1,1,.12)],[arcGeo(HR*.15,HR*.024,1.15,PI/2),onHead(.425*PI,.37,1.012,1,1,1,-.12)],
+    [arcGeo(HR*.28,HR*.034,1.55,-PI/2),onHead(.635*PI,0,1.018)]]);
+  GEO.nose=merge([[new T.SphereGeometry(HR*.14,16,12),onHead(.565*PI,0,.97,.95,.9,.85)]]);
+  const ear=new T.SphereGeometry(HR*.17,12,10);GEO.ears=merge([[ear,onHead(.53*PI,-PI/2,1.0,.6,1,.5)],[ear,onHead(.53*PI,PI/2,1.0,.6,1,.5)]]);
+}
+/* Da và má hồng thật nhẹ; mắt, mày, miệng là khối 3D riêng cho nét sắc */
 const heads={};
 function faceTex(skin){return heads[skin]||(heads[skin]=(()=>{
-  const cv=document.createElement('canvas');cv.width=512;cv.height=256;const c=cv.getContext('2d');c.fillStyle=skin;c.fillRect(0,0,512,256);const cx=128;
-  c.fillStyle='rgba(255,110,120,.3)';for(const k of[-1,1]){c.beginPath();c.ellipse(cx+k*35,151,12,7,0,0,7);c.fill();}
-  c.fillStyle='#2A1B17';for(const k of[-1,1]){c.beginPath();c.ellipse(cx+k*21,137,5.2,7,0,0,7);c.fill();}
-  c.fillStyle='#FFFFFF';for(const k of[-1,1]){c.beginPath();c.arc(cx+k*21+1.6,134,1.8,0,7);c.fill();}
-  c.strokeStyle='rgba(58,34,26,.7)';c.lineWidth=2.4;c.lineCap='round';for(const k of[-1,1]){c.beginPath();c.moveTo(cx+k*14,124.500);c.quadraticCurveTo(cx+k*21,120,cx+k*28,123.500);c.stroke();}
-  c.strokeStyle='#8A3A30';c.lineWidth=3;c.beginPath();c.moveTo(cx-9,159);c.quadraticCurveTo(cx,167,cx+9,159);c.stroke();
+  const cv=document.createElement('canvas');cv.width=512;cv.height=256;const c=cv.getContext('2d');c.fillStyle=skin;c.fillRect(0,0,512,256);
+  for(const k of[-1,1]){const x=128+k*44,y=147,g=c.createRadialGradient(x,y,0,x,y,18);g.addColorStop(0,'rgba(255,120,120,.22)');g.addColorStop(1,'rgba(255,120,120,0)');c.fillStyle=g;c.fillRect(x-20,y-20,40,40);}
   const t=new T.CanvasTexture(cv);t.anisotropy=4;return t;})());}
 class Char{
   constructor(o){
     this.o=o;const g=this.g=new T.Group();this.body=new T.Group();g.add(this.body);this.speed=0;this.phase=Math.random()*6;this.t=Math.random()*9;this.yaw=0;this.wave=0;this.dance=0;
     const ph=(sh,sp)=>new T.MeshPhongMaterial({color:'#FFFFFF',shininess:sh,specular:sp});
-    this.M={skin:ph(14,'#1C1C1C'),head:ph(14,'#1C1C1C'),nose:ph(30,'#333333'),hair:ph(38,'#383838'),top:ph(6,'#121212'),bot:ph(6,'#121212'),shoe:ph(30,'#333333')};
+    this.M={feat:ph(90,'#5A5A5A'),skin:ph(14,'#1C1C1C'),head:ph(14,'#1C1C1C'),nose:ph(30,'#333333'),hair:ph(38,'#383838'),top:ph(6,'#121212'),bot:ph(6,'#121212'),shoe:ph(30,'#333333')};
     this.M.hair.side=this.M.top.side=this.M.bot.side=T.DoubleSide;
     const sh=new T.Mesh(GEO.blob,new T.MeshBasicMaterial({map:BLOB,transparent:true,depthWrite:false,fog:false}));sh.rotation.x=-PI/2;sh.position.y=.02;g.add(sh);
     g.scale.setScalar(o.scale||1);
@@ -570,8 +591,8 @@ class Char{
     M.top.map=p.cloth;M.bot.map=p.clothB;M.top.color.set('#FFFFFF');M.bot.color.set('#FFFFFF');M.top.needsUpdate=M.bot.needsUpdate=true;this.outfit=p;}
   build(lk){
     const b=this.body,M=this.M;for(let i=b.children.length-1;i>=0;i--)b.remove(b.children[i]);
-    const L=DANG[lk.dang]||DANG.vua,H0=L+.045,sc=this.o.scale||1;this.h=H0+.6+HR*1.2;this.tagY=(this.h+.2)*sc;
-    M.skin.color.set(lk.da);M.head.color.set('#FFFFFF');M.head.map=faceTex(lk.da);M.nose.color.set(mix(lk.da,'#EE6F5E',.5));M.hair.color.set(lk.mauToc);
+    const L=DANG[lk.dang]||DANG.vua,H0=L+.045,sc=this.o.scale||1;this.h=H0+.585+HR*1.3;this.tagY=(this.h+.06)*sc;
+    M.skin.color.set(lk.da);M.head.color.set('#FFFFFF');M.head.map=faceTex(lk.da);M.nose.color.set(mix(lk.da,'#E5574A',.6));M.feat.color.set('#2E1C18');M.hair.color.set(lk.mauToc);
     M.top.map=null;M.top.color.set(lk.ao);M.bot.map=null;M.bot.color.set(lk.duoi);M.shoe.color.set(lk.ao==='#FFFFFF'?'#FF8FB3':'#FFFFFF');
     for(const k in M)M[k].needsUpdate=true;
     const add=(geo,m,x,y,z,par=b)=>{const o=new T.Mesh(geo,m);o.position.set(x,y,z);par.add(o);return o;};
@@ -579,10 +600,11 @@ class Char{
     add(GEO.ctorso,M.top,0,H0,0).scale.z=.78;
     if(pants)add(GEO.band,M.bot,0,H0,0).scale.set(.98,1,.83);
     if(skirt)add(skirtGeo(lk.do,L),lk.do==='dam'?M.top:M.bot,0,H0,0).scale.z=.86;
-    add(GEO.neck,M.skin,0,H0+.44,0);
-    const hd=this.head=new T.Group();hd.position.set(0,H0+.6,0);b.add(hd);
-    add(GEO.chead,M.head,0,0,0,hd);add(GEO.nose,M.nose,0,-HR*.2,HR*.965,hd).scale.set(1,.9,.8);add(hairGeo(lk.toc),M.hair,0,0,0,hd);
-    this.tail=null;if(lk.toc==='duoi'){const tg=this.tail=new T.Group();tg.position.set(0,HR*.5,-HR*1.02);hd.add(tg);add(GEO.tail,M.hair,0,0,0,tg);}
+    add(GEO.neck,M.skin,0,H0+.45,0);
+    const hd=this.head=new T.Group();hd.position.set(0,H0+.585,0);b.add(hd);
+    add(GEO.chead,M.head,0,0,0,hd);add(GEO.face,M.feat,0,0,0,hd);add(GEO.nose,M.nose,0,0,0,hd);add(hairGeo(lk.toc),M.hair,0,0,0,hd);
+    if(EARS[lk.toc])add(GEO.ears,M.skin,0,0,0,hd);
+    this.tail=null;if(lk.toc==='duoi'){const tg=this.tail=new T.Group();tg.position.set(0,HR*.52,-HR*.95);hd.add(tg);add(GEO.tail,M.hair,0,0,0,tg);}
     this.zr=skirt?.19:.12;
     const arm=k=>{const p=new T.Group();p.position.set(k*.112,H0+.34,0);b.add(p);const u=add(GEO.upper,sleeve?M.top:M.skin,0,0,0,p);if(sleeve)u.scale.set(1.2,1,1.2);
       const e=new T.Group();e.position.y=-.22;p.add(e);add(GEO.fore,M.skin,0,0,0,e);add(GEO.hand,M.skin,0,-.215,0,e);return[p,e];};
