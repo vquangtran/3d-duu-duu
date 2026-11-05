@@ -1,6 +1,6 @@
 # Chợ 3D Duu Duu
 
-Khu chợ đêm 3D cho các mẹ dẫn bé đi dạo sạp, xem ảnh thật của từng mẫu, kiểm tra size theo cân nặng của bé rồi gửi đơn qua Zalo. Chợ chạy hoàn toàn trên trình duyệt bằng [three.js r128](https://threejs.org/) (tải từ CDN), không cần bước build.
+Khu chợ 3D mở cả ngày cho các mẹ dẫn bé đi dạo sạp, xem ảnh thật của từng mẫu, kiểm tra size theo cân nặng của bé rồi gửi đơn qua Zalo. Chợ chạy hoàn toàn trên trình duyệt bằng [three.js r128](https://threejs.org/) (tải từ CDN), không cần bước build.
 
 **Cập nhật hàng mỗi ngày:** xem [HUONG-DAN.md](HUONG-DAN.md).
 
