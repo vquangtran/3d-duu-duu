@@ -29,6 +29,7 @@
     <div id="acts">
       <button data-a="wave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V5.500a1.500 1.500 0 0 1 3 0V11m0-1V4a1.500 1.500 0 0 1 3 0v7m0-5.500a1.500 1.500 0 0 1 3 0V12m0-3.500a1.500 1.500 0 0 1 3 0V15a7 7 0 0 1-7 7c-3 0-4.500-1.300-6-3.500L3.500 14c-.8-1.200 1-3 2.300-1.700L8 14.500"/></svg>Vẫy tay</button>
       <button data-a="heart"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-8-5-8-11a4.600 4.600 0 0 1 8-3 4.600 4.600 0 0 1 8 3c0 6-8 11-8 11z"/></svg>Thả tim</button>
+      <button data-a="dress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3l-5 3 2 5 2-1v11h10V10l2 1 2-5-5-3a4 4 0 0 1-8 0z"/></svg>Đổi đồ</button>
       <button data-a="ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M9.500 9a2.500 2.500 0 1 1 3.500 2.300c-.7.300-1 .7-1 1.200"/></svg>Hỏi size</button>
     </div>
   </div>
@@ -78,17 +79,38 @@
     </section>
   </div>
 
-  <div id="intro">
-    <form id="enter">
-      <h1>Duu Duu họp chợ</h1>
-      <p>Dẫn bé đi dạo chợ đêm, ghé từng sạp và vào cửa hàng xem đồ mới.</p>
-      <label>Tên hiện trong chợ<input id="who" type="text" maxlength="16" value="Bé Bống" autocomplete="off"></label>
-      <div class="two">
-        <label>Bé nặng (kg)<input id="beKg" type="number" inputmode="numeric" min="3" max="50" placeholder="VD: 14"></label>
-        <label>Bé cao (cm)<input id="beCao" type="number" inputmode="numeric" min="40" max="180" placeholder="VD: 98"></label>
+  <div id="studio">
+    <p class="spin" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.500-6.200L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.500 6.200L3 16"/><path d="M3 21v-5h5"/></svg>Kéo để xoay nhân vật</p>
+    <form id="enter" class="panel" novalidate>
+      <header class="intro-only"><h1>Duu Duu họp chợ</h1><p>Chọn nhân vật cho bé rồi vào chợ đêm dạo sạp nha.</p></header>
+      <header class="play-only"><h2>Đổi nhân vật</h2></header>
+      <div class="tabs" id="avTabs" role="tablist" aria-label="Tuỳ chỉnh nhân vật">
+        <button type="button" role="tab" id="tbMau" aria-controls="tpMau">Mẫu</button>
+        <button type="button" role="tab" id="tbDang" aria-controls="tpDang">Dáng</button>
+        <button type="button" role="tab" id="tbToc" aria-controls="tpToc">Tóc</button>
+        <button type="button" role="tab" id="tbDo" aria-controls="tpDo">Quần áo</button>
       </div>
-      <button class="btn main" type="submit">Vào chợ</button>
-      <p class="demo">Mẫu, giá và size lấy từ bài đăng của shop. Người đi chợ là minh hoạ.</p>
+      <div class="tabp" role="tabpanel" id="tpMau" aria-labelledby="tbMau"><div class="pre" id="avPre"></div></div>
+      <div class="tabp" role="tabpanel" id="tpDang" aria-labelledby="tbDang" hidden>
+        <h3>Chiều cao</h3><div class="seg" id="avDang"></div>
+        <h3>Màu da</h3><div class="sw" id="avDa"></div>
+      </div>
+      <div class="tabp" role="tabpanel" id="tpToc" aria-labelledby="tbToc" hidden>
+        <h3>Kiểu tóc</h3><div class="seg three" id="avToc"></div>
+        <h3>Màu tóc</h3><div class="sw" id="avMauToc"></div>
+      </div>
+      <div class="tabp" role="tabpanel" id="tpDo" aria-labelledby="tbDo" hidden>
+        <h3>Kiểu đồ</h3><div class="seg four" id="avDo"></div>
+        <h3 id="avAoT">Màu áo</h3><div class="sw" id="avAo"></div>
+        <div id="avDuoiW"><h3 id="avDuoiT">Màu quần</h3><div class="sw" id="avDuoi"></div></div>
+      </div>
+      <div class="info">
+        <label class="nm">Tên trong chợ<input id="who" type="text" maxlength="16" value="Bé Bống" autocomplete="off"></label>
+        <label class="intro-only">Bé nặng (kg)<input id="beKg" type="number" inputmode="numeric" min="3" max="50" placeholder="VD: 14"></label>
+        <label class="intro-only">Bé cao (cm)<input id="beCao" type="number" inputmode="numeric" min="40" max="180" placeholder="VD: 98"></label>
+      </div>
+      <button class="btn main" type="submit" id="enterBtn"><span class="intro-only">Vào chợ</span><span class="play-only">Xong</span></button>
+      <p class="demo intro-only">Mẫu, giá và size lấy từ bài đăng của shop. Người đi chợ là minh hoạ.</p>
     </form>
   </div>
   <div id="load">Đang dựng chợ…</div>

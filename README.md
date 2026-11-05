@@ -16,6 +16,8 @@ src/main.js         # Dựng cảnh 3D, nhân vật, sạp, bảng mẫu, giỏ 
 
 ## Cách chợ hoạt động
 
+- **Tạo nhân vật:** khi vào chợ, khách chọn một trong 6 mẫu nhân vật có sẵn (hoặc bấm "Ngẫu nhiên"), rồi tự chỉnh chiều cao (thấp, vừa, cao), màu da, kiểu tóc (búi thấp, bob, đuôi ngựa, tóc dài, hai búi, tóc tém), màu tóc, kiểu đồ (đầm, áo + váy, áo + quần, quần short) và màu áo, màu váy/quần. Kéo trên màn hình để xoay nhân vật. Trong chợ bấm **Đổi đồ** để chỉnh lại. Nhân vật được lưu trên máy của khách.
+- **Mặc thử:** bấm "Cho bé mặc thử" trên một mẫu, nhân vật giữ nguyên tóc và dáng, quần áo đổi sang màu lấy từ ảnh mẫu.
 - **Sạp** được dựng từ danh sách `khu` và trường `khu` của từng mẫu. Ảnh đầu tiên của mẫu được treo lên sạp, kèm giá.
 - **Giá và size** được đọc tự động từ đoạn chữ đã đăng Zalo (`chu`): `10-30kg 129k`, `ko có size 18-19`, `chỉ còn size 9-15kg`, `99k/4quần`.
 - **Kiểm tra size:** khách nhập cân nặng bé, chợ báo mẫu có size cho bé hay không.
@@ -35,4 +37,5 @@ Rồi mở http://localhost:8000
 
 ## Ghi chú
 
+- Các mẫu nhân vật có sẵn và bảng màu nằm ở đầu phần `Nhân vật` trong `src/main.js` (`AVP` và `AV`).
 - Người đi chợ, lời rao và số người đang xem là minh hoạ.

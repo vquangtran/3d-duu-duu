@@ -77,7 +77,7 @@ Danh sách `khu` ở đầu file là các sạp, theo thứ tự. Chợ có 6 ch
 
 ## Khách đặt hàng thế nào
 
-1. Khách nhập cân nặng và chiều cao bé khi vào chợ.
+1. Khách chọn nhân vật (mẫu có sẵn, chiều cao, tóc, quần áo, màu), nhập cân nặng và chiều cao bé rồi vào chợ.
 2. Bấm vào mẫu trên sạp, chợ báo mẫu đó có size cho bé không.
 3. Thêm vào giỏ. Giỏ tự tính tiền hàng, ship, tiền cọc và số tiền trả khi nhận hàng.
 4. Bấm **Chép tin và mở Zalo shop**, rồi dán vào khung chat. Shop sẽ nhận được tin như sau:
