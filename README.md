@@ -16,7 +16,7 @@ src/main.js         # Dựng cảnh 3D, nhân vật, sạp, bảng mẫu, giỏ 
 
 ## Cách chợ hoạt động
 
-- **Tạo nhân vật:** khi vào chợ, khách chọn một trong 6 mẫu nhân vật có sẵn (hoặc bấm "Ngẫu nhiên"), rồi tự chỉnh chiều cao (thấp, vừa, cao), màu da, kiểu tóc (búi thấp, bob, đuôi ngựa, tóc dài, hai búi, tóc tém), màu tóc, kiểu đồ (đầm, áo + váy, áo + quần, quần short) và màu áo, màu váy/quần. Kéo trên màn hình để xoay nhân vật. Trong chợ bấm **Đổi đồ** để chỉnh lại. Nhân vật được lưu trên máy của khách.
+- **Tạo nhân vật:** khi vào chợ, khách chọn một trong 10 mẫu nhân vật chibi có sẵn (hoặc bấm "Ngẫu nhiên"), rồi tự chỉnh: chiều cao, màu da, nét mặt (mỉm cười, cười tươi, chúm chím, nháy mắt), 9 kiểu tóc (búi thấp, xoăn bồng, tết hai bên, dài mái bằng, đuôi ngựa, hai búi, bob, dài gợn, tém) và màu tóc, kiểu đồ, hoạ tiết áo (trơn, chấm bi, kẻ sọc, ca rô), màu áo, màu váy/quần, phụ kiện trên tóc (nơ, kẹp tóc, mũ len tai mèo, băng đô, hoa cài) và màu phụ kiện, ôm gấu bông hoặc thỏ bông. Kéo trên màn hình để xoay nhân vật. Trong chợ bấm **Đổi đồ** để chỉnh lại. Nhân vật được lưu trên máy của khách.
 - **Mặc thử:** bấm "Cho bé mặc thử" trên một mẫu, nhân vật giữ nguyên tóc và dáng, quần áo đổi sang màu lấy từ ảnh mẫu.
 - **Sạp** được dựng từ danh sách `khu` và trường `khu` của từng mẫu. Ảnh đầu tiên của mẫu được treo lên sạp, kèm giá.
 - **Giá và size** được đọc tự động từ đoạn chữ đã đăng Zalo (`chu`): `10-30kg 129k`, `ko có size 18-19`, `chỉ còn size 9-15kg`, `99k/4quần`.

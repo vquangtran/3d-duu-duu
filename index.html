@@ -89,11 +89,13 @@
         <button type="button" role="tab" id="tbDang" aria-controls="tpDang">Dáng</button>
         <button type="button" role="tab" id="tbToc" aria-controls="tpToc">Tóc</button>
         <button type="button" role="tab" id="tbDo" aria-controls="tpDo">Quần áo</button>
+        <button type="button" role="tab" id="tbPk" aria-controls="tpPk">Phụ kiện</button>
       </div>
       <div class="tabp" role="tabpanel" id="tpMau" aria-labelledby="tbMau"><div class="pre" id="avPre"></div></div>
       <div class="tabp" role="tabpanel" id="tpDang" aria-labelledby="tbDang" hidden>
         <h3>Chiều cao</h3><div class="seg" id="avDang"></div>
         <h3>Màu da</h3><div class="sw" id="avDa"></div>
+        <h3>Nét mặt</h3><div class="seg four" id="avMat"></div>
       </div>
       <div class="tabp" role="tabpanel" id="tpToc" aria-labelledby="tbToc" hidden>
         <h3>Kiểu tóc</h3><div class="seg three" id="avToc"></div>
@@ -101,8 +103,14 @@
       </div>
       <div class="tabp" role="tabpanel" id="tpDo" aria-labelledby="tbDo" hidden>
         <h3>Kiểu đồ</h3><div class="seg four" id="avDo"></div>
+        <h3>Hoạ tiết áo</h3><div class="seg four" id="avHoa"></div>
         <h3 id="avAoT">Màu áo</h3><div class="sw" id="avAo"></div>
         <div id="avDuoiW"><h3 id="avDuoiT">Màu quần</h3><div class="sw" id="avDuoi"></div></div>
+      </div>
+      <div class="tabp" role="tabpanel" id="tpPk" aria-labelledby="tbPk" hidden>
+        <h3>Trên tóc</h3><div class="seg three" id="avPk"></div>
+        <div id="avMauPkW"><h3>Màu phụ kiện</h3><div class="sw" id="avMauPk"></div></div>
+        <h3>Ôm thú bông</h3><div class="seg three" id="avOm"></div>
       </div>
       <div class="info">
         <label class="nm">Tên trong chợ<input id="who" type="text" maxlength="16" value="Bé Bống" autocomplete="off"></label>

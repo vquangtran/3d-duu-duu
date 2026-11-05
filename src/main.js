@@ -477,27 +477,39 @@ const GEO={};
 const AV={
   dang:[['thap','Thấp'],['vua','Vừa'],['cao','Cao']],
   da:[['#FFE3CF','Trắng hồng'],['#F9CFAE','Sáng'],['#E8B48C','Ngăm nhẹ'],['#C68C64','Bánh mật']],
-  toc:[['buithap','Búi thấp'],['bob','Ngắn bob'],['duoi','Đuôi ngựa'],['dai','Tóc dài'],['haibui','Hai búi'],['tem','Tóc tém']],
-  mauToc:[['#2B1B17','Đen'],['#3A2420','Nâu đen'],['#7A4A2E','Nâu'],['#B57A45','Nâu sáng'],['#D9A55B','Vàng mật ong'],['#A9A9B6','Muối tiêu']],
+  mat:[['cuoi','Mỉm cười'],['toet','Cười tươi'],['chum','Chúm chím'],['nhay','Nháy mắt']],
+  toc:[['buithap','Búi thấp'],['xoan','Xoăn bồng'],['tet','Tết hai bên'],['mai','Dài mái bằng'],['duoi','Đuôi ngựa'],['haibui','Hai búi'],['bob','Ngắn bob'],['dai','Dài gợn'],['tem','Tóc tém']],
+  mauToc:[['#2B1B17','Đen'],['#3A2420','Nâu đen'],['#7A4A2E','Nâu'],['#B57A45','Nâu sáng'],['#E3B23C','Vàng'],['#F2A7BB','Hồng phấn'],['#A9A9B6','Muối tiêu']],
   do:[['dam','Đầm'],['vay','Áo + váy'],['quan','Áo + quần'],['short','Quần short']],
-  mau:[['#F2644E','Cam san hô'],['#FF8FB3','Hồng'],['#E5484D','Đỏ'],['#FFD866','Vàng'],['#8FD694','Xanh lá'],['#3CCFC0','Xanh ngọc'],['#7EC4FF','Xanh trời'],['#3E5BA9','Xanh jean'],['#B9A8FF','Tím'],['#FFFFFF','Trắng'],['#E9D3B0','Be'],['#2B2F45','Đen']]
+  hoa:[['tron','Trơn'],['bi','Chấm bi'],['soc','Kẻ sọc'],['caro','Ca rô']],
+  mau:[['#F2644E','Cam san hô'],['#FF8FB3','Hồng'],['#FFC9DA','Hồng phấn'],['#E5484D','Đỏ'],['#FFD866','Vàng'],['#8FD694','Xanh lá'],['#3CCFC0','Xanh ngọc'],['#7EC4FF','Xanh trời'],['#3E5BA9','Xanh jean'],['#B9A8FF','Tím'],['#FFFFFF','Trắng'],['#E9D3B0','Be'],['#2B2F45','Đen']],
+  pk:[['khong','Không'],['no','Nơ'],['kep','Kẹp tóc'],['mumeo','Mũ tai mèo'],['bangdo','Băng đô'],['hoa','Hoa cài']],
+  om:[['khong','Không'],['gau','Gấu bông'],['tho','Thỏ bông']]
 };
+const L0={dang:'vua',da:'#F9CFAE',mat:'cuoi',toc:'buithap',mauToc:'#3A2420',do:'dam',hoa:'tron',ao:'#F2644E',duoi:'#F2644E',pk:'khong',mauPk:'#FF8FB3',om:'khong'};
+const mkLook=o=>Object.assign({},L0,o);
 const AVP=[
-  {id:'cam',ten:'Váy cam',look:{dang:'vua',toc:'buithap',mauToc:'#3A2420',da:'#F9CFAE',do:'dam',ao:'#F2644E',duoi:'#F2644E'}},
-  {id:'duoi',ten:'Đuôi ngựa',look:{dang:'thap',toc:'duoi',mauToc:'#2B1B17',da:'#FFE3CF',do:'vay',ao:'#FFFFFF',duoi:'#FF8FB3'}},
-  {id:'dai',ten:'Tóc dài',look:{dang:'cao',toc:'dai',mauToc:'#7A4A2E',da:'#F9CFAE',do:'quan',ao:'#FFD866',duoi:'#3E5BA9'}},
-  {id:'bui',ten:'Hai búi',look:{dang:'thap',toc:'haibui',mauToc:'#2B1B17',da:'#E8B48C',do:'short',ao:'#3CCFC0',duoi:'#FFFFFF'}},
-  {id:'bob',ten:'Tóc bob',look:{dang:'vua',toc:'bob',mauToc:'#B57A45',da:'#FFE3CF',do:'dam',ao:'#B9A8FF',duoi:'#B9A8FF'}},
-  {id:'tem',ten:'Tóc tém',look:{dang:'cao',toc:'tem',mauToc:'#2B1B17',da:'#C68C64',do:'quan',ao:'#7EC4FF',duoi:'#2B2F45'}}
+  {id:'cam',ten:'Váy cam',look:mkLook({})},
+  {id:'xoan',ten:'Xoăn nơ hồng',look:mkLook({dang:'thap',da:'#FFE3CF',mat:'chum',toc:'xoan',mauToc:'#2B1B17',hoa:'bi',ao:'#FF8FB3',duoi:'#FF8FB3',pk:'no',mauPk:'#FF8FB3'})},
+  {id:'tho',ten:'Ôm thỏ',look:mkLook({dang:'thap',da:'#FFE3CF',toc:'mai',mauToc:'#2B1B17',hoa:'bi',ao:'#FFC9DA',duoi:'#FFC9DA',pk:'kep',mauPk:'#FF8FB3',om:'tho'})},
+  {id:'meo',ten:'Mũ tai mèo',look:mkLook({mat:'toet',toc:'tet',mauToc:'#E3B23C',do:'quan',ao:'#7EC4FF',duoi:'#3E5BA9',pk:'mumeo',mauPk:'#2B2F45'})},
+  {id:'duoi',ten:'Đuôi ngựa',look:mkLook({dang:'thap',da:'#FFE3CF',toc:'duoi',mauToc:'#2B1B17',do:'vay',ao:'#FFFFFF',duoi:'#FF8FB3',pk:'bangdo',mauPk:'#FF8FB3'})},
+  {id:'bui',ten:'Hai búi',look:mkLook({dang:'thap',da:'#E8B48C',mat:'toet',toc:'haibui',mauToc:'#2B1B17',do:'short',hoa:'soc',ao:'#3CCFC0',duoi:'#FFFFFF',pk:'hoa',mauPk:'#FFFFFF'})},
+  {id:'bob',ten:'Tóc bob',look:mkLook({da:'#FFE3CF',mat:'nhay',toc:'bob',mauToc:'#B57A45',hoa:'caro',ao:'#B9A8FF',duoi:'#B9A8FF',pk:'kep',mauPk:'#FFD866'})},
+  {id:'gau',ten:'Ôm gấu',look:mkLook({dang:'thap',da:'#E8B48C',toc:'xoan',mauToc:'#7A4A2E',do:'short',ao:'#FFD866',duoi:'#3E5BA9',om:'gau'})},
+  {id:'tem',ten:'Tóc tém',look:mkLook({dang:'cao',da:'#C68C64',mat:'toet',toc:'tem',mauToc:'#2B1B17',do:'quan',hoa:'soc',ao:'#7EC4FF',duoi:'#2B2F45'})},
+  {id:'dai',ten:'Tóc dài',look:mkLook({dang:'cao',mat:'chum',toc:'dai',mauToc:'#7A4A2E',do:'quan',ao:'#FFD866',duoi:'#3E5BA9',pk:'hoa',mauPk:'#FF8FB3'})}
 ];
-const LOOK0=AVP[0].look,OWNER_LOOK={dang:'cao',toc:'dai',mauToc:'#2B1B17',da:'#F9CFAE',do:'quan',ao:'#E5484D',duoi:'#2D3E86'};
-const okLook=l=>{const o=Object.assign({},LOOK0);if(l)for(const k of['dang','da','toc','mauToc','do'])if(AV[k].some(v=>v[0]===l[k]))o[k]=l[k];
-  if(l)for(const k of['ao','duoi'])if(/^#[0-9a-f]{6}$/i.test(l[k]||''))o[k]=l[k];return o;};
+const LOOK0=AVP[0].look,OWNER_LOOK=mkLook({dang:'cao',toc:'dai',mauToc:'#2B1B17',do:'quan',ao:'#E5484D',duoi:'#2D3E86',pk:'kep',mauPk:'#FFD866'});
+const LOOK_ENUM=['dang','da','mat','toc','mauToc','do','hoa','pk','om'],LOOK_COL=['ao','duoi','mauPk'],LOOK_KEYS=[...LOOK_ENUM,...LOOK_COL];
+const okLook=l=>{const o=Object.assign({},LOOK0);if(l){for(const k of LOOK_ENUM)if(AV[k].some(v=>v[0]===l[k]))o[k]=l[k];
+  for(const k of LOOK_COL)if(/^#[0-9a-f]{6}$/i.test(l[k]||''))o[k]=l[k];}return o;};
 function randLook(r=Math.random){const p=a=>a[Math.floor(r()*a.length)][0],ao=p(AV.mau);let duoi=p(AV.mau);if(duoi===ao)duoi=AV.mau[(AV.mau.findIndex(v=>v[0]===ao)+5)%AV.mau.length][0];
-  return{dang:p(AV.dang),da:p(AV.da),toc:p(AV.toc),mauToc:p(AV.mauToc.slice(0,5)),do:p(AV.do),ao,duoi};}
+  return{dang:p(AV.dang),da:p(AV.da),mat:p(AV.mat),toc:p(AV.toc),mauToc:p(AV.mauToc.slice(0,5)),do:p(AV.do),hoa:r()<.55?'tron':p(AV.hoa),ao,duoi,
+    pk:r()<.4?'khong':p(AV.pk.slice(1)),mauPk:p(AV.mau),om:r()<.75?'khong':p(AV.om.slice(1))};}
 
-const HR=.155;                                /* bán kính đầu */
-const DANG={thap:.54,vua:.64,cao:.76};         /* chiều dài chân theo dáng */
+const HR=.19;                                 /* bán kính đầu */
+const DANG={thap:.44,vua:.52,cao:.62};         /* chiều dài chân theo dáng */
 const TORSO=[[0,-.075],[.08,-.07],[.115,-.03],[.122,.03],[.11,.11],[.095,.18],[.1,.25],[.107,.3],[.098,.34],[.072,.37],[.042,.39],[.027,.403],[0,.408]];
 const BAND=[[0,-.088],[.07,-.086],[.11,-.06],[.124,-.025],[.128,.02],[.123,.075]];
 const lathe=(pts,seg=16)=>new T.LatheGeometry(pts.map(p=>new T.Vector2(Math.max(p[0],0),p[1])),seg);
@@ -520,25 +532,44 @@ function initCharGeo(){
 }
 const thighG=L=>gget('th'+L,()=>rod(.06,.045,L*.5,12)),shinG=L=>gget('sh'+L,()=>rod(.045,.033,L*.5,12));
 const mix=(a,b,t)=>'#'+new T.Color(a).lerp(new T.Color(b),t).getHexString();
-/* Đầu hơi thuôn (cao hơn bề ngang một chút). Mặt, tóc, tai đều đặt theo cùng tỉ lệ này. */
-const HS=[.96,1.02,.97];
+/* Đầu to kiểu chibi, hơi thuôn. Mặt, tóc, tai, phụ kiện đều đặt theo cùng tỉ lệ này. */
+const HS=[.97,1.0,.96];
 const hdir=(th,a)=>new V3(Math.sin(th)*Math.sin(a),Math.cos(th),Math.sin(th)*Math.cos(a));
 /* Ma trận đặt một chi tiết lên mặt đầu: trục z của chi tiết hướng ra ngoài */
 function onHead(th,a,d,sx=1,sy=1,sz=1,roll=0){
   const v=hdir(th,a),p=new V3(v.x*HS[0],v.y*HS[1],v.z*HS[2]).multiplyScalar(HR*d),n=new V3(v.x/HS[0],v.y/HS[1],v.z/HS[2]).normalize();
   const up=Math.abs(n.y)>.97?new V3(0,0,-1):new V3(0,1,0),m=new T.Matrix4().lookAt(n,new V3(),up);
   if(roll)m.multiply(new T.Matrix4().makeRotationZ(roll));m.scale(new V3(sx,sy,sz));m.setPosition(p);return m;}
-/* Nét cong mảnh (lông mày, miệng): cung tròn uốn theo mặt */
-function arcGeo(rad,tube,arc,mid){const g=new T.TorusGeometry(rad,tube,8,32,arc);g.rotateZ(mid-arc/2);g.translate(-rad*Math.cos(mid),-rad*Math.sin(mid),0);
+const mul=(a,b)=>a.clone().multiply(b);
+/* Nét cong mảnh (lông mày, mí mắt, miệng): cung tròn uốn theo mặt */
+function arcGeo(rad,tube,arc,mid,center){const g=new T.TorusGeometry(rad,tube,8,32,arc);g.rotateZ(mid-arc/2);if(!center)g.translate(-rad*Math.cos(mid),-rad*Math.sin(mid),0);
   const p=g.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i);p.setZ(i,p.getZ(i)-(x*x+y*y)/(2*HR));}g.computeVertexNormals();return g;}
-/* Tóc: chỏm, phần sau, các lọn gợn sóng cho bồng, mái lệch, búi */
+const mergeOr=l=>l.length?merge(l):null;
+/* Mặt theo nét mặt: mắt to có mí và lông mi, chấm sáng trong mắt, mũi nhỏ, miệng */
+function faceGeo(ex){return gget('f'+ex,()=>{
+  const R=HR,F=[],S=[],K=[],L=[],E=.545*PI,A=.38;
+  const eye=new T.SphereGeometry(R*.125,20,16),lash=new T.SphereGeometry(R*.024,8,6);lash.scale(.55,1.7,.5);lash.translate(0,R*.035,0);
+  const shine=new T.SphereGeometry(R*.036,10,8),shine2=new T.SphereGeometry(R*.017,8,6);
+  for(const k of[-1,1]){const a=k*A;
+    if(ex==='nhay'&&k>0){F.push([arcGeo(R*.1,R*.03,2.3,PI/2,1),onHead(E+.03,a,1.0)]);}
+    else{F.push([eye,onHead(E,a,.972,.82,1,.42)]);F.push([arcGeo(R*.105,R*.026,2.1,PI/2,1),onHead(E,a,1.012,.86,1.12)]);
+      S.push([shine,onHead(E-.075,a-.04,1.018,1,1,.45)]);S.push([shine2,onHead(E+.06,a+.035,1.016,1,1,.45)]);}
+    F.push([lash,onHead(E-.105,a+k*.075,1.005,1,1,1,-k*.55)]);F.push([lash,onHead(E-.07,a+k*.105,1.005,1,1,1,-k*1.05)]);
+    F.push([arcGeo(R*.1,R*.019,1.1,PI/2),onHead(.44*PI,k*(A+.02),1.012,1,1,1,-k*.12)]);
+  }
+  K.push([new T.SphereGeometry(R*.072,14,10),onHead(.605*PI,0,.985,1,.85,.8)]);
+  if(ex==='toet'){L.push([new T.SphereGeometry(R*.115,18,10,0,2*PI,PI/2,PI/2),onHead(.665*PI,0,.99,1.15,1,.32)]);K.push([new T.SphereGeometry(R*.06,12,8),onHead(.705*PI,0,.996,1.25,.6,.28)]);}
+  else if(ex==='chum')K.push([new T.SphereGeometry(R*.045,12,10),onHead(.672*PI,0,1.0,1.35,.85,.45)]);
+  else F.push([arcGeo(R*.13,R*.03,1.7,-PI/2),onHead(.67*PI,0,1.02)]);
+  return{feat:merge(F),shine:mergeOr(S),pink:merge(K),lip:mergeOr(L)};});}
+/* Tóc: chỏm, phần sau, lọn gợn sóng cho bồng, mái, búi, bím */
 function hairGeo(st){return gget('h'+st,()=>{
   const R=HR,P=[],add=(g,m)=>P.push([g,m]);
   const shell=(r,ps,pl,ts,tl,rx=0,rz=0,hs=12)=>add(new T.SphereGeometry(R*r,32,hs,ps,pl,ts,tl),mat(0,0,0,0,rx,rz,HS[0],HS[1],HS[2]));
   const cap=(t=.37,r=1.06)=>shell(r,0,2*PI,0,PI*t,.08,.1);
   const back=(t1,r=1.07,o=1.05)=>shell(r,PI/2+o,2*PI-2*o,PI*.16,PI*(t1-.16));
   const nape=(r=1.055)=>shell(r,PI/2+1.85,2*PI-3.7,PI*.6,PI*.24);
-  const lump=(th,a,r,d=.87,f=.62,sx=1,roll=0)=>add(new T.SphereGeometry(R*r,16,12),onHead(th,a,d,sx,1,f,roll));
+  const lump=(th,a,r,d=.87,f=.62,sx=1,roll=0,sg=16)=>add(new T.SphereGeometry(R*r,sg,Math.round(sg*.75)),onHead(th,a,d,sx,1,f,roll));
   const waves=(full=1)=>{lump(.04*PI,0,.36,.84);
     for(let i=0;i<6;i++)lump(.2*PI,-2.6+i*1.04,.34,.86);
     if(full)for(let i=0;i<5;i++)lump(.36*PI,1.55+i*.8,.32,.88);};
@@ -547,37 +578,77 @@ function hairGeo(st){return gget('h'+st,()=>{
   else if(st==='bob'){cap();back(.7,1.1,.92);shell(1.13,PI/2+.98,2*PI-1.96,PI*.56,PI*.18,0,0,4);waves();bang();}
   else if(st==='dai'){cap();back(.7,1.1,.92);waves();bang();add(new T.SphereGeometry(R,20,14),mat(0,-R*1.2,-R*.72,0,0,0,1.0,1.8,.5));
     for(const k of[-1,1])add(new T.SphereGeometry(R*.3,14,10),mat(k*R*.84,-R*.75,-R*.08,0,0,0,.9,2.2,.85));}
+  else if(st==='mai'){shell(1.06,0,2*PI,0,PI*.38);shell(1.09,PI/2-1.2,2.4,PI*.16,PI*.29);back(.72,1.1,.95);
+    add(new T.SphereGeometry(R,20,14),mat(0,-R*1.15,-R*.7,0,0,0,1.05,1.85,.5));
+    for(const k of[-1,1])add(new T.SphereGeometry(R*.3,14,10),mat(k*R*.88,-R*.6,R*.05,0,0,0,.75,2.1,.85));}
+  else if(st==='xoan'){cap(.37,1.04);back(.7,1.05,1.0);nape(1.04);
+    const N=96;for(let i=0;i<N;i++){const th=Math.acos(1-2*((i+.5)/N)*.86),aa=((i*2.39996+PI)%(2*PI))-PI;
+      if(th>.33*PI&&Math.abs(aa)<1.05)continue;lump(th,aa,.21,1.0+.05*Math.sin(i*1.7),.8,1,0,10);}
+    for(let i=0;i<6;i++)lump((.33+(i%2)*.025)*PI,-.9+i*.36,.17,1.0,.7,1,0,10);}
   else{cap();back(.66,1.06,1.08);nape();waves();bang();
     if(st==='buithap'){lump(.68*PI,-2.3,.4,1.12,.85);lump(.76*PI,-2.5,.3,1.08,.85);}
     if(st==='duoi')lump(.34*PI,PI,.16,1.05,1);
     if(st==='haibui')for(const k of[-1,1]){lump(.22*PI,k*1.5,.38,1.12,.95);lump(.3*PI,k*1.45,.14,1.0,1);}
+    if(st==='tet')for(const k of[-1,1]){for(let j=0;j<8;j++){const s=1-j*.04;add(new T.SphereGeometry(R*.175*s,14,10),mat(k*R*(.96+j*.03),-R*(.25+j*.2),-R*(.2-j*.045),0,0,k*(j%2?.5:-.5),1.2,.78,1));}
+      add(new T.SphereGeometry(R*.1,10,8),mat(k*R*1.2,-R*1.95,R*.16,0,0,0,1,1.5,1));}
   }
   return merge(P);});}
-const EARS={buithap:1,duoi:1,haibui:1,tem:1};
+const EARS={buithap:1,duoi:1,haibui:1,tem:1,tet:1};
+/* Phụ kiện trên đầu: a dùng màu khách chọn, b là chi tiết phụ (chấm, sao, nhuỵ hoa) */
+function bowParts(list,m){const R=HR,lobe=new T.SphereGeometry(R*.17,16,12);
+  for(const k of[-1,1]){list.push([lobe,mul(m,mat(k*R*.17,0,0,0,0,-k*.35,1.35,.8,.55))]);list.push([new T.SphereGeometry(R*.06,10,8),mul(m,mat(k*R*.08,-R*.17,0,0,0,k*.3,.8,1.8,.4))]);}
+  list.push([new T.SphereGeometry(R*.08,12,10),mul(m,mat(0,0,R*.03,0,0,0,1,1,.7))]);}
+function accGeo(pk){return gget('pk'+pk,()=>{
+  const R=HR,A=[],B=[];
+  if(pk==='no')bowParts(A,onHead(.27*PI,-1.0,1.1,1,1,1,.4));
+  if(pk==='kep'){const m=onHead(.31*PI,.95,1.09,1,1,1,-.75);A.push([new T.SphereGeometry(R*.075,14,10),mul(m,mat(0,0,0,0,0,0,3.0,1,.6))]);
+    for(const x of[-.13,0,.13])B.push([new T.SphereGeometry(R*.022,8,6),mul(m,mat(x*R,0,R*.04,0,0,0,1,1,.5))]);}
+  if(pk==='mumeo'){const hm=mat(0,R*.05,-R*.03,0,-.12,0,HS[0],HS[1],HS[2]);A.push([new T.SphereGeometry(R*1.13,32,12,0,2*PI,0,PI*.4),hm]);
+    const t=PI*.4,rim=new T.TorusGeometry(R*1.13*Math.sin(t),R*.07,8,40);A.push([rim,mul(hm,mat(0,R*1.13*Math.cos(t),0,0,PI/2,0))]);
+    const ear=new T.ConeGeometry(R*.27,R*.42,4);ear.rotateY(PI/4);ear.rotateX(PI/2);ear.translate(0,0,R*.16);for(const k of[-1,1])A.push([ear,mul(mat(0,R*.05,-R*.03,0,-.12,0),onHead(.15*PI,k*1.25,1.06,1,.75,1))]);
+    const st=new T.SphereGeometry(R*.05,8,6);for(const[th,a]of[[.06,0],[.15,-.7],[.15,.75],[.2,2.3],[.22,-2.1],[.27,-.25],[.27,.45],[.3,1.5],[.3,-1.3],[.26,3.0]])B.push([st,mul(mat(0,R*.05,-R*.03,0,-.12,0),onHead(th*PI,a,1.135,1,1,.35))]);}
+  if(pk==='bangdo'){A.push([new T.TorusGeometry(R*1.1,R*.055,8,40,PI),mat(0,R*.06,0,0,-.42,0,HS[0],HS[1],HS[2])]);bowParts(A,mul(onHead(.24*PI,.85,1.12,1,1,1,-.3),mat(0,0,0,0,0,0,.55,.55,.55)));}
+  if(pk==='hoa'){const m=onHead(.3*PI,-1.05,1.1),pt=new T.SphereGeometry(R*.085,12,10);
+    for(let i=0;i<5;i++){const g=i/5*2*PI;A.push([pt,mul(m,mat(Math.cos(g)*R*.1,Math.sin(g)*R*.1,0,0,0,g-PI/2,1,1.25,.5))]);}
+    B.push([new T.SphereGeometry(R*.055,10,8),mul(m,mat(0,0,R*.035,0,0,0,1,1,.6))]);}
+  return{a:mergeOr(A),b:mergeOr(B)};});}
+/* Thú bông ôm trước ngực: a màu chính, b phần sáng, c mắt mũi */
+function plushGeo(kind){return gget('om'+kind,()=>{
+  const A=[],B=[],C=[],s=(r,x,y,z,sx=1,sy=1,sz=1,rz=0)=>[new T.SphereGeometry(r,14,10),mat(x,y,z,0,0,rz,sx,sy,sz)];
+  A.push(s(.075,0,0,0,1,1.05,.85),s(.066,0,.105,.01));
+  for(const k of[-1,1])A.push(s(.026,k*.072,.015,.025,1,1.6,1,k*.4),s(.03,k*.042,-.07,.035));
+  if(kind==='gau'){for(const k of[-1,1])A.push(s(.026,k*.05,.16,0));B.push(s(.026,0,.088,.062,1.25,.9,.7),s(.045,0,-.005,.058,1,1.1,.4));}
+  else{for(const k of[-1,1])A.push(s(.022,k*.03,.2,-.005,1,3.2,.6,-k*.18));B.push(s(.04,0,-.005,.058,1,1.1,.4),s(.022,0,.085,.064,1.2,.85,.6));}
+  for(const k of[-1,1])C.push(s(.009,k*.023,.118,.068));C.push(s(.008,0,.098,.083));
+  return{a:merge(A),b:merge(B),c:merge(C)};});}
+const PLUSH={gau:['#B8834F','#F0D3AE'],tho:['#FFB8CC','#FFFFFF']};
+/* Vải có hoạ tiết: chấm bi, kẻ sọc, ca rô */
+const pats={};
+function patTex(c,k){const key=c+k;if(pats[key])return pats[key];const cv=document.createElement('canvas');cv.width=cv.height=64;const x=cv.getContext('2d');x.fillStyle=c;x.fillRect(0,0,64,64);
+  x.fillStyle=c.toUpperCase()==='#FFFFFF'?'#FF8FB3':'#FFFFFF';
+  if(k==='bi')for(const[px,py]of[[16,16],[48,48]]){x.beginPath();x.arc(px,py,7,0,7);x.fill();}
+  if(k==='soc')x.fillRect(0,22,64,18);
+  if(k==='caro'){x.globalAlpha=.42;x.fillRect(0,0,32,64);x.fillRect(0,0,64,32);x.globalAlpha=1;}
+  const t=new T.CanvasTexture(cv);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(12,7);t.anisotropy=4;return pats[key]=t;}
 function initHeadGeo(){
   const g=new T.SphereGeometry(HR,40,28);g.scale(HS[0],HS[1],HS[2]);
-  /* cằm nhỏ lại một chút */
-  const p=g.attributes.position;for(let i=0;i<p.count;i++){const y=p.getY(i)/(HR*HS[1]);if(y<0){const k=1-.07*y*y;p.setX(i,p.getX(i)*k);p.setZ(i,p.getZ(i)*(1-.04*y*y));}}
+  /* má phúng phính, cằm nhỏ lại một chút */
+  const p=g.attributes.position;for(let i=0;i<p.count;i++){const y=p.getY(i)/(HR*HS[1]);if(y<0){const k=1+.05*Math.sin(-y*PI)-.1*y*y;p.setX(i,p.getX(i)*k);p.setZ(i,p.getZ(i)*(1-.04*y*y));}}
   g.computeVertexNormals();GEO.chead=g;
-  const eye=new T.SphereGeometry(HR*.09,16,12);
-  GEO.face=merge([
-    [eye,onHead(.5*PI,-.35,.985,.66,1,.45)],[eye,onHead(.5*PI,.35,.985,.66,1,.45)],
-    [arcGeo(HR*.15,HR*.024,1.15,PI/2),onHead(.425*PI,-.37,1.012,1,1,1,.12)],[arcGeo(HR*.15,HR*.024,1.15,PI/2),onHead(.425*PI,.37,1.012,1,1,1,-.12)],
-    [arcGeo(HR*.28,HR*.034,1.55,-PI/2),onHead(.635*PI,0,1.018)]]);
-  GEO.nose=merge([[new T.SphereGeometry(HR*.14,16,12),onHead(.565*PI,0,.97,.95,.9,.85)]]);
-  const ear=new T.SphereGeometry(HR*.17,12,10);GEO.ears=merge([[ear,onHead(.53*PI,-PI/2,1.0,.6,1,.5)],[ear,onHead(.53*PI,PI/2,1.0,.6,1,.5)]]);
+  const ear=new T.SphereGeometry(HR*.16,12,10);GEO.ears=merge([[ear,onHead(.53*PI,-PI/2,1.0,.6,1,.5)],[ear,onHead(.53*PI,PI/2,1.0,.6,1,.5)]]);
+  GEO.collar=new T.TorusGeometry(.052,.017,8,24);GEO.collar.rotateX(PI/2);
 }
-/* Da và má hồng thật nhẹ; mắt, mày, miệng là khối 3D riêng cho nét sắc */
+/* Da và má hồng; mắt, mày, miệng là khối 3D riêng cho nét sắc */
 const heads={};
 function faceTex(skin){return heads[skin]||(heads[skin]=(()=>{
   const cv=document.createElement('canvas');cv.width=512;cv.height=256;const c=cv.getContext('2d');c.fillStyle=skin;c.fillRect(0,0,512,256);
-  for(const k of[-1,1]){const x=128+k*44,y=147,g=c.createRadialGradient(x,y,0,x,y,18);g.addColorStop(0,'rgba(255,120,120,.22)');g.addColorStop(1,'rgba(255,120,120,0)');c.fillStyle=g;c.fillRect(x-20,y-20,40,40);}
+  for(const k of[-1,1]){const x=128+k*47,y=156,g=c.createRadialGradient(x,y,0,x,y,24);g.addColorStop(0,'rgba(255,105,130,.42)');g.addColorStop(.6,'rgba(255,105,130,.2)');g.addColorStop(1,'rgba(255,105,130,0)');c.fillStyle=g;c.fillRect(x-26,y-26,52,52);}
   const t=new T.CanvasTexture(cv);t.anisotropy=4;return t;})());}
 class Char{
   constructor(o){
     this.o=o;const g=this.g=new T.Group();this.body=new T.Group();g.add(this.body);this.speed=0;this.phase=Math.random()*6;this.t=Math.random()*9;this.yaw=0;this.wave=0;this.dance=0;
     const ph=(sh,sp)=>new T.MeshPhongMaterial({color:'#FFFFFF',shininess:sh,specular:sp});
-    this.M={feat:ph(90,'#5A5A5A'),skin:ph(14,'#1C1C1C'),head:ph(14,'#1C1C1C'),nose:ph(30,'#333333'),hair:ph(38,'#383838'),top:ph(6,'#121212'),bot:ph(6,'#121212'),shoe:ph(30,'#333333')};
+    this.M={shine:new T.MeshBasicMaterial({color:'#FFFFFF'}),lip:ph(30,'#333333'),pk:ph(40,'#333333'),pk2:ph(40,'#333333'),p1:ph(4,'#0A0A0A'),p2:ph(4,'#0A0A0A'),collar:ph(8,'#111111'),feat:ph(90,'#5A5A5A'),skin:ph(14,'#1C1C1C'),head:ph(14,'#1C1C1C'),nose:ph(30,'#333333'),hair:ph(38,'#383838'),top:ph(6,'#121212'),bot:ph(6,'#121212'),shoe:ph(30,'#333333')};
     this.M.hair.side=this.M.top.side=this.M.bot.side=T.DoubleSide;
     const sh=new T.Mesh(GEO.blob,new T.MeshBasicMaterial({map:BLOB,transparent:true,depthWrite:false,fog:false}));sh.rotation.x=-PI/2;sh.position.y=.02;g.add(sh);
     g.scale.setScalar(o.scale||1);
@@ -591,19 +662,25 @@ class Char{
     M.top.map=p.cloth;M.bot.map=p.clothB;M.top.color.set('#FFFFFF');M.bot.color.set('#FFFFFF');M.top.needsUpdate=M.bot.needsUpdate=true;this.outfit=p;}
   build(lk){
     const b=this.body,M=this.M;for(let i=b.children.length-1;i>=0;i--)b.remove(b.children[i]);
-    const L=DANG[lk.dang]||DANG.vua,H0=L+.045,sc=this.o.scale||1;this.h=H0+.585+HR*1.3;this.tagY=(this.h+.06)*sc;
+    const L=DANG[lk.dang]||DANG.vua,H0=L+.045,sc=this.o.scale||1,HY=H0+.43+HR*.95;this.h=HY+HR*(lk.pk==='mumeo'||lk.toc==='haibui'||lk.toc==='xoan'?1.5:1.25);this.tagY=(this.h+.06)*sc;
     M.skin.color.set(lk.da);M.head.color.set('#FFFFFF');M.head.map=faceTex(lk.da);M.nose.color.set(mix(lk.da,'#E5574A',.6));M.feat.color.set('#2E1C18');M.hair.color.set(lk.mauToc);
-    M.top.map=null;M.top.color.set(lk.ao);M.bot.map=null;M.bot.color.set(lk.duoi);M.shoe.color.set(lk.ao==='#FFFFFF'?'#FF8FB3':'#FFFFFF');
+    const skirt=lk.do==='dam'||lk.do==='vay';
+    M.top.map=lk.hoa!=='tron'?patTex(lk.ao,lk.hoa):null;M.top.color.set(M.top.map?'#FFFFFF':lk.ao);M.bot.map=null;M.bot.color.set(lk.duoi);
+    M.shoe.color.set(skirt?(lk.ao==='#FF8FB3'||lk.duoi==='#FF8FB3'?'#E5484D':'#FF8FB3'):'#FFFFFF');M.lip.color.set('#A2333F');M.collar.color.set(lk.ao==='#FFFFFF'?'#FF8FB3':'#FFFFFF');
+    M.pk.color.set(lk.mauPk);M.pk2.color.set(lk.pk==='mumeo'?(lk.mauPk==='#FFD866'?'#3E5BA9':'#FFD866'):lk.pk==='hoa'?(lk.mauPk==='#FFD866'?'#FF8FB3':'#FFD866'):'#FFFFFF');
+    if(PLUSH[lk.om]){M.p1.color.set(PLUSH[lk.om][0]);M.p2.color.set(PLUSH[lk.om][1]);}
     for(const k in M)M[k].needsUpdate=true;
     const add=(geo,m,x,y,z,par=b)=>{const o=new T.Mesh(geo,m);o.position.set(x,y,z);par.add(o);return o;};
-    const pants=lk.do==='quan'||lk.do==='short',skirt=lk.do==='dam'||lk.do==='vay',sleeve=lk.do!=='dam';
+    const pants=lk.do==='quan'||lk.do==='short',sleeve=lk.do!=='dam';
     add(GEO.ctorso,M.top,0,H0,0).scale.z=.78;
     if(pants)add(GEO.band,M.bot,0,H0,0).scale.set(.98,1,.83);
     if(skirt)add(skirtGeo(lk.do,L),lk.do==='dam'?M.top:M.bot,0,H0,0).scale.z=.86;
-    add(GEO.neck,M.skin,0,H0+.45,0);
-    const hd=this.head=new T.Group();hd.position.set(0,H0+.585,0);b.add(hd);
-    add(GEO.chead,M.head,0,0,0,hd);add(GEO.face,M.feat,0,0,0,hd);add(GEO.nose,M.nose,0,0,0,hd);add(hairGeo(lk.toc),M.hair,0,0,0,hd);
-    if(EARS[lk.toc])add(GEO.ears,M.skin,0,0,0,hd);
+    add(GEO.neck,M.skin,0,H0+.45,0);if(skirt&&!this.outfit)add(GEO.collar,M.collar,0,H0+.392,0).scale.z=.85;
+    const hd=this.head=new T.Group();hd.position.set(0,HY,0);b.add(hd);
+    const F=faceGeo(lk.mat);add(GEO.chead,M.head,0,0,0,hd);add(F.feat,M.feat,0,0,0,hd);add(F.pink,M.nose,0,0,0,hd);if(F.shine)add(F.shine,M.shine,0,0,0,hd);if(F.lip)add(F.lip,M.lip,0,0,0,hd);
+    add(hairGeo(lk.toc),M.hair,0,0,0,hd);if(EARS[lk.toc])add(GEO.ears,M.skin,0,0,0,hd);
+    if(lk.pk!=='khong'){const A=accGeo(lk.pk);if(A.a)add(A.a,M.pk,0,0,0,hd);if(A.b)add(A.b,M.pk2,0,0,0,hd);}
+    this.om=!!PLUSH[lk.om];if(this.om){const G=plushGeo(lk.om),pg=new T.Group();pg.position.set(0,H0+.19,.135);b.add(pg);add(G.a,M.p1,0,0,0,pg);add(G.b,M.p2,0,0,0,pg);add(G.c,M.feat,0,0,0,pg);}
     this.tail=null;if(lk.toc==='duoi'){const tg=this.tail=new T.Group();tg.position.set(0,HR*.52,-HR*.95);hd.add(tg);add(GEO.tail,M.hair,0,0,0,tg);}
     this.zr=skirt?.19:.12;
     const arm=k=>{const p=new T.Group();p.position.set(k*.112,H0+.34,0);b.add(p);const u=add(GEO.upper,sleeve?M.top:M.skin,0,0,0,p);if(sleeve)u.scale.set(1.2,1,1.2);
@@ -623,6 +700,7 @@ class Char{
     this.kL.rotation.x=mv*(.08+.8*Math.max(0,-cp));this.kR.rotation.x=mv*(.08+.8*Math.max(0,cp));
     let axL=-sw*.85,axR=sw*.85,zL=-this.zr,zR=this.zr,eL=-.18-.25*mv,eR=eL,ezL=0,ezR=0;
     let by=Math.abs(cp)*.03*mv,ry=Math.sin(p)*.07*mv,hz=Math.sin(this.t*.9)*.03*(1-mv);
+    if(this.om){axL=axR=-.75+sw*.06;zL=.22;zR=-.22;eL=eR=-1.05;ezL=.42;ezR=-.42;}
     if(this.wave>0){this.wave-=dt;axR=-.1;zR=1.35;eR=-.15;ezR=1.25+Math.sin(this.wave*12)*.35;}
     if(this.dance>0){this.dance-=dt;const d=this.dance*7;by=Math.abs(Math.sin(d))*.16;ry=this.dance*5;axL=axR=0;zL=-2.3+Math.sin(d)*.35;zR=2.3-Math.sin(d)*.35;eL=eR=-.2;ezL=-.4;ezR=.4;}
     else if(mv<.05)by=Math.sin(this.t*1.6)*.006;
@@ -737,7 +815,6 @@ if(BE.kg)$('#beKg').value=BE.kg;if(BE.cao)$('#beCao').value=BE.cao;
 /* ---------- Tạo nhân vật: mẫu có sẵn, dáng, tóc, quần áo, màu ---------- */
 let LOOK=okLook(store.get('nv',null));
 const studio={on:false,yaw:.35,base:0,rect:null,off:{x:0,y:0},snap:true};
-const LOOK_KEYS=['dang','da','toc','mauToc','do','ao','duoi'];
 const sameLook=(a,b)=>LOOK_KEYS.every(k=>a[k]===b[k]);
 const DICE='<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.500" y="3.500" width="17" height="17" rx="4"/><circle cx="8.500" cy="8.500" r="1.100" fill="currentColor"/><circle cx="15.500" cy="15.500" r="1.100" fill="currentColor"/><circle cx="15.500" cy="8.500" r="1.100" fill="currentColor"/><circle cx="8.500" cy="15.500" r="1.100" fill="currentColor"/><circle cx="12" cy="12" r="1.100" fill="currentColor"/></svg>';
 function setLook(l,hi){LOOK=okLook(l);store.set('nv',LOOK);if(player){player.setLook(LOOK);if(hi)player.wave=1.2;}renderAv();}
@@ -750,10 +827,12 @@ function avUI(){
     b.addEventListener('click',()=>setLook(Object.assign({},LOOK,{[key]:v})));w.appendChild(b);});};
   group('#avDang','dang',AV.dang);group('#avDa','da',AV.da,1);group('#avToc','toc',AV.toc);group('#avMauToc','mauToc',AV.mauToc,1);
   group('#avDo','do',AV.do);group('#avAo','ao',AV.mau,1);group('#avDuoi','duoi',AV.mau,1);
+  group('#avMat','mat',AV.mat);group('#avHoa','hoa',AV.hoa);group('#avPk','pk',AV.pk);group('#avMauPk','mauPk',AV.mau,1);group('#avOm','om',AV.om);
 }
 function renderAv(){
   const pick=(id,v)=>$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));
   pick('#avDang',LOOK.dang);pick('#avDa',LOOK.da);pick('#avToc',LOOK.toc);pick('#avMauToc',LOOK.mauToc);pick('#avDo',LOOK.do);pick('#avAo',LOOK.ao);pick('#avDuoi',LOOK.duoi);
+  pick('#avMat',LOOK.mat);pick('#avHoa',LOOK.hoa);pick('#avPk',LOOK.pk);pick('#avMauPk',LOOK.mauPk);pick('#avOm',LOOK.om);$('#avMauPkW').hidden=LOOK.pk==='khong';
   $('#avPre').querySelectorAll('[data-p]').forEach(b=>b.setAttribute('aria-pressed',sameLook(AVP.find(v=>v.id===b.dataset.p).look,LOOK)));
   $('#avAoT').textContent=LOOK.do==='dam'?'Màu đầm':'Màu áo';$('#avDuoiW').hidden=LOOK.do==='dam';$('#avDuoiT').textContent=LOOK.do==='vay'?'Màu váy':'Màu quần';
 }
