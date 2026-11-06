@@ -1,5 +1,5 @@
 /*
-  DỮ LIỆU CHỢ DUU DUU
+  DỮ LIỆU CHỢ DUUDUU
   ===================
   Mỗi ngày chỉ cần sửa file này. Xem hướng dẫn chi tiết trong HUONG-DAN.md.
 
@@ -20,7 +20,7 @@
 */
 window.DUU_CHO = {
   shop: {
-    ten: 'Duu Duu',
+    ten: 'DuuDuu',
     zalo: '0364958993',   // số Zalo nhận đơn (lấy từ tin ghim trong nhóm, nhớ kiểm tra lại)
     ship: [               // phí ship dự kiến theo số bộ (gói càng nặng ship càng cao), nghìn đồng
       { tu: 1, tien: 20 },  // 1-3 bộ: 20k   (theo đơn thật: 3 bộ ship 20k)
@@ -34,12 +34,15 @@ window.DUU_CHO = {
     ]
   },
 
-  // Các sạp trong chợ, theo thứ tự. Màu là màu mái sạp.
+  mauThu: 20,   // CHỈ ĐỂ XEM THỬ: chợ lặp lại các mẫu có sẵn cho đủ 20 mẫu. Xóa dòng này khi đã nhập đủ hàng thật.
+
+  // Các khu trong chợ, theo thứ tự. Màu là màu của khối trưng. Thêm khu mới thì chợ tự thêm khối và dài thêm.
+  // Mỗi khối trưng được 3 mẫu, khu nhiều mẫu hơn thì chợ tự thêm khối cùng màu.
   khu: [
-    { ten: 'Hàng mới về', mau: '#FF6F9F' },
-    { ten: 'Set thu đông', mau: '#3E8BFF' },
-    { ten: 'Giá tốt',      mau: '#FF8A3D' },
-    { ten: 'Đồ ngủ',       mau: '#7B6CF0' }
+    { ten: 'Hàng mới về', mau: '#FF9FDC' },
+    { ten: 'Set thu đông', mau: '#7C3CFF' },
+    { ten: 'Giá tốt',      mau: '#ABDCE0' },
+    { ten: 'Đồ ngủ',       mau: '#2060E0' }
   ],
 
   sanPham: [

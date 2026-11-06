@@ -63,9 +63,11 @@ mau: [{ ten: 'Xanh', anh: 0 }, { ten: 'Tím', anh: 1 }],
 - Hết **cả mẫu** nhưng vẫn muốn khách xem: thêm `het: true,`.
 - **Bỏ hẳn** mẫu khỏi chợ: thêm `an: true,` hoặc xoá cả khối.
 
-## 4. Sạp trong chợ
+## 4. Khu trong chợ
 
-Danh sách `khu` ở đầu file là các sạp, theo thứ tự. Chợ có 6 chỗ đặt sạp: khu nào không có mẫu thì bị bỏ qua, chỗ còn trống thì tự thành sạp "Mẫu hot", "Xem thêm".
+Danh sách `khu` ở đầu file là các khu, theo thứ tự. Màu của mỗi khu là màu khối trưng. Mỗi khối trưng được 3 mẫu: khu nhiều mẫu hơn thì chợ tự thêm khối cùng màu, thêm khu mới thì chợ tự dài thêm.
+
+Dòng `mauThu: 20` chỉ để xem thử: chợ lặp lại các mẫu có sẵn cho đủ 20 mẫu. **Xoá dòng này khi đã nhập đủ hàng thật.**
 
 ## 5. Quy định đơn hàng
 
@@ -83,7 +85,7 @@ Danh sách `khu` ở đầu file là các sạp, theo thứ tự. Chợ có 6 ch
 4. Bấm **Chép tin và mở Zalo shop**, rồi dán vào khung chat. Shop sẽ nhận được tin như sau:
 
 ```
-Chốt đơn chợ Duu Duu
+Chốt đơn chợ DuuDuu
 Tên: Mẹ Bống
 Bé cao: 98cm
 1. YN-A42 Set áo dạ nơ kẻ, chân váy · 14kg · 129k

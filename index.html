@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Chợ 3D Duu Duu</title>
+<title>Chợ 3D DuuDuu</title>
+<link rel="icon" type="image/png" href="anh/logo-64.png">
+<link rel="apple-touch-icon" href="anh/logo-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="src/style.css">
@@ -14,10 +16,9 @@
   <div id="tags"></div>
   <div id="hud" hidden>
     <div class="top">
-      <button class="chip" id="room" aria-haspopup="dialog"><b id="roomName">Khu chợ</b><i id="roomGio">Sáng</i>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
+      <div class="chip ppl" id="room"><img class="lg" data-logo alt=""><b>Chợ DuuDuu</b></div>
       <div class="topR">
-        <span class="chip ppl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c.6-3.800 3-6 6-6s5.400 2.200 6 6"/><path d="M16 5a3.500 3.500 0 0 1 0 6.600M18 14.400c1.700.8 2.700 2.800 3 5.600"/></svg>46</span>
+        <button class="chip be" id="beChip" aria-label="Cân nặng của bé"></button>
         <button class="chip cart" id="cart">Giỏ · <span id="cartN">0</span></button>
       </div>
     </div>
@@ -33,7 +34,6 @@
       <button data-a="ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M9.500 9a2.500 2.500 0 1 1 3.500 2.300c-.7.300-1 .7-1 1.200"/></svg>Hỏi size</button>
     </div>
   </div>
-  <div id="fade"></div>
 
   <div class="scrim" id="sheetWrap" hidden>
     <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sName">
@@ -52,6 +52,30 @@
     </section>
   </div>
 
+  <div class="scrim" id="tvWrap" hidden>
+    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="tvTitle">
+      <button class="close" data-close aria-label="Đóng"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <header class="tvh"><img id="tvAv" alt=""><div><h2 id="tvTitle">Trần Thị Phanh Phanh</h2><p class="sub">Tư vấn size và mẫu cho bé</p></div></header>
+      <div class="tvz"><span>Zalo tư vấn</span><b id="tvSo"></b></div>
+      <label class="tvl" for="tvMsg">Tin nhắn mẫu, mẹ sửa thoải mái</label>
+      <textarea id="tvMsg" rows="6"></textarea>
+      <div class="row"><button class="btn ghost" id="tvCopy">Chép tin nhắn</button><a class="btn main" id="tvZalo" target="_blank" rel="noopener">Mở Zalo</a></div>
+      <p class="sub" id="tvHow">Mẹ chạm Chép tin nhắn, chạm Mở Zalo rồi dán vào khung chat gửi Phanh Phanh nha.</p>
+    </section>
+  </div>
+
+  <div class="scrim" id="shotWrap" hidden>
+    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+      <button class="close" data-close aria-label="Đóng"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <h2 id="shTitle">Ảnh bé mặc thử</h2>
+      <div class="shotWait" id="shWait">Đang làm ảnh…</div>
+      <img class="shot" id="shImg" alt="" hidden>
+      <p class="sub" id="shHow">Lưu ảnh rồi gửi vào nhóm Zalo cho cả nhà xem nha. Nút không chạy thì mẹ nhấn giữ vào ảnh để lưu.</p>
+      <div class="row"><button class="btn ghost" id="shSave">Lưu ảnh</button><button class="btn main" id="shShare">Gửi ảnh</button></div>
+      <button class="link" id="shBack">Xem lại mẫu này</button>
+    </section>
+  </div>
+
   <div class="scrim" id="cartWrap" hidden>
     <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cTitle">
       <button class="close" data-close aria-label="Đóng"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -65,26 +89,16 @@
       <dl class="sum" id="cSum"></dl>
       <p class="warn" id="cWarn" hidden></p>
       <details class="msg" id="cMsgWrap"><summary>Xem tin nhắn sẽ gửi</summary><textarea id="cMsg" readonly rows="9"></textarea></details>
-      <button class="btn main" id="cSend">Chép tin và mở Zalo shop</button>
+      <div class="row" id="cAct"><button class="btn main" id="cSend">Chép tin nhắn</button><a class="btn ghost" id="cZalo" target="_blank" rel="noopener">Mở Zalo shop</a></div>
       <p class="sub" id="cHow"></p>
       <button class="link" id="cClear">Xoá giỏ</button>
-    </section>
-  </div>
-
-  <div class="scrim" id="roomWrap" hidden>
-    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="rTitle">
-      <button class="close" data-close aria-label="Đóng"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-      <h2 id="rTitle">Đi đến đâu?</h2>
-      <div class="rooms" id="rooms"></div>
-      <h3>Giờ trong chợ</h3>
-      <div class="seg" id="buoi" aria-label="Giờ trong chợ"></div>
     </section>
   </div>
 
   <div id="studio">
     <p class="spin" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.500-6.200L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.500 6.200L3 16"/><path d="M3 21v-5h5"/></svg>Kéo để xoay nhân vật</p>
     <form id="enter" class="panel" novalidate>
-      <header class="intro-only"><h1>Duu Duu họp chợ</h1><p>Chọn nhân vật cho bé rồi vào chợ dạo sạp nha. Chợ mở cả ngày.</p></header>
+      <header class="intro-only"><img data-logo alt=""><div><h1>DuuDuu họp chợ</h1><p>Chọn nhân vật cho bé rồi vào chợ dạo sạp nha.</p></div></header>
       <header class="play-only"><h2>Đổi nhân vật</h2></header>
       <div class="tabs" id="avTabs" role="tablist" aria-label="Tuỳ chỉnh nhân vật">
         <button type="button" role="tab" id="tbMau" aria-controls="tpMau">Mẫu</button>
@@ -116,14 +130,14 @@
       </div>
       <div class="info">
         <label class="nm">Tên trong chợ<input id="who" type="text" maxlength="16" value="Bé Bống" autocomplete="off"></label>
-        <label class="intro-only">Bé nặng (kg)<input id="beKg" type="number" inputmode="numeric" min="3" max="50" placeholder="VD: 14"></label>
+        <label>Bé nặng (kg)<input id="beKg" type="number" inputmode="numeric" min="3" max="50" placeholder="VD: 14"></label>
         <label class="intro-only">Bé cao (cm)<input id="beCao" type="number" inputmode="numeric" min="40" max="180" placeholder="VD: 98"></label>
       </div>
       <button class="btn main" type="submit" id="enterBtn"><span class="intro-only">Vào chợ</span><span class="play-only">Xong</span></button>
       <p class="demo intro-only">Mẫu, giá và size lấy từ bài đăng của shop. Người đi chợ là minh hoạ.</p>
     </form>
   </div>
-  <div id="load">Đang dựng chợ…</div>
+  <div id="load"><img id="logoImg" alt="DuuDuu" src="anh/logo.png"><span id="loadT">Đang dựng chợ…</span></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="data/san-pham.js"></script>
