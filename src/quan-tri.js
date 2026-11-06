@@ -129,7 +129,7 @@ async function luu(msg, sua) {
         them: [], bo: new Set(), dat: new Set(),
         // Tên file ảnh mới không trùng file đã có: anh/<mã>-<số>.jpg
         tenMoi(ma) {
-          const g = String(ma || 'mau').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'mau';
+          const g = String(ma || 'mau').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'mau';
           for (let n = 1; ; n++) { const p = `anh/${g}-${n}.jpg`; if (!k.files.has(p) && !ctx.dat.has(p)) { ctx.dat.add(p); return p; } }
         }
       };
@@ -291,7 +291,7 @@ async function batDau() {
   ban(false);
   ls.set('cfg', C);
   $('#vao').hidden = true; $('#chinh').hidden = false;
-  veTatCa();
+  khuDoi = caiDoi = false; doiTab('Mau'); veTatCa();
 }
 
 /* ---------- Thẻ ---------- */

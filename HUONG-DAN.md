@@ -23,6 +23,8 @@ Trang quản trị cần một mã truy cập để được ghi vào kho. Chỉ
 4. **Permissions** → **Repository permissions** → **Contents**: chọn **Read and write**.
 5. Bấm **Generate token**, chép mã (bắt đầu bằng `github_pat_`) rồi dán vào trang quản trị.
 
+Người dùng hằng ngày không cần tài khoản GitHub. Người giữ tài khoản tạo mã, nhắn riêng (tin nhắn 1-1, không gửi vào nhóm) cho người dùng. Người dùng chạm giữ vào tin nhắn để chép mã, mở trang quản trị bằng Safari hoặc Chrome, dán vào ô **Mã truy cập GitHub** rồi bấm **Vào quản trị**. Dán xong thì cả hai bên xoá tin nhắn chứa mã.
+
 Máy sẽ nhớ mã. Mã hết hạn thì trang báo, chỉ cần tạo mã mới và dán lại. Mất máy thì vào lại trang trên của GitHub để xoá mã đó. Muốn thôi dùng trên một máy, vào **Cài đặt** → **Đăng xuất khỏi máy này**.
 
 Mã chỉ có quyền với đúng kho chợ. Không gửi mã này cho ai, không dán vào nhóm chat.
