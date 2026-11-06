@@ -2,7 +2,7 @@
 
 Khu chợ 3D mở cả ngày cho các mẹ dẫn bé đi dạo sạp, xem ảnh thật của từng mẫu, kiểm tra size theo cân nặng của bé rồi gửi đơn qua Zalo. Chợ chạy hoàn toàn trên trình duyệt bằng [three.js r128](https://threejs.org/) (tải từ CDN), không cần bước build.
 
-**Cập nhật hàng mỗi ngày:** xem [HUONG-DAN.md](HUONG-DAN.md).
+**Cập nhật hàng mỗi ngày:** mở trang quản trị `quan-tri.html` để thêm, sửa, xoá mẫu ngay trên điện thoại. Xem [HUONG-DAN.md](HUONG-DAN.md).
 
 ## Cấu trúc
 
@@ -12,6 +12,9 @@ data/san-pham.js    # Danh sách mẫu, các sạp, quy định ship và cọc. 
 anh/                # Ảnh thật của các mẫu, logo DuuDuu (logo*.png) và vân gỗ của chợ (van-go.jpg)
 src/style.css       # Toàn bộ CSS
 src/main.js         # Dựng cảnh 3D, nhân vật, sạp, bảng mẫu, giỏ hàng
+quan-tri.html       # Trang quản trị cho shop: thêm, sửa, xoá mẫu, khu, cài đặt đơn hàng
+src/quan-tri.js     # Đọc và ghi data/san-pham.js, tải ảnh lên anh/ qua GitHub API (mỗi lần lưu là một commit)
+src/quan-tri.css    # CSS của trang quản trị
 ```
 
 ## Cách chợ hoạt động
@@ -34,6 +37,10 @@ python3 -m http.server 8000
 ```
 
 Rồi mở http://localhost:8000
+
+## Trang quản trị
+
+Chợ không có máy chủ riêng, nên `quan-tri.html` chạy hoàn toàn trên trình duyệt và ghi thẳng vào kho GitHub bằng mã truy cập (fine-grained token, chỉ quyền Contents: Read and write với kho này) mà shop dán vào một lần. Mỗi lần lưu, trang đọc bản mới nhất của nhánh, áp thay đổi, rồi tạo một commit gồm `data/san-pham.js` và ảnh mới (Git Data API). Nhánh bị đổi giữa chừng thì tự làm lại. Ảnh được thu nhỏ còn cạnh dài 1200px trước khi tải lên. Ảnh bị bỏ khỏi mẫu mà không mẫu nào dùng nữa thì bị xoá khỏi `anh/`. Hàm `docChu` trong `src/quan-tri.js` phải giữ giống hàm cùng tên trong `src/main.js`.
 
 ## Ghi chú
 
