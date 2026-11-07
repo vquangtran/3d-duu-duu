@@ -27,6 +27,7 @@ const ICON = {
   phai: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>',
   len: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>',
   xuong: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
+  cong: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
   xoa: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>'
 };
 
@@ -301,16 +302,24 @@ function doiTab(t) {
   if (t !== tabNay && ((tabNay === 'Khu' && khuDoi) || (tabNay === 'Cai' && caiDoi)) && !confirm('Mẹ chưa bấm lưu, bỏ các thay đổi vừa sửa?')) return;
   tabNay = t;
   TABS.forEach(x => { $('#tb' + x).setAttribute('aria-selected', x === t); $('#tp' + x).hidden = x !== t; });
+  const ten = { Mau: 'Mẫu', Khu: 'Khu', Cai: 'Cài đặt' }[t];
+  $('#tieuDe').textContent = ten; $('#navT').textContent = ten;
+  $('#themMau').hidden = t !== 'Mau'; $('#luuKhu').hidden = t !== 'Khu'; $('#luuCai').hidden = t !== 'Cai';
   if (t === 'Khu') veKhu(); if (t === 'Cai') veCai();
-  window.scrollTo(0, 0);
+  window.scrollTo(0, 0); vienNav();
 }
+// Nút Lưu ở góc trên chỉ sáng khi có thay đổi chưa lưu
+function capNhatNut() { $('#luuKhu').disabled = !khuDoi; $('#luuCai').disabled = !caiDoi; }
+// Cuộn qua tiêu đề lớn thì hiện tên nhỏ và đường viền trên thanh tiêu đề
+function vienNav() { $('#chinh .nav').classList.toggle('vien', window.scrollY > 36); }
+window.addEventListener('scroll', vienNav, { passive: true });
 function veTatCa() { veDS(); if (tabNay === 'Khu') veKhu(); if (tabNay === 'Cai') veCai(); }
 
 /* ---------- Danh sách mẫu ---------- */
 let loc = '*';
 const mauKhu = ten => (K.data.khu.find(k => k.ten === ten) || {}).mau || '#DCCFEF';
 // Chữ trắng trên màu khu đậm, chữ tím trên màu khu nhạt
-const chuTren = hex => { const m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return 'var(--ink)'; const n = parseInt(m[1], 16), l = (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) / 255; return l < 0.6 ? '#fff' : 'var(--ink)'; };
+const chuTren = hex => { const m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return '#1C1C1E'; const n = parseInt(m[1], 16), l = (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) / 255; return l < 0.6 ? '#fff' : '#1C1C1E'; };
 function veDS() {
   const sp = K.data.sanPham, q = $('#tim').value.trim().toLowerCase();
   const dem = {}; sp.forEach(x => { dem[x.khu] = (dem[x.khu] || 0) + 1; });
@@ -339,7 +348,8 @@ function veDS() {
     return `<li><button type="button" data-i="${i}" class="${x.an ? 'an' : ''}">
       ${anh ? `<img class="anhNho" data-anh="${esc(anh)}" alt="" loading="lazy">` : `<span class="anhGia" style="background:${esc(mauKhu(x.khu))};color:${chuTren(mauKhu(x.khu))}">${esc(x.ma || '?')}</span>`}
       <span class="dsC"><b>${esc(x.ten || x.ma || 'Mẫu chưa đặt tên')}</b><span class="ma">${esc(x.ma)} · ${esc(x.khu || '')}</span>
-      <span class="tt">${esc(gia)} · ${esc(size)}${t.thieu.length ? ` · hết ${esc(dayThieu(t.thieu))}kg` : ''}</span>${nh.join('')}</span>
+      <span class="tt">${esc(gia)} · ${esc(size)}${t.thieu.length ? ` · hết ${esc(dayThieu(t.thieu))}kg` : ''}</span>${nh.length ? `<span class="nhans">${nh.join('')}</span>` : ''}</span>
+      <span class="mui" aria-hidden="true"></span>
     </button></li>`;
   }).join('');
   $('#ds').querySelectorAll('img[data-anh]').forEach(im => ganAnh(im, im.dataset.anh));
@@ -359,7 +369,7 @@ function moSua(i) {
     moi: !goc, ma0: goc ? goc.ma : null, goc: goc || {}, imgs, bo: new Set(), doi: false,
     mau: (x.mau || []).map(m => typeof m === 'string' ? { ten: m, img: null } : { ten: m.ten || '', img: Number.isInteger(m.anh) ? imgs[m.anh] || null : null, them: m })
   };
-  $('#suaT').textContent = goc ? 'Sửa mẫu ' + (goc.ma || '') : 'Thêm mẫu mới';
+  $('#suaT').textContent = goc ? (goc.ma || 'Sửa mẫu') : 'Mẫu mới';
   $('#fMa').value = x.ma || ''; $('#fTen').value = x.ten || ''; $('#fChu').value = x.chu || '';
   const khus = K.data.khu.map(k => k.ten); if (x.khu && !khus.includes(x.khu)) khus.push(x.khu);
   $('#fKhu').innerHTML = khus.map(k => `<option${k === x.khu ? ' selected' : ''}>${esc(k)}</option>`).join('');
@@ -367,7 +377,7 @@ function moSua(i) {
   $('#fThieu').value = Array.isArray(x.thieu) ? x.thieu.join(', ') : '';
   $('#fTayW').open = x.gia != null || x.tu != null || x.den != null || Array.isArray(x.thieu);
   $('#fHet').checked = !!x.het; $('#fAn').checked = !!x.an;
-  $('#xoaMau').hidden = !goc;
+  $('#xoaW').hidden = !goc;
   veAnh(); veMauSac(); veDoc();
   $('#suaWrap').hidden = false; document.body.style.overflow = 'hidden';
   $('.suaB').scrollTop = 0;
@@ -393,7 +403,7 @@ function veAnh() {
       <span class="nuts"><button type="button" data-l="${i}" aria-label="Đưa ảnh ${i + 1} lên trước"${i === 0 ? ' disabled' : ''}>${ICON.trai}</button>
       <button type="button" class="xoaI" data-x="${i}" aria-label="Bỏ ảnh ${i + 1}">${ICON.xoa}</button>
       <button type="button" data-r="${i}" aria-label="Đưa ảnh ${i + 1} ra sau"${i === n - 1 ? ' disabled' : ''}>${ICON.phai}</button></span>
-    </li>`).join('') + `<li><button type="button" class="themA" id="themAnh"><b aria-hidden="true">+</b>Thêm ảnh</button></li>`;
+    </li>`).join('') + `<li><button type="button" class="themA" id="themAnh">${ICON.cong}Thêm ảnh</button></li>`;
   $('#anhs').querySelectorAll('img[data-i]').forEach(im => { const it = E.imgs[+im.dataset.i]; if (it.path && !it.url) ganAnh(im, it.path); });
 }
 $('#anhs').addEventListener('click', e => {
@@ -423,11 +433,11 @@ $('#anhFile').addEventListener('change', async e => {
 });
 
 function veMauSac() {
-  const op = i => `<option value="-1">Không có ảnh riêng</option>` + E.imgs.map((_, j) => `<option value="${j}"${j === i ? ' selected' : ''}>Ảnh ${j + 1}</option>`).join('');
-  $('#dsMau').innerHTML = E.mau.map((m, i) => `<li>
+  const op = i => `<option value="-1">Không có ảnh</option>` + E.imgs.map((_, j) => `<option value="${j}"${j === i ? ' selected' : ''}>Ảnh ${j + 1}</option>`).join('');
+  $('#dsMau').innerHTML = E.mau.map((m, i) => `<li class="dong">
+      <button type="button" class="boDong" data-mx="${i}" aria-label="Bỏ màu ${i + 1}"><i class="tru" aria-hidden="true"></i></button>
       <input class="gian" data-m="${i}" value="${esc(m.ten)}" placeholder="Tên màu, VD: Hồng" aria-label="Tên màu ${i + 1}">
-      <select data-ma="${i}" aria-label="Ảnh của màu ${i + 1}">${op(m.img ? E.imgs.indexOf(m.img) : -1)}</select>
-      <button type="button" class="icon xoaI" data-mx="${i}" aria-label="Bỏ màu ${i + 1}">${ICON.xoa}</button></li>`).join('');
+      <select data-ma="${i}" aria-label="Ảnh của màu ${i + 1}">${op(m.img ? E.imgs.indexOf(m.img) : -1)}</select></li>`).join('');
 }
 $('#dsMau').addEventListener('input', e => { const i = e.target.dataset.m; if (i != null) E.mau[+i].ten = e.target.value; });
 $('#dsMau').addEventListener('change', e => { const i = e.target.dataset.ma; if (i != null) { const j = +e.target.value; E.mau[+i].img = j >= 0 ? E.imgs[j] : null; } });
@@ -502,22 +512,22 @@ let KH = [], khuDoi = false;
 function veKhu() {
   const dem = {}; K.data.sanPham.forEach(x => { dem[x.khu] = (dem[x.khu] || 0) + 1; });
   KH = K.data.khu.map(k => ({ ten0: k.ten, ten: k.ten, mau: k.mau || '#DCCFEF', goc: k, so: dem[k.ten] || 0 }));
-  khuDoi = false; veHangKhu();
+  khuDoi = false; veHangKhu(); capNhatNut();
 }
 function veHangKhu() {
   const n = KH.length;
-  $('#dsKhu').innerHTML = KH.map((k, i) => `<li>
-      <input type="color" data-kc="${i}" value="${esc(/^#[0-9a-f]{6}$/i.test(k.mau) ? k.mau : '#DCCFEF')}" aria-label="Màu khu ${esc(k.ten)}">
+  $('#dsKhu').innerHTML = KH.map((k, i) => `<li class="dong">
+      <button type="button" class="boDong" data-kx="${i}" aria-label="Bỏ khu ${esc(k.ten)}"><i class="tru" aria-hidden="true"></i></button>
+      <input type="color" class="mau" data-kc="${i}" value="${esc(/^#[0-9a-f]{6}$/i.test(k.mau) ? k.mau : '#DCCFEF')}" style="background:${esc(/^#[0-9a-f]{6}$/i.test(k.mau) ? k.mau : '#DCCFEF')}" aria-label="Màu khu ${esc(k.ten)}">
       <input class="gian" data-kt="${i}" value="${esc(k.ten)}" placeholder="Tên khu" aria-label="Tên khu ${i + 1}">
       <span class="dem">${k.so} mẫu</span>
-      <button type="button" class="icon" data-ku="${i}" aria-label="Đưa khu lên"${i === 0 ? ' disabled' : ''}>${ICON.len}</button>
-      <button type="button" class="icon" data-kd="${i}" aria-label="Đưa khu xuống"${i === n - 1 ? ' disabled' : ''}>${ICON.xuong}</button>
-      <button type="button" class="icon xoaI" data-kx="${i}" aria-label="Bỏ khu">${ICON.xoa}</button></li>`).join('');
+      <button type="button" class="doiCho" data-ku="${i}" aria-label="Đưa khu lên"${i === 0 ? ' disabled' : ''}>${ICON.len}</button>
+      <button type="button" class="doiCho" data-kd="${i}" aria-label="Đưa khu xuống"${i === n - 1 ? ' disabled' : ''}>${ICON.xuong}</button></li>`).join('');
 }
 $('#dsKhu').addEventListener('input', e => {
   const t = e.target;
   if (t.dataset.kt != null) KH[+t.dataset.kt].ten = t.value;
-  if (t.dataset.kc != null) KH[+t.dataset.kc].mau = t.value.toUpperCase();
+  if (t.dataset.kc != null) { KH[+t.dataset.kc].mau = t.value.toUpperCase(); t.style.background = t.value; }
   khuDoi = true;
 });
 $('#dsKhu').addEventListener('click', e => {
@@ -558,15 +568,15 @@ function veCai() {
   $('#caiThu').checked = K.data.mauThu > 0; $('#caiThuSo').value = K.data.mauThu > 0 ? K.data.mauThu : 20;
   $('#caiThuSo').disabled = !$('#caiThu').checked;
   $('#caiKho').textContent = `Đang sửa kho ${C.owner}/${C.repo}, nhánh ${C.branch}.`;
-  caiDoi = false; veMoc();
+  caiDoi = false; veMoc(); capNhatNut();
 }
 function veMoc() {
   ['ship', 'coc'].forEach(loai => {
-    $(loai === 'ship' ? '#dsShip' : '#dsCoc').innerHTML = CAI[loai].map((m, i) => `<li>
-      <span class="dv">Từ</span><input type="number" inputmode="numeric" min="1" data-loai="${loai}" data-i="${i}" data-f="tu" value="${esc(m.tu)}" aria-label="Từ bao nhiêu bộ">
-      <span class="dv">bộ:</span><input type="number" inputmode="numeric" min="0" data-loai="${loai}" data-i="${i}" data-f="tien" value="${esc(m.tien)}" aria-label="Số tiền (nghìn đồng)">
-      <span class="dv">k</span><span class="gian"></span>
-      <button type="button" class="icon xoaI" data-loai="${loai}" data-x="${i}" aria-label="Bỏ mốc này">${ICON.xoa}</button></li>`).join('');
+    $(loai === 'ship' ? '#dsShip' : '#dsCoc').innerHTML = CAI[loai].map((m, i) => `<li class="dong">
+      <button type="button" class="boDong" data-loai="${loai}" data-x="${i}" aria-label="Bỏ mốc này"><i class="tru" aria-hidden="true"></i></button>
+      <span class="dv">Từ</span><input class="so" type="number" inputmode="numeric" min="1" data-loai="${loai}" data-i="${i}" data-f="tu" value="${esc(m.tu)}" aria-label="Từ bao nhiêu bộ">
+      <span class="dv">bộ</span><span class="gian"></span>
+      <input class="so" type="number" inputmode="numeric" min="0" data-loai="${loai}" data-i="${i}" data-f="tien" value="${esc(m.tien)}" aria-label="Số tiền (nghìn đồng)"><span class="dv">k</span></li>`).join('');
   });
 }
 $('#tpCai').addEventListener('input', e => {
@@ -597,6 +607,8 @@ $('#dangXuat').addEventListener('click', () => {
   if (!confirm('Đăng xuất? Lần sau vào phải dán lại mã truy cập.')) return;
   C.token = ''; ls.set('cfg', Object.assign({}, C, { token: '' })); K = null; hienVao();
 });
+
+['#tpKhu', '#tpCai'].forEach(id => ['input', 'change', 'click'].forEach(ev => $(id).addEventListener(ev, () => setTimeout(capNhatNut))));
 
 /* ---------- Bắt đầu ---------- */
 if (C.token) batDau(); else hienVao();
