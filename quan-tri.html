@@ -4,137 +4,149 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Quản trị">
 <title>Quản trị chợ DuuDuu</title>
 <link rel="icon" type="image/png" href="anh/logo-64.png">
 <link rel="apple-touch-icon" href="anh/logo-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="src/quan-tri.css">
 </head>
 <body>
 
 <!-- Đăng nhập: dán mã truy cập GitHub một lần, máy tự nhớ -->
 <main id="vao" class="vao" hidden>
-  <form id="vaoForm" class="the" novalidate>
-    <header class="vaoH"><img src="anh/logo.png" alt=""><div><h1>Quản trị chợ DuuDuu</h1><p>Thêm mẫu mới, sửa giá, size và ảnh cho chợ.</p></div></header>
-    <label class="o">Mã truy cập GitHub
-      <input id="vaoToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…">
-    </label>
+  <form id="vaoForm" novalidate>
+    <img class="vaoLogo" src="anh/logo.png" alt="">
+    <h1>Quản trị chợ DuuDuu</h1>
+    <p class="vaoMo">Thêm mẫu mới, sửa giá, size và ảnh cho chợ.</p>
+    <div class="nhom">
+      <label class="o"><span>Mã truy cập</span>
+        <input id="vaoToken" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Dán mã vào đây">
+      </label>
+    </div>
     <p class="loi" id="vaoLoi" role="alert" hidden></p>
-    <button class="nut chinh" type="submit" id="vaoNut">Vào quản trị</button>
-    <p class="nho">Máy sẽ nhớ mã này, lần sau mở trang là vào thẳng. Chỉ dán mã trên máy của mình.</p>
+    <button class="nutLon" type="submit" id="vaoNut">Vào quản trị</button>
+    <p class="chuChan">Máy sẽ nhớ mã này, lần sau mở trang là vào thẳng.</p>
   </form>
 </main>
 
 <!-- Trang chính -->
 <div id="chinh" hidden>
-  <header class="dau">
-    <div class="dauT"><img src="anh/logo-64.png" alt=""><b>Quản trị chợ</b></div>
-    <a class="moCho" href="./" target="_blank" rel="noopener">Mở chợ<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg></a>
+  <header class="nav">
+    <a class="navNut" href="./" target="_blank" rel="noopener">Mở chợ</a>
+    <span class="navT" id="navT" aria-hidden="true">Mẫu</span>
+    <span class="navPhai">
+      <button class="navNut dam" id="themMau" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Thêm</button>
+      <button class="navNut dam" id="luuKhu" type="button" hidden disabled>Lưu</button>
+      <button class="navNut dam" id="luuCai" type="button" hidden disabled>Lưu</button>
+    </span>
   </header>
-  <nav class="tab" role="tablist" aria-label="Mục quản trị">
-    <button role="tab" id="tbMau" aria-controls="tpMau" aria-selected="true">Mẫu</button>
-    <button role="tab" id="tbKhu" aria-controls="tpKhu" aria-selected="false">Khu</button>
-    <button role="tab" id="tbCai" aria-controls="tpCai" aria-selected="false">Cài đặt</button>
-  </nav>
 
-  <section class="trang" role="tabpanel" id="tpMau" aria-labelledby="tbMau">
-    <div class="timW">
-      <input id="tim" type="search" placeholder="Tìm mã, tên mẫu" aria-label="Tìm mẫu">
-      <button class="nut chinh them" id="themMau"><span aria-hidden="true">+</span> Thêm mẫu</button>
-    </div>
-    <div class="loc" id="loc" role="group" aria-label="Lọc theo khu"></div>
-    <ul class="ds" id="ds"></ul>
-    <p class="trong" id="dsTrong" hidden>Không có mẫu nào khớp.</p>
-  </section>
+  <div class="noi">
+    <h1 class="lon" id="tieuDe">Mẫu</h1>
 
-  <section class="trang" role="tabpanel" id="tpKhu" aria-labelledby="tbKhu" hidden>
-    <p class="nho">Các khu trong chợ, theo thứ tự đi dạo. Màu là màu khối trưng. Đổi tên khu thì các mẫu trong khu tự đổi theo.</p>
-    <ul class="hang" id="dsKhu"></ul>
-    <button class="nut phu" id="themKhu">+ Thêm khu</button>
-    <div class="chan"><button class="nut chinh" id="luuKhu">Lưu các khu</button></div>
-  </section>
+    <section role="tabpanel" id="tpMau" aria-labelledby="tbMau">
+      <label class="tim"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="tim" type="search" placeholder="Tìm mã hoặc tên mẫu" aria-label="Tìm mẫu" enterkeyhint="search"></label>
+      <div class="loc" id="loc" role="group" aria-label="Lọc theo khu"></div>
+      <ul class="nhom ds" id="ds"></ul>
+      <p class="trong" id="dsTrong" hidden>Không có mẫu nào khớp.</p>
+    </section>
 
-  <section class="trang" role="tabpanel" id="tpCai" aria-labelledby="tbCai" hidden>
-    <div class="the">
-      <h2>Đơn hàng</h2>
-      <div class="luoi2">
-        <label class="o">Số Zalo nhận đơn<input id="caiZalo" type="tel" inputmode="tel"></label>
-        <label class="o">Đi đơn từ (bộ)<input id="caiToiThieu" type="number" inputmode="numeric" min="1"></label>
+    <section role="tabpanel" id="tpKhu" aria-labelledby="tbKhu" hidden>
+      <ul class="nhom" id="dsKhu"></ul>
+      <ul class="nhom"><li><button type="button" class="dongThem" id="themKhu"><i class="cong" aria-hidden="true"></i>Thêm khu</button></li></ul>
+      <p class="chuChan">Thứ tự là thứ tự khách đi dạo trong chợ. Màu là màu khối trưng. Đổi tên khu thì các mẫu trong khu tự đổi theo. Sửa xong bấm <b>Lưu</b> ở góc trên.</p>
+    </section>
+
+    <section role="tabpanel" id="tpCai" aria-labelledby="tbCai" hidden>
+      <h2 class="dauNhom">Đơn hàng</h2>
+      <div class="nhom">
+        <label class="o"><span>Số Zalo nhận đơn</span><input id="caiZalo" type="tel" inputmode="tel"></label>
+        <label class="o"><span>Đi đơn từ</span><input id="caiToiThieu" type="number" inputmode="numeric" min="1"><em>bộ</em></label>
       </div>
-      <h3>Phí ship dự kiến</h3>
-      <ul class="hang" id="dsShip"></ul>
-      <button class="nut phu nho2" data-them="ship">+ Thêm mốc ship</button>
-      <h3>Tiền cọc</h3>
-      <ul class="hang" id="dsCoc"></ul>
-      <button class="nut phu nho2" data-them="coc">+ Thêm mốc cọc</button>
-    </div>
-    <div class="the">
-      <h2>Xem thử</h2>
-      <label class="bat"><input type="checkbox" id="caiThu"><span>Lặp lại mẫu cho chợ trông đầy hàng</span></label>
-      <label class="o hep">Cho đủ bao nhiêu mẫu<input id="caiThuSo" type="number" inputmode="numeric" min="1"></label>
-      <p class="nho">Tắt đi khi đã nhập đủ hàng thật.</p>
-    </div>
-    <div class="chan tinh"><button class="nut chinh" id="luuCai">Lưu cài đặt</button></div>
-    <div class="the">
-      <h2>Tài khoản</h2>
-      <p class="nho" id="caiKho"></p>
-      <button class="nut phu" id="dangXuat">Đăng xuất khỏi máy này</button>
-    </div>
-  </section>
+
+      <h2 class="dauNhom">Phí ship dự kiến</h2>
+      <ul class="nhom" id="dsShip"></ul>
+      <ul class="nhom"><li><button type="button" class="dongThem" data-them="ship"><i class="cong" aria-hidden="true"></i>Thêm mốc ship</button></li></ul>
+
+      <h2 class="dauNhom">Tiền cọc</h2>
+      <ul class="nhom" id="dsCoc"></ul>
+      <ul class="nhom"><li><button type="button" class="dongThem" data-them="coc"><i class="cong" aria-hidden="true"></i>Thêm mốc cọc</button></li></ul>
+
+      <h2 class="dauNhom">Xem thử</h2>
+      <div class="nhom">
+        <label class="o bat"><span>Lặp lại mẫu cho chợ trông đầy hàng</span><input type="checkbox" role="switch" id="caiThu"></label>
+        <label class="o"><span>Cho đủ</span><input id="caiThuSo" type="number" inputmode="numeric" min="1"><em>mẫu</em></label>
+      </div>
+      <p class="chuChan">Tắt đi khi đã nhập đủ hàng thật. Sửa xong bấm <b>Lưu</b> ở góc trên.</p>
+
+      <div class="nhom cachTren"><button type="button" class="dongDo" id="dangXuat">Đăng xuất khỏi máy này</button></div>
+      <p class="chuChan" id="caiKho"></p>
+    </section>
+  </div>
+
+  <nav class="tabbar" role="tablist" aria-label="Mục quản trị">
+    <button role="tab" id="tbMau" aria-controls="tpMau" aria-selected="true"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M10 4.5L4 7.5l2 5 2.5-1.2V23.5h11V11.3L22 12.5l2-5-6-3a4 4 0 0 1-8 0z" fill="currentColor"/></svg>Mẫu</button>
+    <button role="tab" id="tbKhu" aria-controls="tpKhu" aria-selected="false"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="4" y="4" width="8.5" height="8.5" rx="2.2" fill="currentColor"/><rect x="15.5" y="4" width="8.5" height="8.5" rx="2.2" fill="currentColor"/><rect x="4" y="15.5" width="8.5" height="8.5" rx="2.2" fill="currentColor"/><rect x="15.5" y="15.5" width="8.5" height="8.5" rx="2.2" fill="currentColor"/></svg>Khu</button>
+    <button role="tab" id="tbCai" aria-controls="tpCai" aria-selected="false"><svg viewBox="0 0 28 28" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12.3 3h3.4l.6 3a8.5 8.5 0 0 1 2.3 1.3l2.9-1 1.7 3-2.3 2a8.5 8.5 0 0 1 0 2.6l2.3 2-1.7 3-2.9-1a8.5 8.5 0 0 1-2.3 1.3l-.6 3h-3.4l-.6-3a8.5 8.5 0 0 1-2.3-1.3l-2.9 1-1.7-3 2.3-2a8.5 8.5 0 0 1 0-2.6l-2.3-2 1.7-3 2.9 1A8.5 8.5 0 0 1 11.7 6zM14 10.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/></svg>Cài đặt</button>
+  </nav>
 </div>
 
 <!-- Sửa một mẫu -->
 <div class="man" id="suaWrap" hidden>
   <section class="sua" role="dialog" aria-modal="true" aria-labelledby="suaT">
-    <header class="suaH">
-      <h2 id="suaT">Sửa mẫu</h2>
-      <button class="dong" id="suaDong" aria-label="Đóng"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <header class="nav suaH">
+      <button class="navNut" id="suaDong" type="button">Huỷ</button>
+      <h2 class="navT hien" id="suaT">Sửa mẫu</h2>
+      <span class="navPhai"><button class="navNut dam" id="luuMau" type="button">Lưu</button></span>
     </header>
     <div class="suaB">
-      <h3>Ảnh</h3>
-      <p class="nho">Ảnh số 1 được treo lên sạp, nên chọn ảnh trải sàn rõ đồ nhất.</p>
-      <ul class="anhs" id="anhs"></ul>
+      <h3 class="dauNhom">Ảnh</h3>
+      <div class="nhom anhW"><ul class="anhs" id="anhs"></ul></div>
+      <p class="chuChan">Ảnh số 1 được treo lên sạp, nên chọn ảnh trải sàn rõ đồ nhất. Dùng mũi tên để đổi thứ tự.</p>
       <input type="file" id="anhFile" accept="image/*" multiple hidden>
 
-      <div class="luoi2">
-        <label class="o">Mã mẫu<input id="fMa" autocapitalize="characters" spellcheck="false" placeholder="VD: YN-A50"></label>
-        <label class="o">Khu<select id="fKhu"></select></label>
+      <div class="nhom cachTren">
+        <label class="o"><span>Mã mẫu</span><input id="fMa" autocapitalize="characters" spellcheck="false" placeholder="VD: YN-A50"></label>
+        <label class="o"><span>Tên trên sạp</span><input id="fTen" placeholder="VD: Set len cổ bèo"></label>
+        <label class="o chon"><span>Khu</span><select id="fKhu"></select></label>
       </div>
-      <label class="o">Tên ngắn trên sạp<input id="fTen" placeholder="VD: Set len cổ bèo"></label>
-      <label class="o">Đoạn chữ đã đăng Zalo
-        <textarea id="fChu" rows="5" placeholder="Dán nguyên đoạn chữ, có giá và size, VD: … 10-25kg 99k"></textarea>
-      </label>
-      <div class="doc" id="fDoc" aria-live="polite"></div>
 
-      <details class="gap" id="fTayW">
+      <h3 class="dauNhom">Đoạn chữ đã đăng Zalo</h3>
+      <div class="nhom">
+        <label class="o vb"><textarea id="fChu" rows="5" placeholder="Dán nguyên đoạn chữ, có giá và size, VD: … 10-25kg 99k" aria-label="Đoạn chữ đã đăng Zalo"></textarea></label>
+        <div class="doc" id="fDoc" aria-live="polite"></div>
+      </div>
+
+      <details class="nhom tay" id="fTayW">
         <summary>Chợ đọc sai? Sửa tay</summary>
-        <p class="nho">Để trống thì chợ tự đọc từ đoạn chữ.</p>
-        <div class="luoi2">
-          <label class="o">Giá (k)<input id="fGia" type="number" inputmode="numeric" min="0"></label>
-          <label class="o">Hết size (kg)<input id="fThieu" inputmode="numeric" placeholder="VD: 18-19"></label>
-          <label class="o">Size từ (kg)<input id="fTu" type="number" inputmode="numeric" min="1"></label>
-          <label class="o">đến (kg)<input id="fDen" type="number" inputmode="numeric" min="1"></label>
-        </div>
+        <label class="o"><span>Giá</span><input id="fGia" type="number" inputmode="numeric" min="0" placeholder="Tự đọc"><em>k</em></label>
+        <label class="o"><span>Size từ</span><input id="fTu" type="number" inputmode="numeric" min="1" placeholder="Tự đọc"><em>kg</em></label>
+        <label class="o"><span>Size đến</span><input id="fDen" type="number" inputmode="numeric" min="1" placeholder="Tự đọc"><em>kg</em></label>
+        <label class="o"><span>Hết size</span><input id="fThieu" inputmode="numeric" placeholder="VD: 18-19"><em>kg</em></label>
       </details>
+      <p class="chuChan">Để trống thì chợ tự đọc từ đoạn chữ.</p>
 
-      <h3>Màu cho khách chọn</h3>
-      <p class="nho">Không bắt buộc. Chọn ảnh của màu đó để khách bấm màu là thấy ảnh.</p>
-      <ul class="hang" id="dsMau"></ul>
-      <button class="nut phu nho2" id="themMauSac">+ Thêm màu</button>
+      <h3 class="dauNhom">Màu cho khách chọn</h3>
+      <ul class="nhom" id="dsMau"></ul>
+      <ul class="nhom"><li><button type="button" class="dongThem" id="themMauSac"><i class="cong" aria-hidden="true"></i>Thêm màu</button></li></ul>
+      <p class="chuChan">Không bắt buộc. Chọn ảnh của màu đó để khách bấm màu là thấy ảnh.</p>
 
-      <h3>Tình trạng</h3>
-      <label class="bat"><input type="checkbox" id="fHet"><span>Hết hàng<small>Vẫn treo trên sạp, khách không thêm vào giỏ được</small></span></label>
-      <label class="bat"><input type="checkbox" id="fAn"><span>Ẩn khỏi chợ<small>Khách không thấy mẫu này nữa</small></span></label>
+      <h3 class="dauNhom">Tình trạng</h3>
+      <div class="nhom">
+        <label class="o bat"><span>Hết hàng<small>Vẫn treo trên sạp, khách không đặt được</small></span><input type="checkbox" role="switch" id="fHet"></label>
+        <label class="o bat"><span>Ẩn khỏi chợ<small>Khách không thấy mẫu này nữa</small></span><input type="checkbox" role="switch" id="fAn"></label>
+      </div>
+
+      <div class="nhom cachTren" id="xoaW"><button type="button" class="dongDo" id="xoaMau">Xoá mẫu</button></div>
     </div>
-    <footer class="suaF">
-      <button class="nut xoa" id="xoaMau">Xoá mẫu</button>
-      <button class="nut chinh" id="luuMau">Lưu mẫu</button>
-    </footer>
   </section>
 </div>
 
-<div class="ban" id="ban" hidden><div><span class="xoay" aria-hidden="true"></span><p id="banT">Đang lưu…</p></div></div>
+<div class="ban" id="ban" hidden><div class="banH"><span class="xoay" aria-hidden="true"></span><p id="banT">Đang lưu…</p></div></div>
 <div class="bao" id="bao" role="status" hidden></div>
 
 <script src="src/quan-tri.js"></script>
