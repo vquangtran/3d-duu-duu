@@ -11,6 +11,8 @@ index.html          # Khung giao diện: thanh trên cùng, bảng mẫu, giỏ 
 data/san-pham.js    # Danh sách mẫu, các sạp, quy định ship và cọc. Sửa mỗi ngày.
 anh/                # Ảnh thật của các mẫu, logo DuuDuu (logo*.png) và vân gỗ của chợ (van-go.jpg)
 src/style.css       # Toàn bộ CSS
+src/fonts.css       # Khai báo font Baloo 2 và Be Vietnam Pro tải từ fonts/ (không dùng Google Fonts)
+fonts/              # File font woff2 (giấy phép SIL OFL), tiếng Việt và Latin
 src/main.js         # Dựng cảnh 3D, nhân vật, sạp, bảng mẫu, giỏ hàng
 quan-tri.html       # Trang quản trị cho shop: thêm, sửa, xoá mẫu, khu, cài đặt đơn hàng
 src/quan-tri.js     # Đọc và ghi data/san-pham.js, tải ảnh lên anh/ qua GitHub API (mỗi lần lưu là một commit)

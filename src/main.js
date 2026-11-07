@@ -1157,9 +1157,9 @@ function trangTri(s){
   /* cổng bóng ở sảnh vào, chân sát tường, không che sạp nào */
   congBong(s,ZR+3.6,6.5,5.5);
   /* biển "Đang mở" treo giữa cổng bóng, đi vào hay đi ra đều đọc được */
-  {const z=ZR+3.6,y=4.35,o={k:'tot',t:'ĐANG MỞ',s:'CHỢ MỞ CẢ NGÀY'};nhan3D(s,o,1.6,.78,0,y,z,0,0,true);nhan3D(s,o,1.6,.78,0,y,z,PI,0,true);
+  {const z=ZR+3.6,y=4.8,o={k:'tot',t:'ĐANG MỞ',s:'CHỢ MỞ CẢ NGÀY'};nhan3D(s,o,1.6,.78,0,y,z,0,0,true);nhan3D(s,o,1.6,.78,0,y,z,PI,0,true);
    for(const k of[-1,1])ong(s,'den',.012,[k*.55,y+.42,z],[k*.25,5.55,z]);
-   if(NOEL)for(const f of[1,-1]){hoaLa(s,-.62,y+.33,z+f*.12,f>0?0:PI,1.5);chuong(s,-.72,y-.6,z+f*.06,f>0?0:PI,.15,.22);chuong(s,-.52,y-.58,z+f*.06,f>0?0:PI,-.15,.22);noDo(s,-.62,y-.36,z+f*.07,f>0?0:PI,.9);}}
+   if(NOEL)for(const f of[1,-1]){hoaLa(s,-.62,y+.33,z+f*.12,f>0?0:PI,1.5);}}
   /* chùm bóng ở bốn góc và quầy tư vấn */
   [[-W+2.2,ZE-2.4],[W-2.2,ZE-2.4],[W-3+2.6,ZR-M.R*11-5+.9]].forEach(([x,z],i)=>{s.mc('su',new T.CylinderGeometry(.12,.15,.2,12),s.at(x,.1,z));chumBong(s,x,.2,z,7,20+i,1.6);s.round(x,z,.35);});
   /* poster treo giữa các dãy sạp */
@@ -2130,7 +2130,8 @@ function boot(){
   try{build();}catch(err){$('#loadT').textContent='Dựng cảnh bị lỗi: '+err.message;console.error(err);return;}
   camera.position.set(0,3,M.ZE-2);frame();$('#load').style.opacity=0;setTimeout(()=>$('#load').remove(),420);
 }
-const fonts=document.fonts?Promise.race([Promise.all([document.fonts.load('800 60px "Baloo 2"','Chợ'),document.fonts.load('600 20px "Be Vietnam Pro"','Chợ')]),new Promise(r=>setTimeout(r,1800))]):Promise.resolve();
+/* Chữ trên biển, nhãn, giá được vẽ một lần lúc dựng chợ, nên chờ font thật tải xong (tối đa 6 giây) để không dính font dự phòng */
+const fonts=document.fonts?Promise.race([Promise.all(['800 60px "Baloo 2"','700 60px "Baloo 2"','600 20px "Be Vietnam Pro"','700 20px "Be Vietnam Pro"'].map(f=>document.fonts.load(f,'Chợ DuuDuu 129k Size 7–30kg'))),new Promise(r=>setTimeout(r,6000))]):Promise.resolve();
 const logoSan=LOGO.decode?LOGO.decode().catch(()=>{}):Promise.resolve();
 Promise.all([fonts,logoSan]).then(boot,boot);
 })();
