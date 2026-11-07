@@ -176,6 +176,12 @@ h1,h2,h3{margin:0}
 .cachTren2{margin:16px 16px 8px}
 
 /* ---------- Màn sửa mẫu ---------- */
+.treoXem{position:relative;height:230px;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;
+  background:linear-gradient(#FBF3E0,#F3E6CC);color:#6B5A3A}
+.treoXem .sao{position:absolute;left:10%;right:10%;top:16px;height:6px;border-radius:3px;background:linear-gradient(#F3D27A,#C99A3A);box-shadow:0 2px 3px rgba(0,0,0,.15)}
+.treoXem img{position:relative;margin-top:22px;max-width:70%;max-height:196px;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(60,40,10,.22))}
+.treoXem p{align-self:center;margin:0 24px;text-align:center;font-size:15px;line-height:1.4}
+
 .man{position:fixed;inset:0;z-index:10;background:var(--man);display:flex;justify-content:center;align-items:stretch}
 .sua{background:var(--nen);width:100%;display:flex;flex-direction:column;height:100%;height:100dvh;animation:len .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes len{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}

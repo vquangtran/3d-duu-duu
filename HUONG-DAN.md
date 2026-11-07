@@ -7,6 +7,10 @@ Mở trang `quan-tri.html` của chợ (ví dụ `https://<địa chỉ chợ>/q
 Trang quản trị trông như một ứng dụng trên iPhone: ba thẻ **Mẫu**, **Khu**, **Cài đặt** ở dưới cùng, nút **Thêm** và **Lưu** ở góc trên bên phải. Ở trang quản trị có thể:
 - **Thêm mẫu**: bấm **+ Thêm** ở góc trên, chụp hoặc chọn ảnh từ máy (ảnh tự thu nhỏ trước khi tải lên), ghi mã, tên, chọn khu, dán đoạn chữ đã đăng Zalo. Ngay dưới ô chữ, trang báo chợ đọc ra giá, size, size hết thế nào. Đọc sai thì mở **Chợ đọc sai? Sửa tay**.
 - **Sửa mẫu**: bấm vào mẫu trong danh sách. Đổi thứ tự ảnh bằng hai nút mũi tên (ảnh số 1 được treo lên sạp), bỏ ảnh, thêm màu và chọn ảnh cho từng màu, đánh dấu **Hết hàng** hoặc **Ẩn khỏi chợ**.
+- **Ảnh treo sào**: trong màn sửa mẫu, mục **Ảnh treo sào (đã tách nền)** → **Chọn ảnh đã tách nền**. Chợ treo bộ đồ này lên sào cạnh sạp, lớn dần theo các size. Mẫu chưa có ảnh này thì chợ vẽ bộ đồ theo màu của ảnh mẫu. Cách có ảnh tách nền:
+  - **iPhone** (iOS 16 trở lên): mở ảnh trong app **Ảnh**, chạm giữ vào bộ đồ đến khi viền sáng lên, chọn **Chia sẻ** → **Lưu ảnh**. Ảnh vừa lưu là ảnh đã tách nền.
+  - **Android**: dùng tính năng tách nền có sẵn của máy (ví dụ máy Samsung: mở ảnh trong Bộ sưu tập, chạm giữ vào bộ đồ rồi lưu thành ảnh), hoặc tách nền trên trang web như remove.bg rồi tải về.
+  - Nên chụp bộ đồ trải phẳng hoặc treo trên nền trơn, đủ cả áo và quần. Trang tự cắt sát bộ đồ và thu nhỏ trước khi tải lên. Chọn nhầm ảnh còn nền thì trang hỏi lại.
 - **Xoá mẫu**: trong màn sửa mẫu, bấm **Xoá mẫu**. Ảnh của mẫu cũng bị xoá.
 - **Khu**: chạm vào một khu để sửa tên, màu, vị trí trong chợ, và các mẫu trong khu: đổi thứ tự trưng bằng mũi tên, chuyển mẫu sang khu khác (chạm tên khu ở cuối dòng của mẫu), hoặc **Thêm mẫu vào khu này** để chọn mẫu từ khu khác. Khu hết mẫu thì xoá được. Đổi tên khu thì các mẫu trong khu tự đổi theo.
 - **Cài đặt**: số Zalo nhận đơn, đi đơn từ mấy bộ, phí ship, tiền cọc, bật tắt chế độ xem thử.
@@ -79,6 +83,14 @@ Nếu chợ đọc sai, ghi đè bằng tay trong khối của mẫu đó:
 ```js
 gia: 129, tu: 10, den: 30, thieu: [18, 19],
 ```
+
+### Ảnh treo sào
+
+```js
+anhTreo: 'anh/yn-a50-treo-1.png',
+```
+
+Ảnh PNG bộ đồ đã tách nền (nền trong suốt). Có ảnh này thì giá treo cạnh sạp hiện chính bộ đồ, không có thì chợ vẽ bộ đồ theo màu ảnh mẫu.
 
 ### Màu cho khách chọn
 

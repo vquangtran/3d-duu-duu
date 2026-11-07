@@ -108,6 +108,15 @@
       <p class="chuChan">Ảnh số 1 được treo lên sạp, nên chọn ảnh trải sàn rõ đồ nhất. Dùng mũi tên để đổi thứ tự.</p>
       <input type="file" id="anhFile" accept="image/*" multiple hidden>
 
+      <h3 class="dauNhom">Ảnh treo sào (đã tách nền)</h3>
+      <div class="nhom">
+        <div class="treoXem" id="treoXem"><span class="sao" aria-hidden="true"></span><img id="treoImg" alt="Ảnh bộ đồ treo trên sào" hidden><p id="treoTrong">Chưa có ảnh. Chợ đang vẽ bộ đồ theo màu của ảnh mẫu.</p></div>
+        <button type="button" class="dongThem" id="treoChon"><i class="cong" aria-hidden="true"></i><span id="treoChonT">Chọn ảnh đã tách nền</span></button>
+        <button type="button" class="dongDo" id="treoBo" hidden>Bỏ ảnh treo sào</button>
+      </div>
+      <input type="file" id="treoFile" accept="image/png,image/webp,image/*" hidden>
+      <p class="chuChan">Ảnh bộ đồ đã xoá nền (nền trong suốt) sẽ được treo lên sào trong chợ. Trên iPhone: mở ảnh trong app Ảnh, chạm giữ vào bộ đồ đến khi viền sáng lên, chọn <b>Chia sẻ</b> → <b>Lưu ảnh</b>, rồi chọn ảnh vừa lưu ở đây.</p>
+
       <div class="nhom cachTren">
         <label class="o"><span>Mã mẫu</span><input id="fMa" autocapitalize="characters" spellcheck="false" placeholder="VD: YN-A50"></label>
         <label class="o"><span>Tên trên sạp</span><input id="fTen" placeholder="VD: Set len cổ bèo"></label>
