@@ -11,6 +11,7 @@
             Ví dụ: '... 10-30kg 129k', '... 12-28kg ko có size 18-19 ạ 69k',
                    '... chỉ còn size 9-15kg ... 79k', '... 99k/4quần ...'
     anh   : danh sách ảnh trong thư mục anh/. Ảnh đầu tiên được treo lên sạp.
+    anhTreo: (không bắt buộc) ảnh bộ đồ đã tách nền (PNG nền trong suốt), chợ treo bộ đồ này lên sào theo các size.
     mau   : (không bắt buộc) các màu khách được chọn. Có thể ghi số thứ tự ảnh của màu đó.
     het   : true  -> mẫu đã hết, sạp vẫn treo nhưng khách không thêm vào giỏ được
     an    : true  -> ẩn hẳn khỏi chợ

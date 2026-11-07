@@ -129,14 +129,14 @@ async function luu(msg, sua) {
       const ctx = {
         them: [], bo: new Set(), dat: new Set(),
         // Tên file ảnh mới không trùng file đã có: anh/<mã>-<số>.jpg
-        tenMoi(ma) {
+        tenMoi(ma, duoi = 'jpg', them = '') {
           const g = String(ma || 'mau').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'mau';
-          for (let n = 1; ; n++) { const p = `anh/${g}-${n}.jpg`; if (!k.files.has(p) && !ctx.dat.has(p)) { ctx.dat.add(p); return p; } }
+          for (let n = 1; ; n++) { const p = `anh/${g}${them}-${n}.${duoi}`; if (!k.files.has(p) && !ctx.dat.has(p)) { ctx.dat.add(p); return p; } }
         }
       };
       await sua(d, ctx);
       const text = vietData(d);
-      const dung = new Set(); d.sanPham.forEach(x => (x.anh || []).forEach(a => dung.add(a)));
+      const dung = new Set(); d.sanPham.forEach(x => { (x.anh || []).forEach(a => dung.add(a)); if (x.anhTreo) dung.add(x.anhTreo); });
       const tree = [{ path: FILE, mode: '100644', type: 'blob', content: text }];
       for (let i = 0; i < ctx.them.length; i++) {
         const t = ctx.them[i];
@@ -163,7 +163,7 @@ function b64(blob) {
 }
 
 /* ---------- Ghi lại data/san-pham.js cho dễ đọc, dễ sửa tay ---------- */
-const THU_TU = ['ma', 'ten', 'khu', 'chu', 'gia', 'tu', 'den', 'thieu', 'combo', 'comboDv', 'tinhTrang', 'anh', 'mau', 'het', 'an'];
+const THU_TU = ['ma', 'ten', 'khu', 'chu', 'gia', 'tu', 'den', 'thieu', 'combo', 'comboDv', 'tinhTrang', 'anh', 'anhTreo', 'mau', 'het', 'an'];
 const chuoi = s => "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, '\\n').replace(/[\u2028\u2029]/g, c => '\\u' + c.charCodeAt(0).toString(16)) + "'";
 const khoa = k => /^[A-Za-z_$][\w$]*$/.test(k) ? k : chuoi(k);
 function lit(v, ind = '') {
@@ -202,6 +202,7 @@ function vietData(d) {
             Ví dụ: '... 10-30kg 129k', '... 12-28kg ko có size 18-19 ạ 69k',
                    '... chỉ còn size 9-15kg ... 79k', '... 99k/4quần ...'
     anh   : danh sách ảnh trong thư mục anh/. Ảnh đầu tiên được treo lên sạp.
+    anhTreo: (không bắt buộc) ảnh bộ đồ đã tách nền (PNG nền trong suốt), chợ treo bộ đồ này lên sào theo các size.
     mau   : (không bắt buộc) các màu khách được chọn. Có thể ghi số thứ tự ảnh của màu đó.
     het   : true  -> mẫu đã hết, sạp vẫn treo nhưng khách không thêm vào giỏ được
     an    : true  -> ẩn hẳn khỏi chợ
@@ -259,6 +260,35 @@ async function nenAnh(file) {
   cv.width = Math.round(w * s); cv.height = Math.round(h * s);
   const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(src, 0, 0, cv.width, cv.height);
   return await new Promise((ok, loi) => cv.toBlob(b => b ? ok(b) : loi(new Error('Không nén được ảnh')), 'image/jpeg', ANH_CL));
+}
+
+// Ảnh treo sào: giữ nền trong suốt, cắt bỏ phần trong suốt thừa quanh bộ đồ, cạnh dài tối đa 900px, xuất PNG
+async function nenTreo(file) {
+  let src, w, h;
+  try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); w = src.width; h = src.height; }
+  catch (e) {
+    src = await new Promise((ok, loi) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => loi(new Error('Không đọc được ảnh ' + file.name)); i.src = URL.createObjectURL(file); });
+    w = src.naturalWidth; h = src.naturalHeight;
+  }
+  const s0 = Math.min(1, 1600 / Math.max(w, h)), cv = document.createElement('canvas');
+  cv.width = Math.round(w * s0); cv.height = Math.round(h * s0);
+  const g = cv.getContext('2d'); g.drawImage(src, 0, 0, cv.width, cv.height);
+  const d = g.getImageData(0, 0, cv.width, cv.height).data;
+  let x0 = cv.width, y0 = cv.height, x1 = -1, y1 = -1, trong = 0;
+  for (let y = 0; y < cv.height; y++) for (let x = 0; x < cv.width; x++) {
+    const a = d[(y * cv.width + x) * 4 + 3];
+    if (a < 250) trong++;
+    if (a > 12) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  }
+  if (x1 < 0) throw new Error('Ảnh này trong suốt hết, không thấy bộ đồ.');
+  const coNen = trong < cv.width * cv.height * 0.02;
+  const pad = Math.round(Math.max(x1 - x0, y1 - y0) * 0.02);
+  x0 = Math.max(0, x0 - pad); y0 = Math.max(0, y0 - pad); x1 = Math.min(cv.width - 1, x1 + pad); y1 = Math.min(cv.height - 1, y1 + pad);
+  const cw = x1 - x0 + 1, ch = y1 - y0 + 1, s1 = Math.min(1, 900 / Math.max(cw, ch)), out = document.createElement('canvas');
+  out.width = Math.round(cw * s1); out.height = Math.round(ch * s1);
+  out.getContext('2d').drawImage(cv, x0, y0, cw, ch, 0, 0, out.width, out.height);
+  const blob = await new Promise((ok, loi) => out.toBlob(b => b ? ok(b) : loi(new Error('Không nén được ảnh')), 'image/png'));
+  return { blob, coNen };
 }
 
 /* ---------- Lớp chờ, thông báo ---------- */
@@ -371,6 +401,7 @@ function moSua(i) {
   const imgs = (x.anh || []).map(p => ({ path: p }));
   E = {
     moi: !goc, ma0: goc ? goc.ma : null, goc: goc || {}, imgs, bo: new Set(), doi: false,
+    treo: x.anhTreo ? { path: x.anhTreo } : null,
     mau: (x.mau || []).map(m => typeof m === 'string' ? { ten: m, img: null } : { ten: m.ten || '', img: Number.isInteger(m.anh) ? imgs[m.anh] || null : null, them: m })
   };
   $('#suaT').textContent = goc ? (goc.ma || 'Sửa mẫu') : 'Mẫu mới';
@@ -382,13 +413,13 @@ function moSua(i) {
   $('#fTayW').open = x.gia != null || x.tu != null || x.den != null || Array.isArray(x.thieu);
   $('#fHet').checked = !!x.het; $('#fAn').checked = !!x.an;
   $('#xoaW').hidden = !goc;
-  veAnh(); veMauSac(); veDoc();
+  veAnh(); veTreo(); veMauSac(); veDoc();
   moMan('#suaWrap');
   if (!goc) setTimeout(() => $('#fMa').focus(), 50);
 }
 function dongSua(hoi) {
   if (hoi && E && E.doi && !confirm('Mẹ chưa lưu mẫu này. Đóng và bỏ các thay đổi?')) return;
-  if (E) E.imgs.forEach(it => { if (it.url) URL.revokeObjectURL(it.url); });
+  if (E) { E.imgs.forEach(it => { if (it.url) URL.revokeObjectURL(it.url); }); if (E.treo && E.treo.url) URL.revokeObjectURL(E.treo.url); }
   E = null; dongMan('#suaWrap');
 }
 $('#suaDong').addEventListener('click', () => dongSua(true));
@@ -436,6 +467,33 @@ $('#anhFile').addEventListener('change', async e => {
     E.doi = true;
   } catch (er) { bao(er.message || 'Không mở được ảnh này.', true); }
   ban(false); veAnh(); veMauSac();
+});
+
+function veTreo() {
+  const t = E.treo, im = $('#treoImg');
+  im.hidden = !t; $('#treoTrong').hidden = !!t; $('#treoBo').hidden = !t;
+  $('#treoChonT').textContent = t ? 'Đổi ảnh khác' : 'Chọn ảnh đã tách nền';
+  im.onerror = null; im.removeAttribute('src');
+  if (t) { if (t.url) im.src = t.url; else ganAnh(im, t.path); }
+}
+$('#treoChon').addEventListener('click', () => $('#treoFile').click());
+$('#treoBo').addEventListener('click', () => {
+  if (!E || !E.treo) return;
+  if (E.treo.path && !E.treo.moi) E.bo.add(E.treo.path);
+  if (E.treo.url) URL.revokeObjectURL(E.treo.url);
+  E.treo = null; E.doi = true; veTreo();
+});
+$('#treoFile').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f || !E) return;
+  ban(true, 'Đang xử lý ảnh…');
+  let r;
+  try { r = await nenTreo(f); } catch (er) { ban(false); bao(er.message || 'Không mở được ảnh này.', true); return; }
+  ban(false);
+  if (r.coNen && !confirm('Ảnh này hình như chưa tách nền (không có phần trong suốt), treo lên sào sẽ thấy cả nền. Vẫn dùng ảnh này?')) return;
+  if (E.treo) { if (E.treo.path && !E.treo.moi) E.bo.add(E.treo.path); if (E.treo.url) URL.revokeObjectURL(E.treo.url); }
+  E.treo = { moi: true, blob: r.blob, url: URL.createObjectURL(r.blob) };
+  E.doi = true; veTreo();
 });
 
 function veMauSac() {
@@ -488,17 +546,19 @@ $('#luuMau').addEventListener('click', async () => {
     await luu(`${e0.moi ? 'Thêm' : 'Sửa'} mẫu ${ma}`, (d, ctx) => {
       const anh = e0.imgs.map(it => { if (it.moi) { it.path = ctx.tenMoi(ma); ctx.them.push(it); } return it.path; });
       e0.bo.forEach(p => ctx.bo.add(p));
+      const t = e0.treo; if (t && t.moi) { t.path = ctx.tenMoi(ma, 'png', '-treo'); ctx.them.push(t); }
       const mau = tenMau.map(m => { const j = m.img ? e0.imgs.indexOf(m.img) : -1; return j >= 0 ? Object.assign({}, m.them, { ten: m.ten.trim(), anh: j }) : m.ten.trim(); });
       const x = Object.assign({}, e0.goc, { ma, ten: ten || undefined, khu, chu: chu || undefined, gia, tu, den, thieu,
-        anh: anh.length ? anh : undefined, mau: mau.length ? mau : undefined, het: $('#fHet').checked || undefined, an: $('#fAn').checked || undefined });
+        anh: anh.length ? anh : undefined, anhTreo: t ? t.path : undefined, mau: mau.length ? mau : undefined, het: $('#fHet').checked || undefined, an: $('#fAn').checked || undefined });
       Object.keys(x).forEach(k => { if (x[k] === undefined) delete x[k]; });
       const i = e0.moi ? -1 : d.sanPham.findIndex(y => y.ma === e0.ma0);
       if (i >= 0) d.sanPham[i] = x; else d.sanPham.unshift(x);
     });
     // giữ ảnh vừa tải lên trong bộ nhớ để xem ngay, không phải chờ chợ cập nhật
     e0.imgs.forEach(it => { if (it.moi && it.url) { anhCache.set(it.path, it.url); it.url = null; } });
+    if (e0.treo && e0.treo.moi && e0.treo.url) { anhCache.set(e0.treo.path, e0.treo.url); e0.treo.url = null; }
     dongSua(false); veTatCa(); bao(DA_LUU);
-  } catch (er) { e0.imgs.forEach(it => { if (it.moi) it.path = undefined; }); bao(loiDe(er), true); }
+  } catch (er) { e0.imgs.forEach(it => { if (it.moi) it.path = undefined; }); if (e0.treo && e0.treo.moi) e0.treo.path = undefined; bao(loiDe(er), true); }
 });
 $('#xoaMau').addEventListener('click', async () => {
   if (!E || E.moi) return;
@@ -507,7 +567,7 @@ $('#xoaMau').addEventListener('click', async () => {
   try {
     await luu(`Xoá mẫu ${e0.ma0}`, (d, ctx) => {
       const i = d.sanPham.findIndex(y => y.ma === e0.ma0);
-      if (i >= 0) { (d.sanPham[i].anh || []).forEach(p => ctx.bo.add(p)); d.sanPham.splice(i, 1); }
+      if (i >= 0) { (d.sanPham[i].anh || []).forEach(p => ctx.bo.add(p)); if (d.sanPham[i].anhTreo) ctx.bo.add(d.sanPham[i].anhTreo); d.sanPham.splice(i, 1); }
     });
     dongSua(false); veTatCa(); bao('Đã xoá mẫu. Chợ cập nhật sau vài phút.');
   } catch (er) { bao(loiDe(er), true); }

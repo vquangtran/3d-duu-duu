@@ -44,7 +44,7 @@ const P=[],byId={};
   let id=String(x.ma||('mau-'+i)).toLowerCase().replace(/[^a-z0-9]+/g,'-');if(byId[id])id+='-'+i;
   const p={id,ma:x.ma||'',name:x.ten||x.ma||('Mẫu '+(i+1)),price:x.gia??d.gia??0,combo:x.combo??d.combo??0,comboDv:x.comboDv||d.comboDv||'cái',
     tu:x.tu??d.tu??10,den:x.den??d.den??28,thieu:x.thieu||d.thieu||[],tinhTrang:x.het?'het':(x.tinhTrang||d.tinhTrang||'con'),
-    khu:x.khu||'Hàng mới về',chu:x.chu||'',anh:(x.anh||[]).filter(Boolean),mau:(x.mau||[]).map(m=>typeof m==='string'?{ten:m}:m),look:2+(i*7)%9};
+    khu:x.khu||'Hàng mới về',chu:x.chu||'',anh:(x.anh||[]).filter(Boolean),treo:x.anhTreo||'',mau:(x.mau||[]).map(m=>typeof m==='string'?{ten:m}:m),look:2+(i*7)%9};
   Object.assign(p,veMau(p,i));P.push(p);byId[id]=p;
 });
 if(!P.length){$('#loadT').textContent='Chưa có mẫu nào trong data/san-pham.js';throw new Error('no products');}
@@ -348,8 +348,20 @@ function rackTex(p){
     c.fillStyle='#FFFFFF';rr(c,-11,20,22,11,3);c.fill();c.strokeStyle='rgba(50,40,90,.3)';c.lineWidth=.6;c.stroke();c.fillStyle='#3A2C6E';c.font='700 7.5px "Be Vietnam Pro",sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(kg+'kg',0,25.8);
     c.restore();
   };
-  const ve=()=>{c.clearRect(0,0,W,H);const a=p.c1||p.base,b=p.c2||p.pant||p.mark;const kg=[0,1,2,3].map(q=>Math.round(p.tu+(p.den-p.tu)*q/3));[[28,0],[76,3],[124,-3],[172,2]].forEach(([x,l],q)=>mot(x,a,b,l,kg[q]));};
-  ve();const t=texOf(cv);t.anisotropy=8;p.veRack=()=>{ve();t.needsUpdate=true;};p.rack=t;return t;
+  /* Có ảnh đã tách nền (anhTreo): treo chính bộ đồ đó lên móc, lớn dần theo size, thay cho hình vẽ */
+  const moc=(x,y0,hw,yv)=>{c.save();c.translate(x,0);c.lineJoin='round';c.lineCap='round';c.strokeStyle='#C99A63';
+    c.lineWidth=1.4*u;c.beginPath();c.arc(0,y0+3*u,2.6*u,PI*.9,PI*2.2);c.lineTo(0,y0+7*u);c.stroke();
+    c.lineWidth=1.8*u;c.beginPath();c.moveTo(-hw,yv);c.lineTo(0,y0+7*u);c.lineTo(hw,yv);c.stroke();c.restore();};
+  const the=(x,y,kg)=>{c.save();c.translate(x,y);c.fillStyle='#FFFFFF';rr(c,-8*u,0,16*u,8*u,2*u);c.fill();c.strokeStyle='rgba(50,40,90,.3)';c.lineWidth=.5*u;c.stroke();
+    c.fillStyle='#3A2C6E';c.font=`700 ${5.4*u}px "Be Vietnam Pro",sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(kg+'kg',0,4.2*u);c.restore();};
+  const veAnh=(im,kg)=>{[28,76,124,172].forEach((x,q)=>{const k=.8+.065*q,bw=46*u*k,bh=(H-14*u)*k,s=Math.min(bw/im.width,bh/im.height),iw=im.width*s,ih=im.height*s,y=10*u;
+    moc(x*u,1.5*u,iw*.36,y+ih*.06);c.drawImage(im,x*u-iw/2,y,iw,ih);the(x*u+iw*.22,y+ih*.05,kg[q]);});};
+  const ve=()=>{c.clearRect(0,0,W,H);const a=p.c1||p.base,b=p.c2||p.pant||p.mark;const kg=[0,1,2,3].map(q=>Math.round(p.tu+(p.den-p.tu)*q/3));
+    if(p.imTreo){c.imageSmoothingQuality='high';veAnh(p.imTreo,kg);return;}
+    [[28,0],[76,3],[124,-3],[172,2]].forEach(([x,l],q)=>mot(x,a,b,l,kg[q]));};
+  ve();const t=texOf(cv);t.anisotropy=8;p.veRack=()=>{ve();t.needsUpdate=true;};p.rack=t;
+  if(p.treo)loadImg(p.treo,im=>{p.imTreo=im;p.veRack();});
+  return t;
 }
 
 /* ---------- Chiều sâu: đồ đời thường quanh khu hàng ---------- */
