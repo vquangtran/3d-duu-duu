@@ -11,6 +11,8 @@ index.html          # Khung giao diện: thanh trên cùng, bảng mẫu, giỏ 
 data/san-pham.js    # Danh sách mẫu, các sạp, quy định ship và cọc. Sửa mỗi ngày.
 anh/                # Ảnh thật của các mẫu, logo DuuDuu (logo*.png) và vân gỗ của chợ (van-go.jpg)
 src/style.css       # Toàn bộ CSS
+src/fonts.css       # Khai báo font Baloo 2 và Be Vietnam Pro tải từ fonts/ (không dùng Google Fonts)
+fonts/              # File font woff2 (giấy phép SIL OFL), tiếng Việt và Latin
 src/main.js         # Dựng cảnh 3D, nhân vật, sạp, bảng mẫu, giỏ hàng
 quan-tri.html       # Trang quản trị cho shop: thêm, sửa, xoá mẫu, khu, cài đặt đơn hàng
 src/quan-tri.js     # Đọc và ghi data/san-pham.js, tải ảnh lên anh/ qua GitHub API (mỗi lần lưu là một commit)
@@ -46,3 +48,10 @@ Chợ không có máy chủ riêng, nên `quan-tri.html` chạy hoàn toàn trê
 
 - Các mẫu nhân vật có sẵn và bảng màu nằm ở đầu phần `Nhân vật` trong `src/main.js` (`AVP` và `AV`).
 - Người đi chợ, lời rao và số người đang xem là minh hoạ.
+- Góc giao hàng tông tím cam: thùng carton (`carton`, có băng keo tím, vận đơn, ký hiệu, tem DuuDuu), xe đẩy (`xeDay`) và loa rao (`loa`). Có ở sảnh vào chợ, mỗi sạp có thùng, sạp chẵn có loa nhỏ trên thùng, cứ 3 sạp có một xe đẩy. Nhãn dán vẽ chung trong một ảnh (`danTex`).
+- Nhãn sale kiểu 3D tự lấy từ dữ liệu, shop không phải nhập thêm: khung ảnh mẫu có nhãn dán (`nhanMau`: Sắp hết size, Combo, Giá tốt, Mới về), mỗi sạp có một nhãn nổi lơ lửng (`nhanKhu`, `nhan3D`: Sắp hết, Combo, Chỉ …k, Hot sale), cạnh loa ở sảnh có nhãn Sale, cổng bóng có biển Đang mở.
+- Hộp quà (`hopQua`) ở quầy tư vấn, giỏ mua hàng (`gioHang`) ở lối vào và ở các sạp.
+- Trang trí Noel cho cả chợ (cùng điều kiện `NOEL`): hai cây thông lớn hai bên logo cuối chợ (`cayThong`), quả châu treo trần dọc lối đi, vòng nguyệt quế trên mỗi sạp (`vongLa`), đèn nháy dọc rào trước sạp, tất Noel ở quầy tư vấn (`tatNoel`), gấu lớn đội mũ Noel, tuyết rơi nhẹ (`tuyetRoi`), hộp quà đổi sang đỏ, xanh lá.
+- Đồ Noel chi tiết: quả châu trơn và sọc có nắp, móc (`quaChau`, ảnh sọc vẽ ở `texNoel`), kẹo gậy sọc bắt chéo có nơ ở hai đầu rào sạp (`keoGay`, `noDo`), đèn quả nhót trên dây võng (`dayDen`), chuông vàng và lá nhựa ruồi treo trần, trên vòng nguyệt quế và biển Đang mở (`chuong`, `hoaLa`), tất sọc cổ lông, quả cầu tuyết, cốc ca cao, bánh gừng trên quầy (`quayNoel`), túi quà cạnh cây thông (`tuiQua`).
+- Góc Noel (`gocNoel`) bên trái lối vào: bục tuyết, cây thông, người tuyết, chim cánh cụt, tuần lộc có đèn nháy, lính kẹp hạt dẻ và nhãn Giáng sinh an lành. Chỉ hiện từ tháng 11 tới hết 6/1 (`NOEL`), ngoài mùa thì tự ẩn.
+- Đồ trong chợ dựng theo kiểu đồ chơi nhựa 3D: hộp bo tròn cạnh (`roundBox`), vệt bóng và viền sáng theo góc nhìn (`glossMat`, `rim`), ánh đèn vẫn nướng sẵn vào màu nên điện thoại chạy nhẹ. Khử răng cưa luôn bật, màn hình nét gấp 2; máy chạy chậm thì chợ tự giảm độ nét.
