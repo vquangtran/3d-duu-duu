@@ -227,7 +227,7 @@ const LP=(x,y,z,i,r,c)=>({x,y,z,i,r2:r*r,c});
 const WARM=[1,.72,.42],GOLD=[1,.84,.55];
 
 function newScene(id,title,sub){
-  const s={id,title,sub,dec:[],root:new T.Group(),lit:new Batch(),glow:new Batch(),hop:new Batch(),vl:{den:new Batch(),vang:new Batch(),su:new Batch()},pts:[],col:[],items:[],glows:[],npcs:[],stack:[new T.Matrix4()],tags:[]};
+  const s={id,title,sub,dec:[],root:new T.Group(),lit:new Batch(),glow:new Batch(),hop:new Batch(),vl:{den:new Batch(),vang:new Batch(),su:new Batch()},pts:[],col:[],items:[],glows:[],npcs:[],stack:[new T.Matrix4()],tags:[],taps:[]};
   s.m=()=>s.stack[s.stack.length-1];
   s.push=m=>s.stack.push(s.m().clone().multiply(m));s.pop=()=>s.stack.pop();
   s.at=(x,y,z,ry=0,rx=0,rz=0,sx=1,sy=1,sz=1)=>s.m().clone().multiply(mat(x,y,z,ry,rx,rz,sx,sy,sz));
@@ -1136,16 +1136,16 @@ function posterChu(dau,duoi,W,H){
     c.fillStyle='#FFD3EF';c.font=`700 ${Math.round(ss)}px ${F_TH}`;chuXuong(c,duoi,W/2,y0+(nh-1)*hl+ss*.6+sl,W*.82,sl,2);});
 }
 /* Poster treo trên lối đi, hai mặt */
-function posterTreo(s,z,truoc,sau){
+function posterTreo(s,z,truoc,sau,pTruoc){
   const w=3.3,h=2.2,y=4.75;
-  for(const[t,ry,dz]of[[truoc,0,.012],[sau,PI,-.012]]){const m=s.plane(t,w,h,0,y,z+dz,ry);m.userData.giu=1;}
+  for(const[t,ry,dz]of[[truoc,0,.012],[sau,PI,-.012]]){const m=s.plane(t,w,h,0,y,z+dz,ry);m.userData.giu=1;if(pTruoc&&t===truoc)s.taps.push({mesh:m,k:'mau',p:pTruoc,pos:s.world(0,y,z)});}
   s.lit.add(boxG(w+.08,h+.08,.02),'#FFFFFF',s.at(0,y,z),true);
   for(const x of[-w/2+.15,w/2-.15])ong(s,'den',.006,[x,y+h/2,z],[x,vomY(x)-.05,z]);
 }
 /* Poster đứng trên giá vẽ gỗ */
-function posterDung(s,x,z,ry,t){
+function posterDung(s,x,z,ry,t,tap){
   s.push(mat(x,0,z,ry));const w=.95,h=1.36,y=1.35;
-  const m=s.plane(t,w,h,0,y,.04,0);m.userData.giu=1;s.lit.add(boxG(w+.06,h+.06,.03),'#FFFFFF',s.at(0,y,.015),true);
+  const m=s.plane(t,w,h,0,y,.04,0);m.userData.giu=1;if(tap)s.taps.push(Object.assign({mesh:m,pos:s.world(0,y-h/2+.12,.06)},tap));s.lit.add(boxG(w+.06,h+.06,.03),'#FFFFFF',s.at(0,y,.015),true);
   ong(s,'vang',.022,[-.56,0,.16],[-.51,y+h/2+.1,0]);ong(s,'vang',.022,[.56,0,.16],[.51,y+h/2+.1,0]);ong(s,'vang',.02,[0,0,-.42],[0,y+h/2,-.02]);
   ong(s,'vang',.018,[-.5,y-h/2-.02,.07],[.5,y-h/2-.02,.07]);
   s.pop();s.round(x,z,.55);
@@ -1164,12 +1164,12 @@ function trangTri(s){
   [[-W+2.2,ZE-2.4],[W-2.2,ZE-2.4],[W-3+2.6,ZR-M.R*11-5+.9]].forEach(([x,z],i)=>{s.mc('su',new T.CylinderGeometry(.12,.15,.2,12),s.at(x,.1,z));chumBong(s,x,.2,z,7,20+i,1.6);s.round(x,z,.35);});
   /* poster treo giữa các dãy sạp */
   const zT=[];for(let r=0;r<M.R-1;r++)if(r!==1)zT.push(ZR-5.5-11*r-5.5);
-  const pa=[[posterMau(lay(0),(lay(0).khu||'Hàng mới về').toUpperCase(),2048,1360),posterChu(`Đi đơn từ ${SHOP.donToiThieu} bộ`,ship,2048,1360)],
-            [posterMau(re,(re.khu||'Giá tốt').toUpperCase(),2048,1360),posterChu(`Size ${tu}–${den}kg`,'Chợ đánh dấu mẫu vừa bé',2048,1360)]];
+  const pa=[[posterMau(lay(0),(lay(0).khu||'Hàng mới về').toUpperCase(),2048,1360),posterChu(`Đi đơn từ ${SHOP.donToiThieu} bộ`,ship,2048,1360),lay(0)],
+            [posterMau(re,(re.khu||'Giá tốt').toUpperCase(),2048,1360),posterChu(`Size ${tu}–${den}kg`,'Chợ đánh dấu mẫu vừa bé',2048,1360),re]];
   zT.forEach((z,i)=>posterTreo(s,z,...pa[i%pa.length]));
   /* hai poster đứng ở sảnh vào */
-  posterDung(s,-4.4,ZR+2.2,.42,posterChu('Bé lên sàn diễn','Mặc thử, lưu ảnh gửi cả nhà',1200,1720));
-  posterDung(s,4.4,ZR+2.2,-.42,posterMau(lay(1),(lay(1).khu||'Hàng mới về').toUpperCase(),1200,1720));
+  posterDung(s,-4.4,ZR+2.2,.42,posterChu('Bé lên sàn diễn','Mặc thử, lưu ảnh gửi cả nhà',1200,1720),{k:'dien'});
+  posterDung(s,4.4,ZR+2.2,-.42,posterMau(lay(1),(lay(1).khu||'Hàng mới về').toUpperCase(),1200,1720),{k:'mau',p:lay(1)});
   /* góc Noel bên trái lối vào (chỉ có vào mùa Noel) */
   if(NOEL)gocNoel(s,-2.9,ZE-2.2,2.6);
   /* chồng giỏ mua hàng ở lối vào, giỏ trên cùng có sẵn quần áo */
@@ -1628,9 +1628,9 @@ function camTarget(){
 /* ---------- Giao diện ---------- */
 const SC=new V3();
 function project(v,offY=0){SC.set(v.x,v.y+offY,v.z).project(camera);return{x:(SC.x*.5+.5)*app.clientWidth,y:(-SC.y*.5+.5)*app.clientHeight,ok:SC.z<1};}
-const close=()=>{$('#sheetWrap').hidden=true;$('#cartWrap').hidden=true;$('#shotWrap').hidden=true;$('#tvWrap').hidden=true;state.lock=0;};
+const close=()=>{$('#dienWrap').hidden=true;$('#sheetWrap').hidden=true;$('#cartWrap').hidden=true;$('#shotWrap').hidden=true;$('#tvWrap').hidden=true;state.lock=0;};
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',close));
-['#sheetWrap','#cartWrap'].forEach(id=>$(id).addEventListener('pointerdown',e=>{if(e.target===$(id))close();}));
+['#sheetWrap','#cartWrap','#dienWrap'].forEach(id=>$(id).addEventListener('pointerdown',e=>{if(e.target===$(id))close();}));
 
 /* ---------- Lưu trên máy khách (giỏ, thông tin bé) ---------- */
 const store={get(k,d){try{const v=localStorage.getItem('duu.'+k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem('duu.'+k,JSON.stringify(v));}catch(e){}}};
@@ -1751,6 +1751,25 @@ function renderKg(){
 $('#kgMinus').addEventListener('click',()=>{pickKg=Math.max(3,pickKg-1);renderKg();});
 $('#kgPlus').addEventListener('click',()=>{pickKg=Math.min(50,pickKg+1);renderKg();});
 $('#tryOn').addEventListener('click',()=>{const p=openP;close();player.wear(p);batDauDien(p);});
+
+/* ---------- Poster "Bé lên sàn diễn": chọn một mẫu để bé mặc thử ngay ---------- */
+function moSanDien(){
+  if(state.lock||state.mode!=='play')return;state.lock=1;state.tgt=null;state.goal=null;marker.visible=false;
+  const kg=BE.kg,ds=P.filter(p=>!p.thu&&p.tinhTrang!=='het'),hang=p=>!kg?0:hopSize(p,kg)==='ok'?0:1;
+  ds.sort((a,b)=>hang(a)-hang(b)||(b.anh.length?1:0)-(a.anh.length?1:0));
+  $('#dSub').textContent=kg?`Mẫu vừa bé ${kg}kg xếp lên trước. Chạm một mẫu, bé mặc vào rồi đi sàn diễn, xong chợ làm ảnh để mẹ lưu và gửi cả nhà.`:'Chạm một mẫu, bé mặc vào rồi đi sàn diễn, xong chợ làm ảnh để mẹ lưu và gửi cả nhà.';
+  const box=$('#dList');box.innerHTML='';
+  ds.forEach(p=>{const b=document.createElement('button');b.type='button';b.className='dc'+(p.anh.length?' photo':'');
+    const im=document.createElement('img');im.src=thumbOf(p);im.alt='';im.loading='lazy';const t=document.createElement('span');t.textContent=p.name;const sm=document.createElement('small');sm.textContent=giaChu(p);t.append(sm);b.append(im,t);
+    let nhan=p.name+', '+giaChu(p);
+    if(kg){const f=hopSize(p,kg),e=document.createElement('em');e.className='fitb';e.textContent=f==='ok'?'Vừa bé':`Không có ${kg}kg`;b.append(e);if(f!=='ok')b.classList.add('ko');nhan+=', '+e.textContent;}
+    b.setAttribute('aria-label','Mặc thử '+nhan);
+    b.addEventListener('click',()=>{close();player.wear(p);batDauDien(p);});box.appendChild(b);});
+  $('#dienWrap').hidden=false;$('#dienWrap .sheet').scrollTop=0;
+}
+const dienHot=document.createElement('button');dienHot.className='hot';dienHot.style.display='none';dienHot.setAttribute('aria-label','Bé lên sàn diễn: chọn mẫu mặc thử');
+dienHot.innerHTML='Mặc thử<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+dienHot.addEventListener('click',moSanDien);$('#tags').appendChild(dienHot);
 
 /* ---------- Sàn diễn: bé đi vài bước về phía máy quay, tạo dáng, rồi ra ảnh để mẹ chia sẻ ---------- */
 let THAM=null;
@@ -2002,10 +2021,13 @@ cv.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;
 const pEnd=e=>{const p=ptr.get(e.pointerId);ptr.delete(e.pointerId);stickEnd();if(p&&p.moved<9&&performance.now()-p.t<400&&state.mode==='play'&&!state.lock)tap(e.clientX,e.clientY);};
 cv.addEventListener('pointerup',pEnd);cv.addEventListener('pointercancel',e=>{ptr.delete(e.pointerId);stickEnd();});
 cv.addEventListener('wheel',e=>{e.preventDefault();if(state.mode==='intro'||studio.on)return;state.zoomed=true;state.dist=clamp(state.dist*(1+e.deltaY*.001),3,11);},{passive:false});
+const g0=r=>r.intersectObject(cur.ground,false)[0];
 function tap(x,y){
   const r=app.getBoundingClientRect(),m=new T.Vector2((x-r.left)/r.width*2-1,-(y-r.top)/r.height*2+1);rc.setFromCamera(m,camera);
   const list=cur.items.filter(i=>i.pos.distanceTo(player.g.position)<16&&trongGian(i,player.g.position)).map(i=>i.mesh),hit=rc.intersectObjects(list,false)[0];
   if(hit&&hit.object.userData.item){openSheet(hit.object.userData.item);return;}
+  const tp=cur.taps.filter(t=>t.pos.distanceTo(player.g.position)<16),th=rc.intersectObjects(tp.map(t=>t.mesh),false)[0];
+  if(th&&(!g0(rc)||th.distance<=g0(rc).distance)){const t=tp.find(t=>t.mesh===th.object);if(t.k==='dien')moSanDien();else if(t.p)openSheet(t.p);return;}
   if(cur.tuvan&&cur.tuvan.g.position.distanceTo(player.g.position)<18&&rc.intersectObject(cur.tuvan.g,true)[0]){moTuVan();return;}
   const g=rc.intersectObject(cur.ground,false)[0];
   if(g){const t={x:g.point.x,z:g.point.z};resolve(cur,t,.34);diToi(t);state.goal=null;state.wantYaw=null;marker.position.set(t.x,.04,t.z);marker.visible=true;state.stuck=0;hideHint();}
@@ -2073,6 +2095,9 @@ function stepHots(){moNhanVat();
       v.x=clamp(v.x,46,W-92);if(done.some(q=>Math.abs(q.x-v.x)<76&&Math.abs(q.y-v.y)<48))continue;done.push(v);
       const b=hotBtn(n++);b.item=it.p;const f=BE.kg?hopSize(it.p,BE.kg):null;b.classList.toggle('ok',f==='ok');b.classList.toggle('no',!!f&&f!=='ok');b.setAttribute('aria-label','Xem mẫu '+it.p.name);b.style.display='';b.style.transform=`translate(${v.x}px,${v.y}px) translate(-50%,-50%)`;}}
   for(let i=n;i<hots.length;i++)hots[i].style.display='none';
+  let dh=false;const dp=state.mode==='play'&&!state.lock&&!studio.on&&cur.taps.find(t=>t.k==='dien');
+  if(dp&&dp.pos.distanceTo(player.g.position)<11){const v=project(dp.pos);if(v.ok&&v.x>40&&v.x<app.clientWidth-40&&v.y>70&&v.y<app.clientHeight-150){dh=true;dienHot.style.transform=`translate(${v.x}px,${v.y}px) translate(-50%,-50%)`;}}
+  dienHot.style.display=dh?'':'none';
 }
 /* Bảng nổi trên tên sạp: sạp có bao nhiêu mẫu vừa cân nặng của bé */
 const KB=[];

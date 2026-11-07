@@ -225,3 +225,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-of
 .shot{display:block;width:100%;max-height:min(56dvh,560px);object-fit:contain;border-radius:18px;background:#F3E9FB;-webkit-touch-callout:default;user-select:auto;-webkit-user-select:auto}
 .shotWait{display:flex;align-items:center;justify-content:center;min-height:240px;border-radius:18px;background:#F3E9FB;font-weight:600;color:var(--dim)}
 
+
+/* ---------- Sàn diễn: chọn mẫu mặc thử ---------- */
+#dTitle,#dSub{padding-right:52px}
+.dlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
+.dc{position:relative;border-radius:15px;overflow:hidden;background:#F7F1FD;color:var(--sun-ink);display:flex;flex-direction:column;text-align:left;padding:0;border:2px solid #EFE4FA}
+.dc img{width:100%;aspect-ratio:4/3;object-fit:contain;display:block;background:#fff}
+.dc.photo img{object-fit:cover}
+.dc span{padding:6px 9px 8px;display:flex;flex-direction:column;font-size:12.5px;font-weight:700;line-height:1.25}
+.dc span small{font-family:var(--display);font-size:15px;font-weight:800;color:#6A2BE8}
+.dc .fitb{position:absolute;left:6px;top:6px;padding:2px 7px;border-radius:9px;font-style:normal;font-size:11px;font-weight:800;background:#DDF6EE;color:#0E6B53}
+.dc.ko{opacity:.55}
+.dc.ko .fitb{background:#ECEDF4;color:#5D638C}
+.dc:active{border-color:var(--act)}
