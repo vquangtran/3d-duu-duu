@@ -327,13 +327,20 @@ function stepsPlinth(s,x,z,ry){
 }
 function bear(s,x,z,sc=1,ry=0,y=0,b='#B9A8FF',l='#EDE7FF'){
   s.push(mat(x,y,z,ry,0,0,sc,sc,sc));
-  s.lit.add(new T.SphereGeometry(.9,16,12),b,s.at(0,.95,0,0,0,0,1,1.05,.9),true);s.lit.add(new T.SphereGeometry(.55,14,10),l,s.at(0,.92,.5,0,0,0,1,1.1,.6),true);
-  s.lit.add(new T.SphereGeometry(.72,16,12),b,s.at(0,2.15,.05),true);
+  s.lit.add(new T.SphereGeometry(.9,32,24),b,s.at(0,.95,0,0,0,0,1,1.05,.9),true);s.lit.add(new T.SphereGeometry(.55,24,16),l,s.at(0,.92,.5,0,0,0,1,1.1,.6),true);
+  s.lit.add(new T.SphereGeometry(.72,32,24),b,s.at(0,2.15,.05),true);
   for(const k of[-1,1]){s.lit.add(new T.SphereGeometry(.26,10,8),b,s.at(k*.55,2.73,0),true);s.lit.add(new T.SphereGeometry(.13,8,6),l,s.at(k*.55,2.73,.15),true);s.lit.add(new T.SphereGeometry(.34,12,8),b,s.at(k*.7,.28,.65,0,0,0,1,.8,1.3),true);s.lit.add(new T.SphereGeometry(.06,6,5),'#2B1B17',s.at(k*.26,2.28,.68),true);}
   /* một tay giơ lên vẫy */
   s.lit.add(new T.SphereGeometry(.28,10,8),b,s.at(-.92,1.22,.25,0,0,0,1,1.4,1),true);s.lit.add(new T.SphereGeometry(.28,10,8),b,s.at(1.15,1.95,.2,0,0,-.5,1,1.7,1),true);
   s.lit.add(new T.SphereGeometry(.26,10,8),l,s.at(0,2,.66,0,0,0,1.15,.85,.7),true);s.lit.add(new T.SphereGeometry(.08,6,5),'#2B1B17',s.at(0,2.08,.87),true);
-  s.lit.add(new T.TorusGeometry(.4,.09,8,14),'#7C3CFF',s.at(0,1.56,.25,0,PI/2.3));
+  /* má hồng, miệng cười */
+  for(const k of[-1,1])s.lit.add(new T.SphereGeometry(.11,14,10),'#FFB8CB',s.at(k*.37,2.02,.62,k*.5,0,0,1,.62,.35),true);
+  s.lit.add(new T.TorusGeometry(.075,.016,6,14,PI),'#2B1B17',s.at(0,1.96,.84,0,-.25,PI),true);
+  /* khăn len quàng cổ: vòng quanh cổ và hai vạt buông trước ngực */
+  s.lit.add(new T.TorusGeometry(.56,.17,14,36),'#E8473C',s.at(0,1.62,.06,0,PI/2.25),true);
+  s.lit.add(roundBox(.28,.72,.1,.045),'#E8473C',s.at(.24,1.2,.9,0,-.32,.1),true);
+  s.lit.add(roundBox(.26,.56,.1,.045),'#D93A30',s.at(.02,1.3,.9,0,-.3,-.12),true);
+  for(const[x,y,z,rz]of[[.27,.87,1.03,.1],[.05,1.04,1.01,-.12]])s.lit.add(roundBox(.27,.045,.11,.02),'#FFFFFF',s.at(x,y,z,0,-.32,rz),true);
   s.pop();
 }
 
