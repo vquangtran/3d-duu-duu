@@ -273,15 +273,14 @@ const DA_LUU = 'Đã lưu. Chợ cập nhật sau vài phút.';
 let K = null;   // bản đang xem: { head, treeSha, files, text, data }
 function hienVao(loi) {
   $('#chinh').hidden = true; $('#vao').hidden = false;
-  $('#vaoToken').value = C.token || ''; $('#vaoOwner').value = C.owner; $('#vaoRepo').value = C.repo; $('#vaoBranch').value = C.branch;
-  $('#vaoKhoTen').textContent = C.repo;
+  $('#vaoToken').value = C.token || '';
   $('#vaoLoi').hidden = !loi; $('#vaoLoi').textContent = loi || '';
 }
 $('#vaoForm').addEventListener('submit', async e => {
   e.preventDefault();
   const tk = $('#vaoToken').value.trim();
   if (!tk) { $('#vaoLoi').hidden = false; $('#vaoLoi').textContent = 'Mẹ dán mã truy cập vào ô trên nha.'; $('#vaoToken').focus(); return; }
-  C = { token: tk, owner: $('#vaoOwner').value.trim() || C.owner, repo: $('#vaoRepo').value.trim() || C.repo, branch: $('#vaoBranch').value.trim() || 'main' };
+  C = Object.assign({}, C, { token: tk });
   await batDau();
 });
 async function batDau() {
