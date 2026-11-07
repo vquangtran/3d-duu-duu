@@ -29,7 +29,7 @@ Máy sẽ nhớ mã. Mã hết hạn thì trang báo, chỉ cần tạo mã mớ
 
 Mã chỉ có quyền với đúng kho chợ. Không gửi mã này cho ai, không dán vào nhóm chat.
 
-Trang quản trị sửa nhánh `main`. Nếu chợ chạy từ nhánh khác, đổi ở mục **Nâng cao** lúc đăng nhập.
+Trang quản trị sửa nhánh `main` của kho `vquangtran/3d-duu-duu`.
 
 ## Cách sửa tay
 
