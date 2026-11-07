@@ -1,5 +1,40 @@
 # Hướng dẫn cập nhật hàng cho chợ 3D
 
+## Cách dễ nhất: trang quản trị
+
+Mở trang `quan-tri.html` của chợ (ví dụ `https://<địa chỉ chợ>/quan-tri.html`) trên điện thoại hoặc máy tính. Nên lưu trang này vào màn hình chính cho tiện. Khách không thấy đường vào trang này.
+
+Ở trang quản trị có thể:
+- **Thêm mẫu**: chụp hoặc chọn ảnh từ máy (ảnh tự thu nhỏ trước khi tải lên), ghi mã, tên, chọn khu, dán đoạn chữ đã đăng Zalo. Ngay dưới ô chữ, trang báo chợ đọc ra giá, size, size hết thế nào. Đọc sai thì mở **Chợ đọc sai? Sửa tay**.
+- **Sửa mẫu**: bấm vào mẫu trong danh sách. Đổi thứ tự ảnh bằng hai nút mũi tên (ảnh số 1 được treo lên sạp), bỏ ảnh, thêm màu và chọn ảnh cho từng màu, đánh dấu **Hết hàng** hoặc **Ẩn khỏi chợ**.
+- **Xoá mẫu**: trong màn sửa mẫu, bấm **Xoá mẫu**. Ảnh của mẫu cũng bị xoá.
+- **Khu**: thêm khu, đổi tên, đổi màu, đổi thứ tự. Đổi tên khu thì các mẫu trong khu tự đổi theo.
+- **Cài đặt**: số Zalo nhận đơn, đi đơn từ mấy bộ, phí ship, tiền cọc, bật tắt chế độ xem thử.
+
+Mỗi lần bấm **Lưu**, trang ghi thẳng vào kho GitHub của chợ. Chợ cập nhật sau vài phút. Trang luôn đọc bản mới nhất trước khi lưu, nên hai người sửa trên hai máy cũng không đè mất của nhau.
+
+### Lần đầu vào: lấy mã truy cập GitHub
+
+Trang quản trị cần một mã truy cập để được ghi vào kho. Chỉ làm một lần trên mỗi máy:
+
+1. Đăng nhập GitHub (tài khoản có quyền sửa kho chợ), mở https://github.com/settings/personal-access-tokens/new
+2. **Token name**: ghi `Quản trị chợ`. **Expiration**: chọn thời hạn dài, ví dụ 1 năm.
+3. **Repository access**: chọn **Only select repositories**, rồi chọn kho `3d-duu-duu`.
+4. **Permissions** → **Repository permissions** → **Contents**: chọn **Read and write**.
+5. Bấm **Generate token**, chép mã (bắt đầu bằng `github_pat_`) rồi dán vào trang quản trị.
+
+Người dùng hằng ngày không cần tài khoản GitHub. Người giữ tài khoản tạo mã, nhắn riêng (tin nhắn 1-1, không gửi vào nhóm) cho người dùng. Người dùng chạm giữ vào tin nhắn để chép mã, mở trang quản trị bằng Safari hoặc Chrome, dán vào ô **Mã truy cập GitHub** rồi bấm **Vào quản trị**. Dán xong thì cả hai bên xoá tin nhắn chứa mã.
+
+Máy sẽ nhớ mã. Mã hết hạn thì trang báo, chỉ cần tạo mã mới và dán lại. Mất máy thì vào lại trang trên của GitHub để xoá mã đó. Muốn thôi dùng trên một máy, vào **Cài đặt** → **Đăng xuất khỏi máy này**.
+
+Mã chỉ có quyền với đúng kho chợ. Không gửi mã này cho ai, không dán vào nhóm chat.
+
+Trang quản trị sửa nhánh `main`. Nếu chợ chạy từ nhánh khác, đổi ở mục **Nâng cao** lúc đăng nhập.
+
+## Cách sửa tay
+
+Vẫn có thể sửa tay như trước. Trang quản trị và sửa tay dùng chung file `data/san-pham.js`. Khi trang quản trị lưu, file được viết lại gọn gàng, các ghi chú tự viết thêm trong file sẽ mất.
+
 Mỗi ngày chỉ cần làm 2 việc:
 1. Bỏ ảnh mẫu mới vào thư mục `anh/`.
 2. Sửa file `data/san-pham.js`.
