@@ -10,7 +10,7 @@ const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)), lerp=(a,b,t)=>a+(b-a)*t;
 const angLerp=(a,b,t)=>{let d=(b-a+PI)%(2*PI);if(d<0)d+=2*PI;return a+(d-PI)*t;};
 const seeded=s=>()=>(s=(s*16807)%2147483647)/2147483647;
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const LOW=(navigator.deviceMemory&&navigator.deviceMemory<=3)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4);
+const LOW=(navigator.deviceMemory&&navigator.deviceMemory<=2)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=2);
 const mat=(x,y,z,ry=0,rx=0,rz=0,sx=1,sy=1,sz=1)=>new T.Matrix4().compose(new V3(x,y,z),new T.Quaternion().setFromEuler(new T.Euler(rx,ry,rz,'YXZ')),new V3(sx,sy,sz));
 
 /* ---------- Sản phẩm: đọc từ data/san-pham.js ---------- */
@@ -151,8 +151,9 @@ class Batch{
         col[i*3]=Math.min(1,this.c[i*3]*r*ao);col[i*3+1]=Math.min(1,this.c[i*3+1]*g*ao);col[i*3+2]=Math.min(1,this.c[i*3+2]*b*ao);}
     }else col.set(this.c);
     const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(new Float32Array(this.p),3));geo.setAttribute('color',new T.BufferAttribute(col,3));
+    if(light)geo.setAttribute('normal',new T.BufferAttribute(new Float32Array(this.n),3));
     this.p=this.n=this.c=null;
-    return new T.Mesh(geo,new T.MeshBasicMaterial({vertexColors:true}));
+    return new T.Mesh(geo,light?glossMat(light.dir):new T.MeshBasicMaterial({vertexColors:true}));
   }
   /* vật liệu ánh kim, sứ: chỉ một lần tra ảnh nên máy yếu vẫn chạy mượt */
   meshMc(tex){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(new Float32Array(this.p),3));geo.setAttribute('normal',new T.BufferAttribute(new Float32Array(this.n),3));this.p=this.n=this.c=null;return new T.Mesh(geo,new T.MeshMatcapMaterial({matcap:tex}));}
@@ -164,8 +165,37 @@ function matcap(k){
   c.fillStyle=e;c.fillRect(0,0,n,n);const g=c.createRadialGradient(n*.42,n*.34,2,n*.5,n*.5,n*.56);g.addColorStop(0,a);g.addColorStop(.28,b);g.addColorStop(.72,d);g.addColorStop(1,e);c.fillStyle=g;c.fillRect(0,0,n,n);
   return MC[k]=new T.CanvasTexture(cv);
 }
+/* Bóng nhựa: ánh sáng đã nướng sẵn vào màu, chỉ cộng thêm vệt sáng bóng và viền sáng theo góc nhìn */
+const GLOSS={};
+function glossMat(dir){
+  const k=dir.join(',');if(GLOSS[k])return GLOSS[k];
+  const m=new T.MeshBasicMaterial({vertexColors:true}),sun={value:new V3(...dir).normalize()};
+  m.onBeforeCompile=sh=>{
+    sh.uniforms.uSun=sun;
+    sh.vertexShader=sh.vertexShader.replace('void main() {','varying vec3 vGN;varying vec3 vGV;\nvoid main() {').replace('#include <project_vertex>','#include <project_vertex>\nvGN=normalize(normalMatrix*normal);vGV=-mvPosition.xyz;');
+    sh.fragmentShader=sh.fragmentShader.replace('void main() {','uniform vec3 uSun;varying vec3 vGN;varying vec3 vGV;\nvoid main() {').replace('#include <envmap_fragment>',`#include <envmap_fragment>
+      vec3 gn=normalize(vGN),gv=normalize(vGV),gl=normalize((viewMatrix*vec4(uSun,0.)).xyz),gh=normalize(gl+gv);
+      float nh=max(dot(gn,gh),0.),nv=max(dot(gn,gv),0.);
+      outgoingLight+=vec3(pow(nh,60.)*.22+pow(nh,8.)*.05)+pow(1.-nv,4.)*.1*outgoingLight;`);
+  };
+  return GLOSS[k]=m;
+}
+/* Nhân vật: viền sáng nhẹ quanh mép như đất sét bóng */
+function rim(m){m.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <envmap_fragment>','#include <envmap_fragment>\noutgoingLight+=pow(1.-abs(dot(normal,normalize(vViewPosition))),3.)*.22*outgoingLight;');};return m;}
 const seg=v=>clamp(Math.ceil(v/1.5),1,14);
-const boxG=(w,h,d)=>new T.BoxGeometry(w,h,d,seg(w),seg(h),seg(d));
+/* Hộp bo tròn cạnh như đồ nhựa: 2 đoạn cong ở mỗi cạnh, phần phẳng chia theo seg() để ánh đèn nướng mịn */
+const RB={};
+function roundBox(w,h,d,r){
+  const key=[w,h,d,r].map(v=>v.toFixed(3)).join('|');if(RB[key])return RB[key];
+  const D=[w,h,d],m=D.map(seg),N=m.map(v=>v+4),g=new T.BoxGeometry(1,1,1,N[0],N[1],N[2]),pa=g.attributes.position,na=g.attributes.normal,c=[0,0,0],q=[0,0,0],v=new V3();
+  for(let i=0;i<pa.count;i++){
+    for(let a=0;a<3;a++){const n=N[a],j=Math.round((pa.array[i*3+a]+.5)*n),e=D[a]/2-r;
+      if(j<2){c[a]=-e;q[a]=-(2-j)/2;}else if(j>n-2){c[a]=e;q[a]=(j-n+2)/2;}else{c[a]=-e+(j-2)/m[a]*2*e;q[a]=0;}}
+    v.set(q[0],q[1],q[2]).normalize();na.setXYZ(i,v.x,v.y,v.z);pa.setXYZ(i,c[0]+v.x*r,c[1]+v.y*r,c[2]+v.z*r);
+  }
+  return RB[key]=g;
+}
+const boxG=(w,h,d)=>{const mn=Math.min(w,h,d);return mn<.025?new T.BoxGeometry(w,h,d,seg(w),seg(h),seg(d)):roundBox(w,h,d,Math.min(mn*.2,.09));};
 const LP=(x,y,z,i,r,c)=>({x,y,z,i,r2:r*r,c});
 const WARM=[1,.72,.42],GOLD=[1,.84,.55];
 
@@ -174,9 +204,9 @@ function newScene(id,title,sub){
   s.m=()=>s.stack[s.stack.length-1];
   s.push=m=>s.stack.push(s.m().clone().multiply(m));s.pop=()=>s.stack.pop();
   s.at=(x,y,z,ry=0,rx=0,rz=0,sx=1,sy=1,sz=1)=>s.m().clone().multiply(mat(x,y,z,ry,rx,rz,sx,sy,sz));
-  s.box=(w,h,d,x,y,z,c,ry=0,rx=0,rz=0)=>s.lit.add(boxG(w,h,d),c,s.at(x,y,z,ry,rx,rz));
-  s.cyl=(r1,r2,h,x,y,z,c,sg=10,rx=0,rz=0)=>s.lit.add(new T.CylinderGeometry(r1,r2,h,sg),c,s.at(x,y,z,0,rx,rz));
-  s.ball=(r,x,y,z,c,sy=1,d=1)=>s.lit.add(new T.IcosahedronGeometry(r,d),c,s.at(x,y,z,0,0,0,1,sy,1));
+  s.box=(w,h,d,x,y,z,c,ry=0,rx=0,rz=0)=>s.lit.add(boxG(w,h,d),c,s.at(x,y,z,ry,rx,rz),true);
+  s.cyl=(r1,r2,h,x,y,z,c,sg=16,rx=0,rz=0)=>s.lit.add(new T.CylinderGeometry(r1,r2,h,sg),c,s.at(x,y,z,0,rx,rz),sg>=12);
+  s.ball=(r,x,y,z,c,sy=1,d=2)=>s.lit.add(new T.IcosahedronGeometry(r,Math.max(d,2)),c,s.at(x,y,z,0,0,0,1,sy,1),true);
   s.mc=(k,geo,m)=>s.vl[k].add(geo,'#FFFFFF',m,true);
   s.gball=(r,x,y,z,c,sy=1)=>s.glow.add(new T.SphereGeometry(r,10,8),c,s.at(x,y,z,0,0,0,1,sy,1));
   s.gbox=(w,h,d,x,y,z,c)=>s.glow.add(new T.BoxGeometry(w,h,d),c,s.at(x,y,z));
@@ -726,13 +756,13 @@ function posterChu(dau,duoi,W,H){
 function posterTreo(s,z,truoc,sau){
   const w=3.3,h=2.2,y=4.75;
   for(const[t,ry,dz]of[[truoc,0,.012],[sau,PI,-.012]]){const m=s.plane(t,w,h,0,y,z+dz,ry);m.userData.giu=1;}
-  s.lit.add(boxG(w+.08,h+.08,.02),'#FFFFFF',s.at(0,y,z));
+  s.lit.add(boxG(w+.08,h+.08,.02),'#FFFFFF',s.at(0,y,z),true);
   for(const x of[-w/2+.15,w/2-.15])ong(s,'den',.006,[x,y+h/2,z],[x,vomY(x)-.05,z]);
 }
 /* Poster đứng trên giá vẽ gỗ */
 function posterDung(s,x,z,ry,t){
   s.push(mat(x,0,z,ry));const w=.95,h=1.36,y=1.35;
-  const m=s.plane(t,w,h,0,y,.04,0);m.userData.giu=1;s.lit.add(boxG(w+.06,h+.06,.03),'#FFFFFF',s.at(0,y,.015));
+  const m=s.plane(t,w,h,0,y,.04,0);m.userData.giu=1;s.lit.add(boxG(w+.06,h+.06,.03),'#FFFFFF',s.at(0,y,.015),true);
   ong(s,'vang',.022,[-.56,0,.16],[-.51,y+h/2+.1,0]);ong(s,'vang',.022,[.56,0,.16],[.51,y+h/2+.1,0]);ong(s,'vang',.02,[0,0,-.42],[0,y+h/2,-.02]);
   ong(s,'vang',.018,[-.5,y-h/2-.02,.07],[.5,y-h/2-.02,.07]);
   s.pop();s.round(x,z,.55);
@@ -1034,7 +1064,7 @@ function faceTex(skin,ma=.42){const key=skin+ma;return heads[key]||(heads[key]=(
 class Char{
   constructor(o){
     this.o=o;const g=this.g=new T.Group();this.body=new T.Group();g.add(this.body);this.speed=0;this.phase=Math.random()*6;this.t=Math.random()*9;this.yaw=0;this.wave=0;this.dance=0;
-    const ph=(sh,sp)=>new T.MeshPhongMaterial({color:'#FFFFFF',shininess:sh,specular:sp});
+    const ph=(sh,sp)=>rim(new T.MeshPhongMaterial({color:'#FFFFFF',shininess:sh,specular:sp}));
     this.M={shine:new T.MeshBasicMaterial({color:'#FFFFFF'}),lip:ph(30,'#333333'),pk:ph(40,'#333333'),pk2:ph(40,'#333333'),p1:ph(4,'#0A0A0A'),p2:ph(4,'#0A0A0A'),collar:ph(8,'#111111'),feat:ph(90,'#5A5A5A'),skin:ph(14,'#1C1C1C'),head:ph(14,'#1C1C1C'),nose:ph(30,'#333333'),hair:ph(38,'#383838'),top:ph(6,'#121212'),bot:ph(6,'#121212'),shoe:ph(30,'#333333')};
     this.M.hair.side=this.M.top.side=this.M.bot.side=T.DoubleSide;
     const sh=new T.Mesh(GEO.blob,new T.MeshBasicMaterial({map:BLOB,transparent:true,depthWrite:false,fog:false}));sh.rotation.x=-PI/2;sh.position.y=.02;g.add(sh);
@@ -1052,7 +1082,7 @@ class Char{
     const L=DANG[lk.dang]||DANG.vua,H0=L+.045,sc=this.o.scale||1,HY=H0+.43+HR*.95;this.h=HY+HR*(lk.pk==='mumeo'||lk.toc==='haibui'||lk.toc==='xoan'?1.5:1.25);this.tagY=(this.h+.06)*sc;
     M.skin.color.set(lk.da);M.head.color.set('#FFFFFF');M.head.map=faceTex(lk.da,lk.ma);M.nose.color.set(mix(lk.da,'#E5574A',lk.mui??.6));M.feat.color.set('#2E1C18');M.hair.color.set(lk.mauToc);
     const skirt=lk.do==='dam'||lk.do==='vay'||lk.do==='midi';
-    M.top.map=lk.inAo==='ve'?veTayTex(lk.ao):lk.inAo?inAoTex(lk.ao):lk.hoa!=='tron'?patTex(lk.ao,lk.hoa):null;M.top.color.set(M.top.map?'#FFFFFF':lk.ao);M.tay=M.tay||new T.MeshPhongMaterial({color:'#FFFFFF',shininess:6,specular:'#121212',side:T.DoubleSide});M.tay.color.set(lk.ao);M.bot.map=null;M.bot.color.set(lk.duoi);
+    M.top.map=lk.inAo==='ve'?veTayTex(lk.ao):lk.inAo?inAoTex(lk.ao):lk.hoa!=='tron'?patTex(lk.ao,lk.hoa):null;M.top.color.set(M.top.map?'#FFFFFF':lk.ao);M.tay=M.tay||rim(new T.MeshPhongMaterial({color:'#FFFFFF',shininess:6,specular:'#121212',side:T.DoubleSide}));M.tay.color.set(lk.ao);M.bot.map=null;M.bot.color.set(lk.duoi);
     M.shoe.color.set(lk.giay||(skirt?(lk.ao==='#FF8FB3'||lk.duoi==='#FF8FB3'?'#E5484D':'#FF8FB3'):'#FFFFFF'));M.lip.color.set(lk.moi||'#A2333F');M.collar.color.set(lk.ao==='#FFFFFF'?'#FF8FB3':'#FFFFFF');
     M.pk.color.set(lk.pk==='mulu'?'#FFFFFF':lk.mauPk);M.pk.map=lk.pk==='mulu'?soc2Tex():null;M.pk.shininess=lk.pk==='mulu'||lk.pk==='nolon'?3:40;M.pk.specular.set(lk.pk==='mulu'?'#111111':'#333333');M.pk2.color.set(lk.pk==='mumeo'?(lk.mauPk==='#FFD866'?'#3E5BA9':'#FFD866'):lk.pk==='hoa'?(lk.mauPk==='#FFD866'?'#FF8FB3':'#FFD866'):'#FFFFFF');
     if(PLUSH[lk.om]){M.p1.color.set(PLUSH[lk.om][0]);M.p2.color.set(PLUSH[lk.om][1]);}
@@ -1113,9 +1143,9 @@ function resolve(sc,p,rad=.32){
 /* ---------- Khởi tạo đồ hoạ ---------- */
 const app=$('#app'),cv=$('#gl');
 let renderer;
-try{renderer=new T.WebGLRenderer({canvas:cv,antialias:!LOW,powerPreference:'high-performance'});}
+try{renderer=new T.WebGLRenderer({canvas:cv,antialias:true,powerPreference:'high-performance'});}
 catch(e){$('#loadT').textContent='Máy này chưa mở được 3D. Mẹ thử trên trình duyệt Chrome hoặc Safari giúp em nha.';return;}
-let PR=Math.min(devicePixelRatio||1,LOW?1.25:2);renderer.setPixelRatio(PR);
+let PR=Math.min(devicePixelRatio||1,LOW?1.5:2);renderer.setPixelRatio(PR);
 const scene=new T.Scene();
 const camera=new T.PerspectiveCamera(58,1,.1,400);
 const hemi=new T.HemisphereLight('#fff','#888',1);const dirL=new T.DirectionalLight('#fff',.6);scene.add(hemi,dirL);

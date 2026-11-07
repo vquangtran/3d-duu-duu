@@ -46,3 +46,4 @@ Chợ không có máy chủ riêng, nên `quan-tri.html` chạy hoàn toàn trê
 
 - Các mẫu nhân vật có sẵn và bảng màu nằm ở đầu phần `Nhân vật` trong `src/main.js` (`AVP` và `AV`).
 - Người đi chợ, lời rao và số người đang xem là minh hoạ.
+- Đồ trong chợ dựng theo kiểu đồ chơi nhựa 3D: hộp bo tròn cạnh (`roundBox`), vệt bóng và viền sáng theo góc nhìn (`glossMat`, `rim`), ánh đèn vẫn nướng sẵn vào màu nên điện thoại chạy nhẹ. Khử răng cưa luôn bật, màn hình nét gấp 2; máy chạy chậm thì chợ tự giảm độ nét.
