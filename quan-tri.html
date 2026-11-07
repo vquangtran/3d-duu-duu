@@ -39,7 +39,6 @@
     <span class="navT" id="navT" aria-hidden="true">Mẫu</span>
     <span class="navPhai">
       <button class="navNut dam" id="themMau" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Thêm</button>
-      <button class="navNut dam" id="luuKhu" type="button" hidden disabled>Lưu</button>
       <button class="navNut dam" id="luuCai" type="button" hidden disabled>Lưu</button>
     </span>
   </header>
@@ -56,9 +55,9 @@
     </section>
 
     <section role="tabpanel" id="tpKhu" aria-labelledby="tbKhu" hidden>
-      <ul class="nhom" id="dsKhu"></ul>
+      <ul class="nhom ds dsKhu" id="dsKhu"></ul>
       <ul class="nhom"><li><button type="button" class="dongThem" id="themKhu"><i class="cong" aria-hidden="true"></i>Thêm khu</button></li></ul>
-      <p class="chuChan">Thứ tự là thứ tự khách đi dạo trong chợ. Màu là màu khối trưng. Đổi tên khu thì các mẫu trong khu tự đổi theo. Sửa xong bấm <b>Lưu</b> ở góc trên.</p>
+      <p class="chuChan">Khu xếp theo thứ tự khách đi dạo trong chợ. Chạm vào một khu để sửa tên, màu, vị trí, và chọn mẫu nào nằm trong khu.</p>
     </section>
 
     <section role="tabpanel" id="tpCai" aria-labelledby="tbCai" hidden>
@@ -142,6 +141,48 @@
       </div>
 
       <div class="nhom cachTren" id="xoaW"><button type="button" class="dongDo" id="xoaMau">Xoá mẫu</button></div>
+    </div>
+  </section>
+</div>
+
+<!-- Sửa một khu -->
+<div class="man" id="khuWrap" hidden>
+  <section class="sua" role="dialog" aria-modal="true" aria-labelledby="kT">
+    <header class="nav suaH">
+      <button class="navNut" id="kHuy" type="button">Huỷ</button>
+      <h2 class="navT hien" id="kT">Khu</h2>
+      <span class="navPhai"><button class="navNut dam" id="kLuu" type="button">Lưu</button></span>
+    </header>
+    <div class="suaB">
+      <div class="nhom cachTren">
+        <label class="o"><span>Tên khu</span><input id="kTen" placeholder="VD: Hàng mới về"></label>
+        <label class="o"><span>Màu khối trưng</span><span class="gian"></span><input type="color" class="mau" id="kMau"></label>
+        <label class="o chon"><span>Vị trí trong chợ</span><select id="kViTri"></select></label>
+      </div>
+
+      <h3 class="dauNhom" id="kDsT">Mẫu trong khu</h3>
+      <ul class="nhom" id="kDs"></ul>
+      <ul class="nhom"><li><button type="button" class="dongThem" id="kThem"><i class="cong" aria-hidden="true"></i>Thêm mẫu vào khu này</button></li></ul>
+      <p class="chuChan">Mẫu ở trên được trưng trước. Dùng mũi tên để đổi thứ tự. Muốn chuyển một mẫu sang khu khác, chạm tên khu ở cuối dòng của mẫu đó rồi chọn khu mới.</p>
+
+      <div class="nhom cachTren" id="kXoaW"><button type="button" class="dongDo" id="kXoa">Xoá khu</button></div>
+      <p class="chuChan" id="kXoaGhi"></p>
+    </div>
+  </section>
+</div>
+
+<!-- Chọn mẫu để thêm vào khu -->
+<div class="man" id="chonWrap" hidden>
+  <section class="sua" role="dialog" aria-modal="true" aria-labelledby="cT">
+    <header class="nav suaH">
+      <button class="navNut" id="cHuy" type="button">Huỷ</button>
+      <h2 class="navT hien" id="cT">Chọn mẫu</h2>
+      <span class="navPhai"><button class="navNut dam" id="cXong" type="button">Thêm</button></span>
+    </header>
+    <div class="suaB">
+      <p class="chuChan cachTren2">Chạm vào các mẫu muốn chuyển vào khu này.</p>
+      <ul class="nhom ds" id="cDs"></ul>
+      <p class="trong" id="cTrong" hidden>Mọi mẫu đã ở trong khu này.</p>
     </div>
   </section>
 </div>
