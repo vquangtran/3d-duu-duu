@@ -8,7 +8,7 @@ Trang quản trị trông như một ứng dụng trên iPhone: ba thẻ **Mẫu
 - **Thêm mẫu**: bấm **+ Thêm** ở góc trên, chụp hoặc chọn ảnh từ máy (ảnh tự thu nhỏ trước khi tải lên), ghi mã, tên, chọn khu, dán đoạn chữ đã đăng Zalo. Ngay dưới ô chữ, trang báo chợ đọc ra giá, size, size hết thế nào. Đọc sai thì mở **Chợ đọc sai? Sửa tay**.
 - **Sửa mẫu**: bấm vào mẫu trong danh sách. Đổi thứ tự ảnh bằng hai nút mũi tên (ảnh số 1 được treo lên sạp), bỏ ảnh, thêm màu và chọn ảnh cho từng màu, đánh dấu **Hết hàng** hoặc **Ẩn khỏi chợ**.
 - **Xoá mẫu**: trong màn sửa mẫu, bấm **Xoá mẫu**. Ảnh của mẫu cũng bị xoá.
-- **Khu**: thêm khu, đổi tên, đổi màu, đổi thứ tự. Đổi tên khu thì các mẫu trong khu tự đổi theo.
+- **Khu**: chạm vào một khu để sửa tên, màu, vị trí trong chợ, và các mẫu trong khu: đổi thứ tự trưng bằng mũi tên, chuyển mẫu sang khu khác (chạm tên khu ở cuối dòng của mẫu), hoặc **Thêm mẫu vào khu này** để chọn mẫu từ khu khác. Khu hết mẫu thì xoá được. Đổi tên khu thì các mẫu trong khu tự đổi theo.
 - **Cài đặt**: số Zalo nhận đơn, đi đơn từ mấy bộ, phí ship, tiền cọc, bật tắt chế độ xem thử.
 
 Mỗi lần bấm **Lưu** ở góc trên bên phải, trang ghi thẳng vào kho GitHub của chợ. Chợ cập nhật sau vài phút. Trang luôn đọc bản mới nhất trước khi lưu, nên hai người sửa trên hai máy cũng không đè mất của nhau.

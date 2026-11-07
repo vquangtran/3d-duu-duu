@@ -151,6 +151,30 @@ h1,h2,h3{margin:0}
 .doiCho:disabled{opacity:.25;cursor:default}
 #dsKhu>li+li::before,#dsMau>li+li::before,#dsShip>li+li::before,#dsCoc>li+li::before{left:56px}
 
+/* ---------- Khu ---------- */
+.cham{width:30px;height:30px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 .5px var(--vach)}
+.dsKhu>li+li::before{left:58px}
+.anhNho.nho,.anhGia.nho{width:44px;height:44px;border-radius:7px}
+.anhGia.nho{font-size:9px}
+#kDs>li+li::before,#cDs>li+li::before{left:72px}
+.spK{gap:8px;padding-top:7px;padding-bottom:7px}
+.spK .dsC b{font-size:15.5px;line-height:1.25;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.spK .dsC .ma{font-size:13px;white-space:normal}
+.spK .doiCho{margin:0 -3px}
+.spK.di .dsC b,.spK.di img,.spK.di .anhGia{opacity:.45}
+.spK.di .dsC .ma{color:var(--cam)}
+.spK .doiCho{width:30px;height:30px}
+.dong select.chuyen{flex:none;max-width:104px;font-size:15px;color:var(--tint);padding:6px 16px 6px 0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='16' viewBox='0 0 10 16'%3E%3Cpath d='M1.5 6 5 2.5 8.5 6M1.5 10 5 13.5 8.5 10' fill='none' stroke='%237C3CFF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.trongK{padding:14px 16px;color:var(--phu);font-size:15px}
+.o .gian{flex:1}
+.o input.mau{flex:none;padding:0}
+.dongDo:disabled{color:var(--phu3);cursor:default}
+.tick{width:24px;height:24px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1.5px var(--phu3);position:relative}
+[aria-pressed="true"]>.tick{background:var(--tint);box-shadow:none}
+[aria-pressed="true"]>.tick::after{content:"";position:absolute;left:8px;top:4px;width:6px;height:11px;border:solid #fff;border-width:0 2.4px 2.4px 0;transform:rotate(45deg)}
+.cachTren2{margin:16px 16px 8px}
+
 /* ---------- Màn sửa mẫu ---------- */
 .man{position:fixed;inset:0;z-index:10;background:var(--man);display:flex;justify-content:center;align-items:stretch}
 .sua{background:var(--nen);width:100%;display:flex;flex-direction:column;height:100%;height:100dvh;animation:len .3s cubic-bezier(.2,.8,.2,1)}

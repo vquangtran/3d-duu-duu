@@ -291,7 +291,7 @@ async function batDau() {
   ban(false);
   ls.set('cfg', C);
   $('#vao').hidden = true; $('#chinh').hidden = false;
-  khuDoi = caiDoi = false; doiTab('Mau'); veTatCa();
+  caiDoi = false; doiTab('Mau'); veTatCa();
 }
 
 /* ---------- Thẻ ---------- */
@@ -299,17 +299,17 @@ const TABS = ['Mau', 'Khu', 'Cai'];
 let tabNay = 'Mau';
 TABS.forEach(t => $('#tb' + t).addEventListener('click', () => doiTab(t)));
 function doiTab(t) {
-  if (t !== tabNay && ((tabNay === 'Khu' && khuDoi) || (tabNay === 'Cai' && caiDoi)) && !confirm('Mẹ chưa bấm lưu, bỏ các thay đổi vừa sửa?')) return;
+  if (t !== tabNay && tabNay === 'Cai' && caiDoi && !confirm('Mẹ chưa bấm lưu, bỏ các thay đổi vừa sửa?')) return;
   tabNay = t;
   TABS.forEach(x => { $('#tb' + x).setAttribute('aria-selected', x === t); $('#tp' + x).hidden = x !== t; });
   const ten = { Mau: 'Mẫu', Khu: 'Khu', Cai: 'Cài đặt' }[t];
   $('#tieuDe').textContent = ten; $('#navT').textContent = ten;
-  $('#themMau').hidden = t !== 'Mau'; $('#luuKhu').hidden = t !== 'Khu'; $('#luuCai').hidden = t !== 'Cai';
+  $('#themMau').hidden = t !== 'Mau'; $('#luuCai').hidden = t !== 'Cai';
   if (t === 'Khu') veKhu(); if (t === 'Cai') veCai();
   window.scrollTo(0, 0); vienNav();
 }
 // Nút Lưu ở góc trên chỉ sáng khi có thay đổi chưa lưu
-function capNhatNut() { $('#luuKhu').disabled = !khuDoi; $('#luuCai').disabled = !caiDoi; }
+function capNhatNut() { $('#luuCai').disabled = !caiDoi; }
 // Cuộn qua tiêu đề lớn thì hiện tên nhỏ và đường viền trên thanh tiêu đề
 function vienNav() { $('#chinh .nav').classList.toggle('vien', window.scrollY > 36); }
 window.addEventListener('scroll', vienNav, { passive: true });
@@ -359,6 +359,10 @@ $('#loc').addEventListener('click', e => { const b = e.target.closest('[data-loc
 $('#ds').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) moSua(+b.dataset.i); });
 $('#themMau').addEventListener('click', () => moSua(-1));
 
+/* ---------- Màn trượt lên (sửa mẫu, sửa khu, chọn mẫu) ---------- */
+function moMan(id) { $(id).hidden = false; document.body.style.overflow = 'hidden'; $(id + ' .suaB').scrollTop = 0; }
+function dongMan(id) { $(id).hidden = true; if (![...document.querySelectorAll('.man')].some(m => !m.hidden)) document.body.style.overflow = ''; }
+
 /* ---------- Sửa một mẫu ---------- */
 let E = null;   // { moi, ma0, goc, imgs:[{path}|{moi,blob,url}], mau:[{ten,img}], bo:Set, doi }
 function moSua(i) {
@@ -379,21 +383,23 @@ function moSua(i) {
   $('#fHet').checked = !!x.het; $('#fAn').checked = !!x.an;
   $('#xoaW').hidden = !goc;
   veAnh(); veMauSac(); veDoc();
-  $('#suaWrap').hidden = false; document.body.style.overflow = 'hidden';
-  $('.suaB').scrollTop = 0;
+  moMan('#suaWrap');
   if (!goc) setTimeout(() => $('#fMa').focus(), 50);
 }
 function dongSua(hoi) {
   if (hoi && E && E.doi && !confirm('Mẹ chưa lưu mẫu này. Đóng và bỏ các thay đổi?')) return;
   if (E) E.imgs.forEach(it => { if (it.url) URL.revokeObjectURL(it.url); });
-  E = null; $('#suaWrap').hidden = true; document.body.style.overflow = '';
+  E = null; dongMan('#suaWrap');
 }
 $('#suaDong').addEventListener('click', () => dongSua(true));
 $('#suaWrap').addEventListener('click', e => { if (e.target === $('#suaWrap')) dongSua(true); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && E) dongSua(true); });
-$('.suaB').addEventListener('input', () => { if (E) E.doi = true; });
-$('.suaB').addEventListener('change', () => { if (E) E.doi = true; });
-window.addEventListener('beforeunload', e => { if ((E && E.doi) || khuDoi || caiDoi) { e.preventDefault(); e.returnValue = ''; } });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!$('#chonWrap').hidden) dongChon(); else if (KE) dongKhu(true); else if (E) dongSua(true);
+});
+$('#suaWrap .suaB').addEventListener('input', () => { if (E) E.doi = true; });
+$('#suaWrap .suaB').addEventListener('change', () => { if (E) E.doi = true; });
+window.addEventListener('beforeunload', e => { if ((E && E.doi) || (KE && KE.doi) || caiDoi) { e.preventDefault(); e.returnValue = ''; } });
 
 function veAnh() {
   const n = E.imgs.length;
@@ -508,54 +514,156 @@ $('#xoaMau').addEventListener('click', async () => {
 });
 
 /* ---------- Khu ---------- */
-let KH = [], khuDoi = false;
+const mauHop = m => /^#[0-9a-f]{6}$/i.test(m || '') ? m : '#DCCFEF';
+const anhDong = x => { const anh = (x.anh || [])[0], m = mauKhu(x.khu);
+  return anh ? `<img class="anhNho nho" data-anh="${esc(anh)}" alt="">` : `<span class="anhGia nho" style="background:${esc(m)};color:${chuTren(m)}">${esc(x.ma || '?')}</span>`; };
+const ganAnhTrong = el => el.querySelectorAll('img[data-anh]').forEach(im => ganAnh(im, im.dataset.anh));
+
+// Danh sách khu: chạm vào một khu để mở màn sửa khu
 function veKhu() {
   const dem = {}; K.data.sanPham.forEach(x => { dem[x.khu] = (dem[x.khu] || 0) + 1; });
-  KH = K.data.khu.map(k => ({ ten0: k.ten, ten: k.ten, mau: k.mau || '#DCCFEF', goc: k, so: dem[k.ten] || 0 }));
-  khuDoi = false; veHangKhu(); capNhatNut();
+  $('#dsKhu').innerHTML = K.data.khu.map((k, i) => `<li><button type="button" data-k="${i}">
+      <span class="cham" style="background:${esc(mauHop(k.mau))}"></span>
+      <span class="dsC"><b>${esc(k.ten)}</b><span class="ma">${dem[k.ten] || 0} mẫu</span></span>
+      <span class="mui" aria-hidden="true"></span></button></li>`).join('');
 }
-function veHangKhu() {
-  const n = KH.length;
-  $('#dsKhu').innerHTML = KH.map((k, i) => `<li class="dong">
-      <button type="button" class="boDong" data-kx="${i}" aria-label="Bỏ khu ${esc(k.ten)}"><i class="tru" aria-hidden="true"></i></button>
-      <input type="color" class="mau" data-kc="${i}" value="${esc(/^#[0-9a-f]{6}$/i.test(k.mau) ? k.mau : '#DCCFEF')}" style="background:${esc(/^#[0-9a-f]{6}$/i.test(k.mau) ? k.mau : '#DCCFEF')}" aria-label="Màu khu ${esc(k.ten)}">
-      <input class="gian" data-kt="${i}" value="${esc(k.ten)}" placeholder="Tên khu" aria-label="Tên khu ${i + 1}">
-      <span class="dem">${k.so} mẫu</span>
-      <button type="button" class="doiCho" data-ku="${i}" aria-label="Đưa khu lên"${i === 0 ? ' disabled' : ''}>${ICON.len}</button>
-      <button type="button" class="doiCho" data-kd="${i}" aria-label="Đưa khu xuống"${i === n - 1 ? ' disabled' : ''}>${ICON.xuong}</button></li>`).join('');
+$('#dsKhu').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) moKhu(+b.dataset.k); });
+$('#themKhu').addEventListener('click', () => moKhu(-1));
+
+/* Sửa một khu: tên, màu, vị trí trong chợ, các mẫu trong khu và thứ tự của chúng.
+   ds: các mẫu đang hiện trong màn, theo thứ tự muốn trưng. khuMoi rỗng là ở lại khu này. */
+let KE = null;
+function moKhu(i) {
+  const k = i >= 0 ? K.data.khu[i] : null;
+  KE = { moi: !k, ten0: k ? k.ten : null, doi: false,
+    ds: k ? K.data.sanPham.filter(x => x.khu === k.ten).map(x => ({ ma: x.ma, x, khuMoi: '' })) : [] };
+  $('#kT').textContent = k ? k.ten : 'Khu mới';
+  $('#kTen').value = k ? k.ten : '';
+  const mau = mauHop(k ? k.mau : '#FFD3E0'); $('#kMau').value = mau; $('#kMau').style.background = mau;
+  const n = K.data.khu.length + (k ? 0 : 1), nay = k ? i : n - 1;
+  $('#kViTri').innerHTML = Array.from({ length: n }, (_, j) =>
+    `<option value="${j}"${j === nay ? ' selected' : ''}>${j + 1}${n > 1 && j === 0 ? ' · đầu chợ' : n > 1 && j === n - 1 ? ' · cuối chợ' : ''}</option>`).join('');
+  veKhuDs();
+  moMan('#khuWrap');
+  if (!k) setTimeout(() => $('#kTen').focus(), 50);
 }
-$('#dsKhu').addEventListener('input', e => {
-  const t = e.target;
-  if (t.dataset.kt != null) KH[+t.dataset.kt].ten = t.value;
-  if (t.dataset.kc != null) { KH[+t.dataset.kc].mau = t.value.toUpperCase(); t.style.background = t.value; }
-  khuDoi = true;
+function veKhuDs() {
+  const tenNay = $('#kTen').value.trim() || 'Khu này';
+  const khac = K.data.khu.filter(k => k.ten !== KE.ten0).map(k => k.ten);
+  const o = KE.ds, conLai = o.filter(r => !r.khuMoi).length;
+  $('#kDsT').textContent = `Mẫu trong khu (${conLai})`;
+  $('#kDs').innerHTML = o.length ? o.map((r, i) => {
+    const x = r.x, di = !!r.khuMoi;
+    return `<li class="dong spK${di ? ' di' : ''}">
+      ${anhDong(x)}
+      <span class="dsC"><b>${esc(x.ten || x.ma)}</b><span class="ma">${di ? 'Sẽ chuyển sang ' + esc(r.khuMoi) : esc(x.ma)}</span></span>
+      <button type="button" class="doiCho" data-ku="${i}" aria-label="Đưa ${esc(x.ma)} lên trước"${i === 0 || di ? ' disabled' : ''}>${ICON.len}</button>
+      <button type="button" class="doiCho" data-kd="${i}" aria-label="Đưa ${esc(x.ma)} ra sau"${i === o.length - 1 || di ? ' disabled' : ''}>${ICON.xuong}</button>
+      <select class="chuyen" data-kc="${i}" aria-label="Khu của mẫu ${esc(x.ma)}"><option value=""${di ? '' : ' selected'}>${esc(tenNay)}</option>${khac.map(t => `<option${r.khuMoi === t ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select>
+    </li>`;
+  }).join('') : '<li class="trongK">Khu chưa có mẫu nào. Chạm "Thêm mẫu vào khu này" để chọn mẫu.</li>';
+  ganAnhTrong($('#kDs'));
+  const xoaDuoc = !KE.moi && conLai === 0;
+  $('#kXoaW').hidden = KE.moi; $('#kXoa').disabled = !xoaDuoc;
+  $('#kXoaGhi').hidden = KE.moi || xoaDuoc;
+  $('#kXoaGhi').textContent = 'Chuyển hết mẫu sang khu khác thì mới xoá được khu.';
+}
+function dongKhu(hoi) {
+  if (hoi && KE && KE.doi && !confirm('Mẹ chưa lưu khu này. Đóng và bỏ các thay đổi?')) return;
+  KE = null; dongMan('#khuWrap');
+}
+$('#kHuy').addEventListener('click', () => dongKhu(true));
+$('#khuWrap').addEventListener('click', e => { if (e.target === $('#khuWrap')) dongKhu(true); });
+$('#kTen').addEventListener('input', () => {
+  KE.doi = true; const t = $('#kTen').value.trim();
+  $('#kT').textContent = t || 'Khu mới';
+  $('#kDs').querySelectorAll('select.chuyen option[value=""]').forEach(o => { o.textContent = t || 'Khu này'; });
 });
-$('#dsKhu').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.ku) { const i = +b.dataset.ku; [KH[i - 1], KH[i]] = [KH[i], KH[i - 1]]; }
-  else if (b.dataset.kd) { const i = +b.dataset.kd; [KH[i + 1], KH[i]] = [KH[i], KH[i + 1]]; }
-  else if (b.dataset.kx) {
-    const k = KH[+b.dataset.kx];
-    if (k.so) { bao(`Khu ${k.ten0} còn ${k.so} mẫu. Mẹ chuyển các mẫu sang khu khác trước rồi mới bỏ khu.`, true); return; }
-    KH.splice(+b.dataset.kx, 1);
-  } else return;
-  khuDoi = true; veHangKhu();
+$('#kMau').addEventListener('input', e => { e.target.style.background = e.target.value; KE.doi = true; });
+$('#kViTri').addEventListener('change', () => { KE.doi = true; });
+$('#kDs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || !KE) return;
+  const a = KE.ds;
+  if (b.dataset.ku) { const i = +b.dataset.ku; [a[i - 1], a[i]] = [a[i], a[i - 1]]; }
+  else if (b.dataset.kd) { const i = +b.dataset.kd; [a[i + 1], a[i]] = [a[i], a[i + 1]]; }
+  else return;
+  KE.doi = true; veKhuDs();
 });
-$('#themKhu').addEventListener('click', () => {
-  KH.push({ ten0: null, ten: '', mau: '#FFD3E0', goc: {}, so: 0 }); khuDoi = true; veHangKhu();
-  $('#dsKhu').lastElementChild.querySelector('.gian').focus();
+$('#kDs').addEventListener('change', e => {
+  const i = e.target.dataset.kc; if (i == null || !KE) return;
+  KE.ds[+i].khuMoi = e.target.value; KE.doi = true; veKhuDs();
 });
-$('#luuKhu').addEventListener('click', async () => {
-  const rows = KH.map(k => Object.assign({}, k, { ten: k.ten.trim() }));
-  if (!rows.length) { bao('Chợ cần ít nhất một khu.', true); return; }
-  if (rows.some(k => !k.ten)) { bao('Có khu chưa đặt tên.', true); return; }
-  if (new Set(rows.map(k => k.ten.toLowerCase())).size < rows.length) { bao('Có hai khu trùng tên.', true); return; }
+
+// Chọn mẫu ở khu khác để chuyển vào khu đang sửa
+let CH = null;
+$('#kThem').addEventListener('click', () => {
+  const co = new Set(KE.ds.map(r => r.x));
+  const ds = K.data.sanPham.filter(x => !co.has(x));
+  CH = new Set();
+  $('#cT').textContent = 'Thêm vào ' + ($('#kTen').value.trim() || 'khu mới');
+  $('#cTrong').hidden = ds.length > 0;
+  $('#cDs').innerHTML = ds.map(x => `<li><button type="button" data-ci="${K.data.sanPham.indexOf(x)}" aria-pressed="false">
+      ${anhDong(x)}
+      <span class="dsC"><b>${esc(x.ten || x.ma)}</b><span class="ma">${esc(x.ma)} · ${esc(x.khu || 'chưa có khu')}</span></span>
+      <span class="tick" aria-hidden="true"></span></button></li>`).join('');
+  ganAnhTrong($('#cDs'));
+  capNhatChon(); moMan('#chonWrap');
+});
+function capNhatChon() { $('#cXong').disabled = !CH.size; $('#cXong').textContent = CH.size ? `Thêm (${CH.size})` : 'Thêm'; }
+function dongChon() { CH = null; dongMan('#chonWrap'); }
+$('#cDs').addEventListener('click', e => {
+  const b = e.target.closest('[data-ci]'); if (!b) return;
+  const x = K.data.sanPham[+b.dataset.ci];
+  if (CH.has(x)) CH.delete(x); else CH.add(x);
+  b.setAttribute('aria-pressed', CH.has(x)); capNhatChon();
+});
+$('#cHuy').addEventListener('click', dongChon);
+$('#chonWrap').addEventListener('click', e => { if (e.target === $('#chonWrap')) dongChon(); });
+$('#cXong').addEventListener('click', () => {
+  K.data.sanPham.filter(x => CH.has(x)).forEach(x => KE.ds.push({ ma: x.ma, x, khuMoi: '' }));
+  KE.doi = true; dongChon(); veKhuDs();
+});
+
+const loiDe2 = t => { const e = new Error(t); e.de = true; return e; };
+$('#kLuu').addEventListener('click', async () => {
+  const ten = $('#kTen').value.trim(), mau = $('#kMau').value.toUpperCase(), viTri = +$('#kViTri').value;
+  if (!ten) { bao('Mẹ đặt tên cho khu nha.', true); $('#kTen').focus(); return; }
+  if (K.data.khu.some(k => k.ten.toLowerCase() === ten.toLowerCase() && k.ten !== KE.ten0)) { bao(`Đã có khu tên ${ten} rồi.`, true); $('#kTen').focus(); return; }
+  const k0 = KE, ds = k0.ds.map(r => ({ ma: r.ma, khuMoi: r.khuMoi }));
   try {
-    await luu('Sửa các khu trong chợ', d => {
-      rows.forEach(k => { if (k.ten0 && k.ten0 !== k.ten) d.sanPham.forEach(x => { if (x.khu === k.ten0) x.khu = k.ten; }); });
-      d.khu = rows.map(k => Object.assign({}, k.goc, { ten: k.ten, mau: k.mau }));
+    await luu(`${k0.moi ? 'Thêm' : 'Sửa'} khu ${ten}`, d => {
+      let k = {};
+      if (!k0.moi) {
+        const i = d.khu.findIndex(z => z.ten === k0.ten0);
+        if (i < 0) throw loiDe2('Khu này vừa bị xoá ở máy khác. Mẹ tải lại trang nha.');
+        k = d.khu.splice(i, 1)[0];
+      }
+      Object.assign(k, { ten, mau });
+      d.khu.splice(Math.min(viTri, d.khu.length), 0, k);
+      if (!k0.moi && k0.ten0 !== ten) d.sanPham.forEach(x => { if (x.khu === k0.ten0) x.khu = ten; });
+      ds.forEach(r => { const x = d.sanPham.find(y => y.ma === r.ma); if (x) x.khu = r.khuMoi || ten; });
+      // Xếp lại các mẫu của khu theo thứ tự đã chọn, giữ nguyên chỗ của mẫu thuộc khu khác
+      const cho = []; d.sanPham.forEach((x, j) => { if (x.khu === ten) cho.push(j); });
+      const trong = cho.map(j => d.sanPham[j]), muon = ds.filter(r => !r.khuMoi).map(r => r.ma);
+      const xep = muon.map(ma => trong.find(x => x.ma === ma)).filter(Boolean);
+      trong.forEach(x => { if (!xep.includes(x)) xep.push(x); });
+      cho.forEach((j, n) => { d.sanPham[j] = xep[n]; });
     });
-    veTatCa(); bao(DA_LUU);
+    dongKhu(false); veTatCa(); bao(DA_LUU);
+  } catch (er) { bao(loiDe(er), true); }
+});
+$('#kXoa').addEventListener('click', async () => {
+  if (!KE || KE.moi) return;
+  const k0 = KE, ds = k0.ds.filter(r => r.khuMoi).map(r => ({ ma: r.ma, khuMoi: r.khuMoi }));
+  if (!confirm(`Xoá khu ${k0.ten0} khỏi chợ?`)) return;
+  try {
+    await luu(`Xoá khu ${k0.ten0}`, d => {
+      ds.forEach(r => { const x = d.sanPham.find(y => y.ma === r.ma); if (x) x.khu = r.khuMoi; });
+      if (d.sanPham.some(x => x.khu === k0.ten0)) throw loiDe2('Khu này vẫn còn mẫu. Mẹ chuyển hết mẫu sang khu khác trước nha.');
+      if (d.khu.length <= 1) throw loiDe2('Chợ cần ít nhất một khu.');
+      d.khu = d.khu.filter(z => z.ten !== k0.ten0);
+    });
+    dongKhu(false); veTatCa(); bao('Đã xoá khu. Chợ cập nhật sau vài phút.');
   } catch (er) { bao(loiDe(er), true); }
 });
 
@@ -608,7 +716,7 @@ $('#dangXuat').addEventListener('click', () => {
   C.token = ''; ls.set('cfg', Object.assign({}, C, { token: '' })); K = null; hienVao();
 });
 
-['#tpKhu', '#tpCai'].forEach(id => ['input', 'change', 'click'].forEach(ev => $(id).addEventListener(ev, () => setTimeout(capNhatNut))));
+['#tpCai'].forEach(id => ['input', 'change', 'click'].forEach(ev => $(id).addEventListener(ev, () => setTimeout(capNhatNut))));
 
 /* ---------- Bắt đầu ---------- */
 if (C.token) batDau(); else hienVao();
