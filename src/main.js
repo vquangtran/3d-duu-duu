@@ -106,6 +106,32 @@ function texOf(cv){const t=new T.CanvasTexture(cv);t.anisotropy=4;return t;}
 function loadImg(src,cb){const im=new Image();im.decoding='async';im.onload=()=>cb(im);im.src=src;}
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
 function cover(c,im,x,y,w,h){const s=Math.max(w/im.width,h/im.height),iw=im.width*s,ih=im.height*s;c.drawImage(im,x+(w-iw)/2,y+(h-ih)/2,iw,ih);}
+/* ---------- Nhãn sale kiểu 3D: lấy từ dữ liệu có sẵn, không cần shop nhập thêm ---------- */
+const NHAN_MAU={hot:['#FFA04D','#F2581F','#B8360E','#FFFFFF','#FFE066'],gia:['#A57CFF','#6B35E8','#4A1FB8','#FFFFFF','#FFE066'],moi:['#FF8CC0','#E8488F','#B02866','#FFFFFF','#FFF2A8'],
+  het:['#FF6B6B','#D93636','#9E1F1F','#FFFFFF','#FFE066'],combo:['#FFD36B','#F5A11F','#C2700A','#4A1FB8','#7C3CFF'],tot:['#6FE3B4','#1FB57D','#0E7A52','#FFFFFF','#FFF2A8']};
+const GIA_RE=Math.min(...P.filter(p=>p.price>0&&!p.combo).map(p=>p.price),...P.map(p=>p.price||999));
+function nhanMau(p){
+  if(p.tinhTrang==='het')return null;
+  if(p.tinhTrang==='it'||p.tinhTrang==='le')return{k:'het',t:'SẮP HẾT',s:'SIZE'};
+  if(p.combo)return{k:'combo',t:'COMBO',s:`${p.price}K/${p.combo}`};
+  if(p.price===GIA_RE)return{k:'tot',t:'GIÁ TỐT',s:''};
+  if(/mới/i.test(p.khu))return{k:'moi',t:'MỚI VỀ',s:''};
+  return null;
+}
+/* Mặt nhãn: khối nổi (mép tối phía dưới), mặt chuyển màu, viền trắng, vệt bóng, chữ có bóng khối. day=true vẽ cả phần dày (dùng trên ảnh phẳng). */
+function veNhan(c,o,w,h,day){
+  const[a,b,d,chu,phu]=NHAN_MAU[o.k],r=h*.32,dz=h*.13,font=f=>`800 ${f}px "Baloo 2","Be Vietnam Pro",sans-serif`;
+  c.save();c.lineJoin='round';
+  if(day){c.shadowColor='rgba(40,20,60,.35)';c.shadowBlur=h*.25;c.shadowOffsetY=h*.12;c.fillStyle=d;rr(c,-w/2,-h/2+dz,w,h,r);c.fill();c.shadowColor='transparent';}
+  const g=c.createLinearGradient(0,-h/2,0,h/2);g.addColorStop(0,a);g.addColorStop(1,b);c.fillStyle=g;rr(c,-w/2,-h/2,w,h,r);c.fill();
+  c.lineWidth=h*.08;c.strokeStyle='rgba(255,255,255,.95)';rr(c,-w/2+h*.06,-h/2+h*.06,w-h*.12,h-h*.12,r*.8);c.stroke();
+  c.save();rr(c,-w/2,-h/2,w,h,r);c.clip();c.fillStyle='rgba(255,255,255,.28)';c.beginPath();c.ellipse(-w*.12,-h*.52,w*.55,h*.36,-.05,0,7);c.fill();c.restore();
+  c.textAlign='center';c.textBaseline='middle';
+  const viet=(t,y,f,col)=>{c.font=font(f);const mx=w*.84;let sz=f;if(c.measureText(t).width>mx){sz=f*mx/c.measureText(t).width;c.font=font(sz);}
+    for(let k=3;k>0;k--){c.fillStyle=d;c.fillText(t,0,y+sz*.03*k);}c.fillStyle=col;c.fillText(t,0,y);};
+  if(o.s){viet(o.t,-h*.17,h*.42,chu);viet(o.s,h*.24,h*.3,phu);}else viet(o.t,h*.02,h*.55,chu);
+  c.restore();
+}
 /* Khung ảnh hình vòm: ảnh lớn ở trên, dải giá ở dưới. Vẽ độ phân giải cao để ảnh nét khi lại gần. */
 function boardTex(p){
   const W=LOW?512:720,u=W/100,H=Math.round(129.5*u),cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
@@ -116,6 +142,7 @@ function boardTex(p){
     c.save();vom(px,py,pw,ph);c.clip();
     if(im)cover(c,im,px,py,pw,ph);else{c.fillStyle=p.tile;c.fillRect(px,py,pw,ph);c.translate(px+pw*.1,py+ph*.14);paintSet(c,p,pw*.8,ph*.8);}
     c.restore();
+    const nh=nhanMau(p);if(nh){c.save();c.translate(px+19*u,py+ph-11*u);c.rotate(-.1);veNhan(c,nh,34*u,15*u,true);c.restore();}
     c.fillStyle='#2A1670';c.textAlign='center';c.textBaseline='middle';c.font=`800 ${15*u}px "Baloo 2","Be Vietnam Pro",sans-serif`;c.fillText(giaChu(p),W/2,116.5*u,pw*.92);};
   draw(null);const t=texOf(cv);t.anisotropy=8;t.generateMipmaps=false;t.minFilter=T.LinearFilter;
   if(p.anh.length)loadImg(p.anh[0],im=>{c.imageSmoothingQuality='high';draw(im);t.needsUpdate=true;mauTuAnh(p,im);});
@@ -407,6 +434,7 @@ function keHoachRac(d){
   L.push({k:'tui',lx:dau*(2.5+r()*.5),lz:2.3});
   if(r()<.75)L.push({k:'ghe',lx:-dau*(3.9+r()*.6),lz:2.4,mau:r()<.5?'#E8574A':'#4A7BD9'});
   if(d.i%3===1)L.push({k:'quat',lx:-dau*(2.6+r()*.4),lz:2.35});
+  if(d.i%3===0)L.push({k:'gio',lx:-dau*(2.6+r()*.3),lz:2.35,ry:(r()-.5)*.6});
   if(d.i%3===2)L.push({k:'xe',lx:-dau*(2.5+r()*.3),lz:2.25,ry:(r()-.5)*.4});
   L.push({k:'bien',lx:(r()-.5)*2.2,lz:2.06,ry:(r()-.5)*.25});
   return L;
@@ -432,6 +460,7 @@ function datRac(s,d){
     if(o.k==='thung'){let y=0;for(let q=0;q<o.n;q++){const sz=.62-q*.08,h=sz*.74;carton(s,sz,h,sz*.8,q%2?.08:-.05,y,0,(q%2?.22:-.12)+q*.1,q+i);y+=h;}
       if(i%2===0)loa(s,0,y+.11,0,.5,-.12,.42);s.round(w.x,w.z,.5);}
     if(o.k==='xe'){xeDay(s,0,0,0,i);s.round(w.x,w.z,.62);}
+    if(o.k==='gio'){gioHang(s,0,0,0,0,true,i);hopQua(s,.24,.42,0,.12,.4,i);s.round(w.x,w.z,.45);}
     if(o.k==='tui'){s.lit.add(new T.SphereGeometry(.26,10,8),'#F6D3E4',s.at(0,.24,0,0,0,0,1,1.05,.8),true);s.lit.add(new T.TorusGeometry(.09,.02,5,10,PI),'#F6D3E4',s.at(0,.5,0));s.lit.add(new T.SphereGeometry(.2,10,8),'#FFFFFF',s.at(.3,.18,.08,0,0,0,1,1,.8),true);}
     if(o.k==='ghe'){s.cyl(.2,.25,.42,0,.21,0,o.mau,4);s.cyl(.24,.24,.04,0,.44,0,o.mau,16);s.round(w.x,w.z,.32);}
     if(o.k==='quat'){s.cyl(.22,.24,.05,0,.025,0,'#FFFFFF',16);s.cyl(.025,.025,1.05,0,.55,0,'#FFFFFF',6);s.lit.add(new T.CylinderGeometry(.28,.28,.08,20),'#DCE7F5',s.at(0,1.15,.04,0,PI/2.2),true);s.lit.add(new T.TorusGeometry(.29,.02,5,20),'#FFFFFF',s.at(0,1.15,.09,0,PI/2.2+PI/2));s.round(w.x,w.z,.3);}
@@ -439,6 +468,57 @@ function datRac(s,d){
     s.pop();
   }
   s.lit=L;
+}
+/* Nhãn nổi trên sạp */
+function nhanTex(o,w,h,pad){const q=360,cv=document.createElement('canvas');cv.width=Math.round((w+2*pad)*q);cv.height=Math.round((h+2*pad)*q);const c=cv.getContext('2d');c.fillStyle=NHAN_MAU[o.k][1];c.fillRect(0,0,cv.width,cv.height);c.translate(cv.width/2,cv.height/2);veNhan(c,o,w*q,h*q,false);const t=texOf(cv);t.anisotropy=8;return t;}
+/* Nhãn nổi 3D: khối bo tròn có độ dày, mặt trước in chữ, mép bóng như nhựa; lơ lửng nhẹ */
+function nhan3D(s,o,w,h,x,y,z,ry=0,rz=0,dung=false){
+  const r=h*.32,sh=new T.Shape();sh.moveTo(-w/2+r,-h/2);sh.lineTo(w/2-r,-h/2);sh.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);sh.lineTo(w/2,h/2-r);sh.quadraticCurveTo(w/2,h/2,w/2-r,h/2);sh.lineTo(-w/2+r,h/2);sh.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);sh.lineTo(-w/2,-h/2+r);sh.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
+  const bv=h*.06,geo=new T.ExtrudeGeometry(sh,{depth:h*.12,bevelEnabled:true,bevelThickness:bv,bevelSize:bv,bevelSegments:3,curveSegments:10}),t=nhanTex(o,w,h,bv);
+  t.repeat.set(1/(w+2*bv),1/(h+2*bv));t.offset.set(.5,.5);
+  const mc='nh_'+o.k;if(!MC_BANG[mc]){const[a,b,d]=NHAN_MAU[o.k];MC_BANG[mc]=['#FFFFFF',a,b,d];}
+  const m=new T.Mesh(geo,[new T.MeshBasicMaterial({map:t}),new T.MeshMatcapMaterial({matcap:matcap(mc)})]);
+  const v=s.world(x,y,z);m.position.copy(v);m.rotation.set(0,ry,rz,'YXZ');m.userData.y=v.y;m.userData.ph=x*1.7+z;
+  s.root.add(m);if(!dung)(s.bob=s.bob||[]).push(m);return m;
+}
+/* Nhãn cho từng sạp: chọn theo hàng trong sạp, đổi lần lượt để các sạp không giống nhau */
+function nhanKhu(g,i){
+  const ps=g.ps,gia=Math.min(...ps.map(p=>p.price||999)),L=[];
+  if(ps.some(p=>p.tinhTrang==='it'||p.tinhTrang==='le'))L.push({k:'het',t:'SẮP HẾT',s:'NHANH TAY'});
+  const cb=ps.find(p=>p.combo);if(cb)L.push({k:'combo',t:'COMBO',s:`${cb.price}K/${cb.combo} ${String(cb.comboDv).toUpperCase()}`});
+  if(gia<999)L.push({k:'gia',t:`CHỈ ${gia}K`,s:'GIÁ TẠI CHỢ'});
+  L.push({k:'hot',t:'HOT SALE',s:'MẪU ĐANG HOT'});
+  return L[i%L.length];
+}
+/* Hộp quà bo cạnh, ruy băng chéo, nơ hai vòng; y là đáy */
+function hopQua(s,w,x,y,z,ry=0,mau=0){
+  const[A,R]=[['#8C5CF5','#FF9A4A'],['#FF7EB6','#8C5CF5'],['#F27A2E','#FFD36B']][mau%3],h=w*.8,rb=w*.17;
+  s.push(mat(x,y,z,ry));
+  s.lit.add(roundBox(w,h*.82,w,w*.07),A,s.at(0,h*.41,0),true);
+  s.lit.add(roundBox(w*1.08,h*.26,w*1.08,w*.07),A,s.at(0,h*.87,0),true);
+  s.lit.add(roundBox(rb,h*1.02,w*1.1,rb*.25),R,s.at(0,h*.5,0),true);
+  s.lit.add(roundBox(w*1.1,h*1.02,rb,rb*.25),R,s.at(0,h*.5,0),true);
+  for(const k of[-1,1])s.lit.add(new T.TorusGeometry(w*.15,w*.055,10,24),R,s.at(k*w*.16,h*1.1,0,0,0,k*.55,1,.8,1.6),true);
+  s.ball(w*.085,0,h*1.04,0,R);
+  s.pop();
+}
+/* Giỏ mua hàng tím, khe thoáng, quai cam; day=true có quần áo gấp bên trong */
+function gioHang(s,x,y,z,ry=0,day=true,mau=0,khe=true){
+  const B='#8C5CF5',K='#5B2FD0',w=.62,d=.42,h=.3,t=.04;
+  s.push(mat(x,y,z,ry));
+  s.lit.add(roundBox(w-.04,t,d-.04,.015),B,s.at(0,t/2,0),true);
+  for(const q of[-1,1]){
+    s.lit.add(roundBox(w,h,t,.016),B,s.at(0,h/2,q*(d/2-t/2)),true);
+    s.lit.add(roundBox(t,h,d,.016),B,s.at(q*(w/2-t/2),h/2,0),true);
+    s.lit.add(roundBox(w+.03,.045,.06,.02),B,s.at(0,h,q*(d/2-t/2)),true);
+    s.lit.add(roundBox(.06,.045,d+.03,.02),B,s.at(q*(w/2-t/2),h,0),true);
+    if(khe)for(let k=0;k<3;k++)s.lit.add(roundBox(.1,h*.46,.026,.012),K,s.at(-.15+k*.15,h*.52,q*(d/2-.006)),true);
+    if(khe)for(let k=0;k<2;k++)s.lit.add(roundBox(.026,h*.46,.1,.012),K,s.at(q*(w/2-.006),h*.52,-.075+k*.15),true);
+    if(khe)s.lit.add(new T.TorusGeometry(.16,.024,8,18,PI),'#F27A2E',s.at(0,h+.02,q*(d/2-.02),0,q*.7),true);
+  }
+  if(day){const ao=[['#FFB3CF','#9CC8FF','#FFE58A'],['#B9F0D8','#FFB3CF','#C9B8FF']][mau%2];
+    ao.forEach((c,k)=>s.lit.add(roundBox(.44-k*.04,.07,.28-k*.02,.03),c,s.at(-.02+k*.02,h*.78+k*.075,0,k*.12-.1),true));}
+  s.pop();
 }
 /* ---------- Đồ giao hàng kiểu nhựa 3D: thùng carton, xe đẩy, loa ---------- */
 /* Ảnh nhãn dán: vận đơn (nửa trái), ký hiệu thùng (phải trên), tem DuuDuu (phải dưới) */
@@ -522,11 +602,11 @@ function sanSauBong(c,zm){
     /* bóng chân bục */
     const a=veTheGioi(d,-5,1.99),b=veTheGioi(d,5,1.99),e=veTheGioi(d,0,2.55);
     const g=c.createLinearGradient(a.x,0,e.x,0);g.addColorStop(0,'rgba(70,45,30,.3)');g.addColorStop(1,'rgba(70,45,30,0)');c.fillStyle=g;c.fillRect(Math.min(a.x,e.x),Math.min(a.z,b.z),Math.abs(e.x-a.x),Math.abs(b.z-a.z));
-    for(const o of keHoachRac(d)){const w=veTheGioi(d,o.lx,o.lz+.06);toa(w.x,w.z,{thung:.62,tui:.42,ghe:.36,quat:.32,bien:.4,xe:.78}[o.k],'rgba(60,40,30,.4)');}
+    for(const o of keHoachRac(d)){const w=veTheGioi(d,o.lx,o.lz+.06);toa(w.x,w.z,{thung:.62,tui:.42,ghe:.36,quat:.32,bien:.4,xe:.78,gio:.5}[o.k],'rgba(60,40,30,.4)');}
   });
   toa(0,zm,2.1,'rgba(60,40,30,.28)');
   /* bóng góc giao hàng ở sảnh */
-  [[-5.2,M.ZR+5.4,.85],[-6.2,M.ZR+4,.85],[5.3,M.ZR+5.2,.5],[6.2,M.ZR+4.5,.5]].forEach(([x,z,R])=>toa(x,z,R,'rgba(60,40,30,.38)'));
+  [[-5.2,M.ZR+5.4,.85],[-6.2,M.ZR+4,.85],[5.3,M.ZR+5.2,.5],[6.2,M.ZR+4.5,.5],[2.5,M.ZR+7.4,.55],[M.W-1.2,M.ZR-M.R*11-5+1.55,.8]].forEach(([x,z,R])=>toa(x,z,R,'rgba(60,40,30,.38)'));
   toa(-(M.W-2.6),M.ZR-M.R*11-5,2.8,'rgba(60,40,30,.3)');toa(M.W-3,M.ZR-M.R*11-5,2.9,'rgba(60,40,30,.26)');
 }
 
@@ -592,6 +672,7 @@ function khuHang(s,d){
   }
   const yt=top+.55;
   s.plane(haloSign(g.ten,{w:1024,h:150,size:100,fg:g.chu,glow:'rgba(0,0,0,0)'}),5.4,.79,0,yt,.22,0,{transparent:true,depthWrite:false});
+  nhan3D(s,nhanKhu(g,i),1.5,.66,-side*3.55,yt+.42,.45,ry,side*.1);
   s.pop();
   /* tấm nền trắng viền gỗ, cao vừa tới tên khu */
   const geo=new T.ExtrudeGeometry(nenKhu(yt+.6),{depth:.3,bevelEnabled:false,curveSegments:8});
@@ -848,6 +929,9 @@ function trangTri(s){
   const tu=Math.min(...P.map(p=>p.tu)),den=Math.max(...P.map(p=>p.den)),re=P.reduce((a,b)=>(b.price&&b.price<a.price?b:a),P[0]);
   /* cổng bóng ở sảnh vào, chân sát tường, không che sạp nào */
   congBong(s,ZR+3.6,6.5,5.5);
+  /* biển "Đang mở" treo giữa cổng bóng, đi vào hay đi ra đều đọc được */
+  {const z=ZR+3.6,y=4.35,o={k:'tot',t:'ĐANG MỞ',s:'CHỢ MỞ CẢ NGÀY'};nhan3D(s,o,1.6,.78,0,y,z,0,0,true);nhan3D(s,o,1.6,.78,0,y,z,PI,0,true);
+   for(const k of[-1,1])ong(s,'den',.012,[k*.55,y+.42,z],[k*.25,5.55,z]);}
   /* chùm bóng ở bốn góc và quầy tư vấn */
   [[-W+2.2,ZE-2.4],[W-2.2,ZE-2.4],[W-3+2.6,ZR-M.R*11-5+.9]].forEach(([x,z],i)=>{s.mc('su',new T.CylinderGeometry(.12,.15,.2,12),s.at(x,.1,z));chumBong(s,x,.2,z,7,20+i,1.6);s.round(x,z,.35);});
   /* poster treo giữa các dãy sạp */
@@ -858,10 +942,12 @@ function trangTri(s){
   /* hai poster đứng ở sảnh vào */
   posterDung(s,-4.4,ZR+2.2,.42,posterChu('Bé lên sàn diễn','Mặc thử, lưu ảnh gửi cả nhà',1200,1720));
   posterDung(s,4.4,ZR+2.2,-.42,posterMau(lay(1),(lay(1).khu||'Hàng mới về').toUpperCase(),1200,1720));
+  /* chồng giỏ mua hàng ở lối vào, giỏ trên cùng có sẵn quần áo */
+  {const x=2.5,z=ZR+7.4;for(let k=0;k<3;k++)gioHang(s,x,k*.06,z,.3,k===2,k,k===2);s.round(x,z,.45);}
   /* góc giao hàng ở sảnh: xe đẩy chở thùng, chồng thùng và loa rao trên chân đứng */
   xeDay(s,-5.2,ZR+5.4,.55,0);s.round(-5.2,ZR+5.4,.65);
   carton(s,.7,.52,.56,-6.4,0,ZR+4.3,.3,1);carton(s,.56,.42,.46,-6.36,.52,ZR+4.32,-.1,2);carton(s,.6,.45,.5,-5.7,0,ZR+3.5,-.5,0);s.round(-6.2,ZR+4,.7);
-  {const x=5.3,z=ZR+5.2;s.cyl(.3,.34,.08,x,.04,z,'#FFFFFF',24);ong(s,'bac',.035,[x,.08,z],[x,1.62,z]);loa(s,x,1.78,z,-1.45,-.22,1.15);s.round(x,z,.45);
+  {const x=5.3,z=ZR+5.2;s.cyl(.3,.34,.08,x,.04,z,'#FFFFFF',24);ong(s,'bac',.035,[x,.08,z],[x,1.62,z]);loa(s,x,1.78,z,-1.45,-.22,1.15);nhan3D(s,{k:'hot',t:'SALE',s:`CHỈ TỪ ${GIA_RE}K`},.95,.5,x-.95,2.35,z+.15,-1.45+PI/2,.12);s.round(x,z,.45);
     carton(s,.62,.46,.5,x+.9,0,z-.7,-.4,2);carton(s,.5,.38,.42,x+.92,.46,z-.68,.1,0);s.round(x+.9,z-.7,.45);}
 }
 function buildMarket(){
@@ -886,6 +972,9 @@ function buildMarket(){
   {const v=[[2.1,.5],[1.1,2.1]].map(([a,b])=>new V3(bx+a*Math.cos(br)+b*Math.sin(br),0,zb-a*Math.sin(br)+b*Math.cos(br)));s.round(v[0].x,v[0].z,1);s.round(v[1].x,v[1].z,.95);}
   const cx=W-3;s.box(4.6,1.05,1.3,cx,.525,zb,'#FFFFFF');s.box(4.8,.08,1.5,cx,1.09,zb,'#EFCB9B');s.gbox(4.74,.03,1.44,cx,.02,zb,'#F5F0E2');s.solid(cx-2.3,cx+2.3,zb-.65,zb+.65,false);for(const k of[-1,1])logoDisc(s,cx+k*1.3,.56,zb+.65,0,.84);
   s.ownerAt={x:cx,z:zb-1.25,yaw:0};
+  /* quà tặng: trên quầy và chồng quà cạnh tường */
+  hopQua(s,.34,cx+1.45,1.13,zb-.1,.3,0);hopQua(s,.24,cx+1.85,1.13,zb+.15,-.4,1);
+  hopQua(s,.56,W-1,0,zb+1.3,.25,2);hopQua(s,.36,W-1.02,.46,zb+1.28,-.3,1);hopQua(s,.4,W-1.6,0,zb+1.9,.6,0);s.round(W-1.2,zb+1.55,.75);
   plant(s,-W+1.4,ZE-1.6,1.4);plant(s,W-1.4,ZE-1.6,1.4);plant(s,-W+1.4,ZS+1.6,1.4);plant(s,W-1.4,ZS+1.6,1.4);
   tuongCuoi(s);
   s.bounds={minX:-W+.7,maxX:W-.7,minZ:ZS+.6,maxZ:ZE-.6};s.camB={x:W-.4,zMin:ZS+.5,zMax:ZE-.5};
@@ -1789,6 +1878,7 @@ function frame(){
     if(marker.visible)marker.scale.setScalar(1+Math.sin(time*7)*.14);
   }
   if(cur.spin&&!REDUCED)for(const o of cur.spin)o.rotation.y+=dt*.5;
+  if(cur.bob&&!REDUCED)for(const o of cur.bob)o.position.y=o.userData.y+Math.sin(time*1.6+o.userData.ph)*.05;
   applyOffset(dt);
   renderer.render(scene,camera);
   /* tự giảm độ nét nếu máy chậm */
