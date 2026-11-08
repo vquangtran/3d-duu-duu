@@ -3,7 +3,7 @@
    Chữ hệ thống của máy, màu nhấn là tím DuuDuu, tự đổi sáng/tối theo điện thoại. */
 :root{
   --nen:#F2F2F7; --o:#FFFFFF; --o2:rgba(118,118,128,.12); --nav:rgba(249,249,249,.86);
-  --chu:#000000; --phu:rgba(60,60,67,.6); --phu3:rgba(60,60,67,.3); --vach:rgba(60,60,67,.29);
+  --chu:#000000; --phu:rgba(60,60,67,.6); --phu3:rgba(60,60,67,.3); --phu2:rgba(60,60,67,.42); --vach:rgba(60,60,67,.29);
   --tint:#7C3CFF; --tint-nen:rgba(124,60,255,.12);
   --do:#FF3B30; --do-nen:rgba(255,59,48,.12); --xanh:#34C759; --xanh-nen:rgba(52,199,89,.14); --cam:#C46A00; --cam-nen:rgba(255,149,0,.16);
   --tat:#E9E9EA; --hud:rgba(28,28,30,.88); --man:rgba(0,0,0,.35);
@@ -13,7 +13,7 @@
 }
 @media (prefers-color-scheme:dark){:root{
   --nen:#000000; --o:#1C1C1E; --o2:rgba(118,118,128,.24); --nav:rgba(22,22,23,.86);
-  --chu:#FFFFFF; --phu:rgba(235,235,245,.6); --phu3:rgba(235,235,245,.3); --vach:rgba(84,84,88,.6);
+  --chu:#FFFFFF; --phu:rgba(235,235,245,.6); --phu3:rgba(235,235,245,.3); --phu2:rgba(235,235,245,.4); --vach:rgba(84,84,88,.6);
   --tint:#A98BFF; --tint-nen:rgba(169,139,255,.2);
   --do:#FF453A; --do-nen:rgba(255,69,58,.2); --xanh:#30D158; --xanh-nen:rgba(48,209,88,.2); --cam:#FFB340; --cam-nen:rgba(255,159,10,.2);
   --tat:#39393D; --hud:rgba(44,44,46,.92); --man:rgba(0,0,0,.6);
@@ -125,7 +125,7 @@ h1,h2,h3{margin:0}
 .dsC .tt{font-size:15px}
 .dsC .gia{color:var(--tint);font-weight:600}
 .dsC .gia.chua{color:var(--do);font-weight:400}
-.dsC .ngay{font-size:13px;color:var(--phu)}
+.dsC .ngay{font-size:12px;color:var(--phu2);font-style:italic}
 .dsC .nhans{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
 .mui{width:8px;height:8px;border-top:2px solid var(--phu3);border-right:2px solid var(--phu3);transform:rotate(45deg);flex:none;margin-left:2px}
 .nhan{display:inline-block;font-size:12px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--o2);color:var(--phu)}
