@@ -15,6 +15,7 @@
     mau   : (không bắt buộc) các màu khách được chọn. Có thể ghi số thứ tự ảnh của màu đó.
     het   : true  -> mẫu đã hết, sạp vẫn treo nhưng khách không thêm vào giỏ được
     an    : true  -> ẩn hẳn khỏi chợ
+    ngay  : ngày cập nhật mẫu (năm-tháng-ngày), trang quản trị tự ghi mỗi lần bấm Lưu
 
   Nếu chợ đọc sai giá hoặc size, ghi đè bằng tay:
     gia: 129, tu: 10, den: 30, thieu: [18, 19]

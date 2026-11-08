@@ -110,6 +110,8 @@ mau: [{ ten: 'Xanh', anh: 0 }, { ten: 'Tím', anh: 1 }],
 - Hết **cả mẫu** nhưng vẫn muốn khách xem: thêm `het: true,`.
 - **Bỏ hẳn** mẫu khỏi chợ: thêm `an: true,` hoặc xoá cả khối.
 
+Dòng `ngay: '2026-11-08',` là ngày cập nhật mẫu. Sửa ở trang quản trị thì mỗi lần bấm **Lưu** chợ tự ghi ngày hôm nay, danh sách mẫu hiện "Cập nhật hôm nay", "hôm qua" hoặc ngày cụ thể. Sửa tay file này thì có thể tự ghi dòng đó, không ghi cũng được.
+
 ## 4. Khu trong chợ
 
 Danh sách `khu` ở đầu file là các khu, theo thứ tự. Màu của mỗi khu là màu khối trưng. Mỗi khối trưng được 3 mẫu: khu nhiều mẫu hơn thì chợ tự thêm khối cùng màu, thêm khu mới thì chợ tự dài thêm.
