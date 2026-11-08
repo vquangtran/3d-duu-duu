@@ -489,6 +489,20 @@ function veTreo() {
   if (t) { if (t.url) im.src = t.url; else ganAnh(im, t.path); }
 }
 $('#treoChon').addEventListener('click', () => $('#treoFile').click());
+// Chép câu lệnh tách nền để dán vào ChatGPT
+$('#lenhChu').addEventListener('click', e => e.currentTarget.classList.toggle('mo'));
+let chepT = 0;
+$('#chepLenh').addEventListener('click', async () => {
+  const t = $('#lenhChu').textContent.trim();
+  let ok = false;
+  try { await navigator.clipboard.writeText(t); ok = true; } catch (e) {
+    const a = document.createElement('textarea'); a.value = t; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(a); a.select(); a.setSelectionRange(0, t.length);
+    try { ok = document.execCommand('copy'); } catch (e2) {} a.remove();
+  }
+  $('#chepT').textContent = ok ? 'Đã chép, dán vào ChatGPT nha' : 'Không chép được, mẹ chạm giữ đoạn chữ để chép';
+  clearTimeout(chepT); chepT = setTimeout(() => { $('#chepT').textContent = 'Chép câu lệnh'; }, 3000);
+});
 $('#treoBo').addEventListener('click', () => {
   if (!E || !E.treo) return;
   if (E.treo.path && !E.treo.moi) E.bo.add(E.treo.path);
