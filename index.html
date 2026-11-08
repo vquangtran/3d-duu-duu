@@ -80,15 +80,17 @@
     </section>
   </div>
 
-  <div class="scrim" id="shotWrap" hidden>
-    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle">
+  <div class="scrim" id="thuWrap" hidden>
+    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="thTitle">
       <button class="close" data-close aria-label="Đóng"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-      <h2 id="shTitle">Ảnh bé mặc thử</h2>
-      <div class="shotWait" id="shWait">Đang làm ảnh…</div>
-      <img class="shot" id="shImg" alt="" hidden>
-      <p class="sub" id="shHow">Lưu ảnh rồi gửi vào nhóm Zalo cho cả nhà xem nha. Nút không chạy thì mẹ nhấn giữ vào ảnh để lưu.</p>
-      <div class="row"><button class="btn ghost" id="shSave">Lưu ảnh</button><button class="btn main" id="shShare">Gửi ảnh</button></div>
-      <button class="link" id="shBack">Xem lại mẫu này</button>
+      <h2 id="thTitle">Mẹ thấy mẫu này sao?</h2>
+      <div class="cmp">
+        <figure><img id="thBe" alt=""><figcaption id="thBeCap">Bé mặc thử</figcaption></figure>
+        <figure><img id="thSP" alt=""><figcaption id="thSPCap">Ảnh thật của shop</figcaption></figure>
+      </div>
+      <div><header><h2 id="thName"></h2><p class="price" id="thPrice"></p></header><p class="sub" id="thMeta"></p></div>
+      <p class="fit" id="thFit" hidden></p>
+      <div class="row"><button class="btn ghost" id="thKhac">Thử mẫu khác</button><button class="btn main" id="thMua">Chọn size, thêm giỏ</button></div>
     </section>
   </div>
 

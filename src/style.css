@@ -219,11 +219,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-of
 .tvl{font-size:13px;font-weight:700;margin-bottom:-8px}
 #tvMsg{width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--soft);border-radius:14px;font:500 15px/1.5 var(--body);color:var(--sun-ink);background:#FAFAFD;resize:vertical;user-select:text;-webkit-user-select:text}
 #tvZalo{display:flex;align-items:center;justify-content:center;text-decoration:none;background:#0068FF}
-/* ---------- Sàn diễn mặc thử và ảnh chia sẻ ---------- */
+/* ---------- Sàn diễn mặc thử, rồi so với ảnh thật ---------- */
 #hud #nav,#hud #strip,#hud #acts{transition:opacity .3s}
 #hud.show #nav,#hud.show #strip,#hud.show #acts{opacity:0;pointer-events:none}
-.shot{display:block;width:100%;max-height:min(56dvh,560px);object-fit:contain;border-radius:18px;background:#F3E9FB;-webkit-touch-callout:default;user-select:auto;-webkit-user-select:auto}
-.shotWait{display:flex;align-items:center;justify-content:center;min-height:240px;border-radius:18px;background:#F3E9FB;font-weight:600;color:var(--dim)}
+#thTitle{padding-right:52px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cmp figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.cmp figure[hidden]{display:none}
+.cmp img{display:block;width:100%;aspect-ratio:3/4;object-fit:contain;border-radius:18px;background:linear-gradient(#FFF1FA,#EEE7FF)}
+.cmp figure+figure img{object-fit:cover;background:#F3E9FB}
+.cmp figcaption{text-align:center;font-size:12.5px;font-weight:700;color:var(--dim)}
 
 
 /* ---------- Sàn diễn: chọn mẫu mặc thử ---------- */
