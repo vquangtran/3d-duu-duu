@@ -389,7 +389,7 @@ function veDS() {
     return `<li><button type="button" data-i="${i}" class="${x.an ? 'an' : ''}">
       ${anh ? `<img class="anhNho" data-anh="${esc(anh)}" alt="" loading="lazy">` : `<span class="anhGia" style="background:${esc(mauKhu(x.khu))};color:${chuTren(mauKhu(x.khu))}">${esc(x.ma || '?')}</span>`}
       <span class="dsC"><b>${esc(x.ten || x.ma || 'Mẫu chưa đặt tên')}</b><span class="ma">${esc(x.ma)} · ${esc(x.khu || '')}</span>
-      <span class="tt">${gia ? `<span class="gia">${esc(gia)}</span>` : '<span class="gia chua">Chưa có giá</span>'} · ${esc(size)}${t.thieu.length ? ` · hết ${esc(dayThieu(t.thieu))}kg` : ''}</span>${x.ngay ? `<span class="ngay">Cập nhật ${esc(ngayChu(x.ngay))}</span>` : ''}${nh.length ? `<span class="nhans">${nh.join('')}</span>` : ''}</span>
+      <span class="tt">${gia ? `<span class="gia">${esc(gia)}</span>` : '<span class="gia chua">Chưa có giá</span>'} · ${esc(size)}${t.thieu.length ? ` · hết ${esc(dayThieu(t.thieu))}kg` : ''}</span><span class="ngay">${x.ngay ? `Cập nhật ${esc(ngayChu(x.ngay))}` : 'Chưa ghi ngày cập nhật'}</span>${nh.length ? `<span class="nhans">${nh.join('')}</span>` : ''}</span>
       <span class="mui" aria-hidden="true"></span>
     </button></li>`;
   }).join('');
