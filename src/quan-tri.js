@@ -808,4 +808,21 @@ $('#dangXuat').addEventListener('click', () => {
 ['#tpCai'].forEach(id => ['input', 'change', 'click'].forEach(ev => $(id).addEventListener(ev, () => setTimeout(capNhatNut))));
 
 /* ---------- Bắt đầu ---------- */
+/* Tự lấy bản mới của trang quản trị. GitHub Pages cho trình duyệt giữ bản cũ tới 10 phút,
+   nên mỗi lần mở trang hỏi máy chủ xem có bản mới hơn không; có thì tải lại cả trang.
+   Chỉ làm khi mẹ chưa sửa gì dở, và mỗi phiên tối đa một lần cho khỏi lặp. */
+async function banMoi() {
+  try {
+    const r = await fetch('quan-tri.html', { method: 'HEAD', cache: 'no-store' });
+    const moi = Date.parse(r.headers.get('last-modified')), cu = Date.parse(document.lastModified);
+    if (!(moi > cu + 1000)) return;
+    if (ls.get('lamMoi') === moi) return;
+    if (E || KE || caiDoi) return;
+    ls.set('lamMoi', moi);
+    await Promise.all(['quan-tri.html', 'src/quan-tri.js', 'src/quan-tri.css'].map(u => fetch(u, { cache: 'reload' })));
+    location.reload();
+  } catch (e) {}
+}
+banMoi();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') banMoi(); });
 if (C.token) batDau(); else hienVao();
