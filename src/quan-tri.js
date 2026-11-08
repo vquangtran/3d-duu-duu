@@ -384,12 +384,12 @@ function veDS() {
     else if (t.tt === 'it') nh.push('<span class="nhan vang">Còn vài ri</span>');
     if (!K.data.khu.some(k => k.ten === x.khu)) nh.push('<span class="nhan do">Chưa có khu</span>');
     if (!(x.anh || []).length) nh.push('<span class="nhan">Chưa có ảnh</span>');
-    const gia = giaChu(t) || 'Chưa có giá', size = t.tu && t.den ? `${t.tu}–${t.den}kg` : 'chưa có size';
+    const gia = giaChu(t), size = t.tu && t.den ? `${t.tu}–${t.den}kg` : 'chưa có size';
     const anh = (x.anh || [])[0];
     return `<li><button type="button" data-i="${i}" class="${x.an ? 'an' : ''}">
       ${anh ? `<img class="anhNho" data-anh="${esc(anh)}" alt="" loading="lazy">` : `<span class="anhGia" style="background:${esc(mauKhu(x.khu))};color:${chuTren(mauKhu(x.khu))}">${esc(x.ma || '?')}</span>`}
       <span class="dsC"><b>${esc(x.ten || x.ma || 'Mẫu chưa đặt tên')}</b><span class="ma">${esc(x.ma)} · ${esc(x.khu || '')}</span>
-      <span class="tt">${esc(gia)} · ${esc(size)}${t.thieu.length ? ` · hết ${esc(dayThieu(t.thieu))}kg` : ''}</span>${x.ngay ? `<span class="ngay">Cập nhật ${esc(ngayChu(x.ngay))}</span>` : ''}${nh.length ? `<span class="nhans">${nh.join('')}</span>` : ''}</span>
+      <span class="tt">${gia ? `<span class="gia">${esc(gia)}</span>` : '<span class="gia chua">Chưa có giá</span>'} · ${esc(size)}${t.thieu.length ? ` · hết ${esc(dayThieu(t.thieu))}kg` : ''}</span>${x.ngay ? `<span class="ngay">Cập nhật ${esc(ngayChu(x.ngay))}</span>` : ''}${nh.length ? `<span class="nhans">${nh.join('')}</span>` : ''}</span>
       <span class="mui" aria-hidden="true"></span>
     </button></li>`;
   }).join('');
