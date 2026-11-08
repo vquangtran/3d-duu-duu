@@ -115,7 +115,22 @@
         <button type="button" class="dongDo" id="treoBo" hidden>Bỏ ảnh treo sào</button>
       </div>
       <input type="file" id="treoFile" accept="image/png,image/webp,image/*" hidden>
-      <p class="chuChan">Không bắt buộc. Chưa có ảnh thì chợ tự vẽ bộ đồ theo màu của ảnh mẫu. Ảnh bộ đồ đã xoá nền (nền trong suốt) sẽ được treo lên sào trong chợ. Trên iPhone: mở ảnh trong app Ảnh, chạm giữ vào bộ đồ đến khi viền sáng lên, chọn <b>Chia sẻ</b> → <b>Lưu ảnh</b>, rồi chọn ảnh vừa lưu ở đây.</p>
+      <p class="chuChan">Không bắt buộc. Chưa có ảnh thì chợ tự vẽ bộ đồ theo màu của ảnh mẫu.</p>
+
+      <h3 class="dauNhom">Tách nền bằng ChatGPT</h3>
+      <div class="nhom">
+        <p class="lenh" id="lenhChu" title="Chạm để xem hết">Từ ảnh mình gửi, hãy tạo ảnh PNG nền trong suốt của riêng bộ quần áo trẻ em trong ảnh, để treo lên móc trong cửa hàng online.
+Yêu cầu:
+- Giữ đúng 100% bộ đồ gốc: màu sắc, hoạ tiết, chất vải, cúc, nơ, cổ áo, đường may. Không thêm, không bớt, không đổi kiểu.
+- Chỉ lấy quần áo. Bỏ hết nền, sàn, gấu bông, giày, phụ kiện, tay người, chữ, logo, watermark.
+- Xếp bộ đồ thẳng, nhìn chính diện, phẳng như đang treo trên móc: áo ở trên, quần hoặc váy ngay bên dưới, ở chính giữa ảnh. Không vẽ móc treo, không có người mặc.
+- Nền trong suốt thật (PNG có kênh alpha), không phải nền trắng hay ô caro. Không đổ bóng.
+- Ảnh dọc, bộ đồ chiếm gần hết khung, chừa lề mỏng.
+- Ánh sáng đều, màu tự nhiên như ảnh thật, sắc nét.</p>
+        <button type="button" class="dongThem" id="chepLenh"><svg class="icoChep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><span id="chepT">Chép câu lệnh</span></button>
+        <a class="dongThem" href="https://chatgpt.com/" target="_blank" rel="noopener"><svg class="icoChep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></svg>Mở ChatGPT</a>
+      </div>
+      <p class="chuChan">Chép câu lệnh, mở ChatGPT, gửi <b>ảnh trải sàn rõ đồ nhất</b> kèm câu lệnh. Tải ảnh ChatGPT trả về rồi bấm <b>Chọn ảnh đã tách nền</b> ở trên. Ảnh chưa ưng thì nhắn ChatGPT sửa tiếp, ví dụ "giữ đúng màu như ảnh gốc".</p>
 
       <div class="nhom cachTren">
         <label class="o"><span>Mã mẫu</span><input id="fMa" autocapitalize="characters" spellcheck="false" placeholder="VD: YN-A50"></label>
