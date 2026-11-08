@@ -483,7 +483,7 @@ $('#anhFile').addEventListener('change', async e => {
 
 function veTreo() {
   const t = E.treo, im = $('#treoImg');
-  im.hidden = !t; $('#treoTrong').hidden = !!t; $('#treoBo').hidden = !t;
+  $('#treoXem').hidden = !t; $('#treoBo').hidden = !t;
   $('#treoChonT').textContent = t ? 'Đổi ảnh khác' : 'Chọn ảnh đã tách nền';
   im.onerror = null; im.removeAttribute('src');
   if (t) { if (t.url) im.src = t.url; else ganAnh(im, t.path); }
