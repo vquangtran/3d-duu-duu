@@ -67,6 +67,16 @@ function tinh(x) {
     tt: x.het ? 'het' : (x.tinhTrang || d.tinhTrang || 'con')
   };
 }
+/* Ngày cập nhật mẫu: lưu dạng '2026-11-08', hiện '8/11/2026' (hoặc hôm nay, hôm qua) */
+const ngayISO = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const homNay = () => ngayISO(new Date());
+function ngayChu(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); if (!m) return '';
+  if (s === homNay()) return 'hôm nay';
+  const qua = new Date(); qua.setDate(qua.getDate() - 1);
+  if (s === ngayISO(qua)) return 'hôm qua';
+  return `${+m[3]}/${+m[2]}/${m[1]}`;
+}
 const giaChu = t => t.gia ? (t.combo ? `${t.gia}k/${t.combo} ${t.comboDv}` : `${t.gia}k`) : '';
 const dayThieu = a => a.length > 1 ? `${a[0]}–${a[a.length - 1]}` : String(a[0]);
 
@@ -163,7 +173,7 @@ function b64(blob) {
 }
 
 /* ---------- Ghi lại data/san-pham.js cho dễ đọc, dễ sửa tay ---------- */
-const THU_TU = ['ma', 'ten', 'khu', 'chu', 'gia', 'tu', 'den', 'thieu', 'combo', 'comboDv', 'tinhTrang', 'anh', 'anhTreo', 'mau', 'het', 'an'];
+const THU_TU = ['ma', 'ten', 'khu', 'chu', 'gia', 'tu', 'den', 'thieu', 'combo', 'comboDv', 'tinhTrang', 'anh', 'anhTreo', 'mau', 'het', 'an', 'ngay'];
 const chuoi = s => "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, '\\n').replace(/[\u2028\u2029]/g, c => '\\u' + c.charCodeAt(0).toString(16)) + "'";
 const khoa = k => /^[A-Za-z_$][\w$]*$/.test(k) ? k : chuoi(k);
 function lit(v, ind = '') {
@@ -206,6 +216,7 @@ function vietData(d) {
     mau   : (không bắt buộc) các màu khách được chọn. Có thể ghi số thứ tự ảnh của màu đó.
     het   : true  -> mẫu đã hết, sạp vẫn treo nhưng khách không thêm vào giỏ được
     an    : true  -> ẩn hẳn khỏi chợ
+    ngay  : ngày cập nhật mẫu (năm-tháng-ngày), trang quản trị tự ghi mỗi lần bấm Lưu
 
   Nếu chợ đọc sai giá hoặc size, ghi đè bằng tay:
     gia: 129, tu: 10, den: 30, thieu: [18, 19]
@@ -373,12 +384,12 @@ function veDS() {
     else if (t.tt === 'it') nh.push('<span class="nhan vang">Còn vài ri</span>');
     if (!K.data.khu.some(k => k.ten === x.khu)) nh.push('<span class="nhan do">Chưa có khu</span>');
     if (!(x.anh || []).length) nh.push('<span class="nhan">Chưa có ảnh</span>');
-    const gia = giaChu(t) || 'Chưa có giá', size = t.tu && t.den ? `${t.tu}–${t.den}kg` : 'chưa có size';
+    const gia = giaChu(t), size = t.tu && t.den ? `${t.tu}–${t.den}kg` : 'chưa có size';
     const anh = (x.anh || [])[0];
     return `<li><button type="button" data-i="${i}" class="${x.an ? 'an' : ''}">
       ${anh ? `<img class="anhNho" data-anh="${esc(anh)}" alt="" loading="lazy">` : `<span class="anhGia" style="background:${esc(mauKhu(x.khu))};color:${chuTren(mauKhu(x.khu))}">${esc(x.ma || '?')}</span>`}
       <span class="dsC"><b>${esc(x.ten || x.ma || 'Mẫu chưa đặt tên')}</b><span class="ma">${esc(x.ma)} · ${esc(x.khu || '')}</span>
-      <span class="tt">${esc(gia)} · ${esc(size)}${t.thieu.length ? ` · hết ${esc(dayThieu(t.thieu))}kg` : ''}</span>${nh.length ? `<span class="nhans">${nh.join('')}</span>` : ''}</span>
+      <span class="tt">${gia ? `<span class="gia">${esc(gia)}</span>` : '<span class="gia chua">Chưa có giá</span>'} · ${esc(size)}${t.thieu.length ? ` · hết ${esc(dayThieu(t.thieu))}kg` : ''}</span>${x.ngay ? `<span class="ngay">Cập nhật ${esc(ngayChu(x.ngay))}</span>` : ''}${nh.length ? `<span class="nhans">${nh.join('')}</span>` : ''}</span>
       <span class="mui" aria-hidden="true"></span>
     </button></li>`;
   }).join('');
@@ -413,6 +424,7 @@ function moSua(i) {
   $('#fTayW').open = x.gia != null || x.tu != null || x.den != null || Array.isArray(x.thieu);
   $('#fHet').checked = !!x.het; $('#fAn').checked = !!x.an;
   $('#xoaW').hidden = !goc;
+  $('#fNgay').innerHTML = goc && goc.ngay ? `Cập nhật lần cuối: <b>${esc(ngayChu(goc.ngay))}</b>. Bấm Lưu thì đổi thành hôm nay.` : 'Bấm Lưu thì chợ ghi ngày cập nhật là hôm nay.';
   veAnh(); veTreo(); veMauSac(); veDoc();
   moMan('#suaWrap');
   if (!goc) setTimeout(() => $('#fMa').focus(), 50);
@@ -549,7 +561,7 @@ $('#luuMau').addEventListener('click', async () => {
       const t = e0.treo; if (t && t.moi) { t.path = ctx.tenMoi(ma, 'png', '-treo'); ctx.them.push(t); }
       const mau = tenMau.map(m => { const j = m.img ? e0.imgs.indexOf(m.img) : -1; return j >= 0 ? Object.assign({}, m.them, { ten: m.ten.trim(), anh: j }) : m.ten.trim(); });
       const x = Object.assign({}, e0.goc, { ma, ten: ten || undefined, khu, chu: chu || undefined, gia, tu, den, thieu,
-        anh: anh.length ? anh : undefined, anhTreo: t ? t.path : undefined, mau: mau.length ? mau : undefined, het: $('#fHet').checked || undefined, an: $('#fAn').checked || undefined });
+        anh: anh.length ? anh : undefined, anhTreo: t ? t.path : undefined, mau: mau.length ? mau : undefined, het: $('#fHet').checked || undefined, an: $('#fAn').checked || undefined, ngay: homNay() });
       Object.keys(x).forEach(k => { if (x[k] === undefined) delete x[k]; });
       const i = e0.moi ? -1 : d.sanPham.findIndex(y => y.ma === e0.ma0);
       if (i >= 0) d.sanPham[i] = x; else d.sanPham.unshift(x);
@@ -701,7 +713,9 @@ $('#kLuu').addEventListener('click', async () => {
       Object.assign(k, { ten, mau });
       d.khu.splice(Math.min(viTri, d.khu.length), 0, k);
       if (!k0.moi && k0.ten0 !== ten) d.sanPham.forEach(x => { if (x.khu === k0.ten0) x.khu = ten; });
-      ds.forEach(r => { const x = d.sanPham.find(y => y.ma === r.ma); if (x) x.khu = r.khuMoi || ten; });
+      // mẫu được chuyển sang khu khác thì tính là vừa cập nhật
+      const nay = homNay();
+      ds.forEach(r => { const x = d.sanPham.find(y => y.ma === r.ma); if (!x) return; const khu = r.khuMoi || ten; if (x.khu !== khu) x.ngay = nay; x.khu = khu; });
       // Xếp lại các mẫu của khu theo thứ tự đã chọn, giữ nguyên chỗ của mẫu thuộc khu khác
       const cho = []; d.sanPham.forEach((x, j) => { if (x.khu === ten) cho.push(j); });
       const trong = cho.map(j => d.sanPham[j]), muon = ds.filter(r => !r.khuMoi).map(r => r.ma);
@@ -718,7 +732,8 @@ $('#kXoa').addEventListener('click', async () => {
   if (!confirm(`Xoá khu ${k0.ten0} khỏi chợ?`)) return;
   try {
     await luu(`Xoá khu ${k0.ten0}`, d => {
-      ds.forEach(r => { const x = d.sanPham.find(y => y.ma === r.ma); if (x) x.khu = r.khuMoi; });
+      const nay = homNay();
+      ds.forEach(r => { const x = d.sanPham.find(y => y.ma === r.ma); if (x) { x.khu = r.khuMoi; x.ngay = nay; } });
       if (d.sanPham.some(x => x.khu === k0.ten0)) throw loiDe2('Khu này vẫn còn mẫu. Mẹ chuyển hết mẫu sang khu khác trước nha.');
       if (d.khu.length <= 1) throw loiDe2('Chợ cần ít nhất một khu.');
       d.khu = d.khu.filter(z => z.ten !== k0.ten0);
