@@ -9,7 +9,7 @@ Khu chợ 3D mở cả ngày cho các mẹ dẫn bé đi dạo sạp, xem ảnh 
 ```
 index.html          # Khung giao diện: thanh trên cùng, bảng mẫu, giỏ hàng, màn hình vào chợ
 data/san-pham.js    # Danh sách mẫu, các sạp, quy định ship và cọc. Sửa mỗi ngày.
-anh/                # Ảnh thật của các mẫu, logo DuuDuu (logo*.png) và vân gỗ của chợ (van-go.jpg)
+anh/                # Ảnh thật của các mẫu, logo DuuDuu (logo*.png); van-go.jpg là vân gỗ cũ, chợ không còn dùng
 src/style.css       # Toàn bộ CSS
 src/fonts.css       # Khai báo font Baloo 2 và Be Vietnam Pro tải từ fonts/ (không dùng Google Fonts)
 fonts/              # File font woff2 (giấy phép SIL OFL), tiếng Việt và Latin
@@ -61,4 +61,4 @@ Chợ không có máy chủ riêng, nên `quan-tri.html` chạy hoàn toàn trê
 - Trang trí Noel cho cả chợ (cùng điều kiện `NOEL`): hai cây thông lớn hai bên logo cuối chợ (`cayThong`), quả châu treo trần dọc lối đi, vòng nguyệt quế trên mỗi sạp (`vongLa`), đèn nháy dọc rào trước sạp, tất Noel ở quầy tư vấn (`tatNoel`), gấu lớn đội mũ Noel, tuyết rơi nhẹ (`tuyetRoi`), hộp quà đổi sang đỏ, xanh lá.
 - Đồ Noel chi tiết: quả châu trơn và sọc có nắp, móc (`quaChau`, ảnh sọc vẽ ở `texNoel`), kẹo gậy sọc bắt chéo có nơ ở hai đầu rào sạp (`keoGay`, `noDo`), đèn quả nhót trên dây võng (`dayDen`), chuông vàng và lá nhựa ruồi treo trần, trên vòng nguyệt quế và biển Đang mở (`chuong`, `hoaLa`), tất sọc cổ lông, quả cầu tuyết, cốc ca cao, bánh gừng trên quầy (`quayNoel`), túi quà cạnh cây thông (`tuiQua`).
 - Góc Noel (`gocNoel`) bên trái lối vào: bục tuyết, cây thông, người tuyết, chim cánh cụt, tuần lộc có đèn nháy, lính kẹp hạt dẻ và nhãn Giáng sinh an lành. Chỉ hiện từ tháng 11 tới hết 6/1 (`NOEL`), ngoài mùa thì tự ẩn.
-- Đồ trong chợ dựng theo kiểu đồ chơi nhựa 3D: hộp bo tròn cạnh (`roundBox`), vệt bóng và viền sáng theo góc nhìn (`glossMat`, `rim`), ánh đèn vẫn nướng sẵn vào màu nên điện thoại chạy nhẹ. Khử răng cưa luôn bật, màn hình nét gấp 2; máy chạy chậm thì chợ tự giảm độ nét.
+- Đồ trong chợ dựng theo kiểu đồ chơi nhựa 3D tông pastel: hộp bo tròn cạnh (`roundBox`), vệt bóng và viền sáng theo góc nhìn (`glossMat`, `rim`). Ánh nắng chiếu chéo từ bên trái được nướng sẵn vào màu (mặt trên sáng, mặt bên đổ bóng tím mát) nên điện thoại chạy nhẹ. Bảng màu: trần xanh trời có sườn tím, tường ván tím nhạt chân trắng viền hồng (`wallTex`), sàn ô cờ tím nhạt, lối đi giữa thảm hồng, nền sau mỗi sạp theo màu khu, thanh treo, khung và rào bằng nhựa tím (`MC_BANG.vang`). Khử răng cưa luôn bật, màn hình nét gấp 2; máy chạy chậm thì chợ tự giảm độ nét.
