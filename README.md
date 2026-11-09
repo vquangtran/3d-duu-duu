@@ -14,6 +14,9 @@ src/style.css       # Toàn bộ CSS
 src/fonts.css       # Khai báo font Baloo 2 và Be Vietnam Pro tải từ fonts/ (không dùng Google Fonts)
 fonts/              # File font woff2 (giấy phép SIL OFL), tiếng Việt và Latin
 src/main.js         # Dựng cảnh 3D, nhân vật, sạp, bảng mẫu, giỏ hàng
+pho-cho.html        # Bản thử: phố chợ nhìn từ trên cao kiểu sa bàn đồ chơi, chạm sạp xem mẫu
+src/pho-cho.js      # Dựng phố chợ: đế nổi, đường, sạp mái sọc theo từng khu, cửa hàng DuuDuu, công viên, xe và người
+src/pho-cho.css     # CSS của phố chợ (nền sáng)
 quan-tri.html       # Trang quản trị cho shop: thêm, sửa, xoá mẫu, khu, cài đặt đơn hàng
 src/quan-tri.js     # Đọc và ghi data/san-pham.js, tải ảnh lên anh/ qua GitHub API (mỗi lần lưu là một commit)
 src/quan-tri.css    # CSS của trang quản trị
@@ -29,6 +32,10 @@ src/quan-tri.css    # CSS của trang quản trị
 - **Giỏ hàng** tính tiền hàng, ship dự kiến theo số bộ (1–3 bộ 20k, từ 4 bộ 25k), tiền cọc (50k từ 2 bộ, 100k từ 4 bộ, 500k từ 20 bộ) và số tiền COD còn lại. Đơn dưới 2 bộ không gửi được, trừ khi khách đã cọc trước đó. Giỏ được lưu trên máy của khách.
 - **Gửi đơn:** chợ chép sẵn tin chốt đơn rồi mở Zalo của shop để khách dán và gửi.
 - Mẫu chưa có ảnh sẽ được vẽ hình minh hoạ.
+
+## Phố chợ (bản thử)
+
+`pho-cho.html` là phố chợ nhìn chéo từ trên cao kiểu sa bàn đồ chơi khối: đế nổi bo tròn, đường có xe chạy, sân gạch, mỗi khu trong `data/san-pham.js` là một sạp mái sọc theo màu khu, ảnh mẫu bày trên quầy, cửa hàng DuuDuu có áo phông lớn trên mái, công viên có cầu trượt. Kéo để xoay, chụm hai ngón hoặc cuộn chuột để phóng to, chạm vào sạp (hoặc tên sạp) để xem mẫu, giá, dải cân nặng; chạm cửa hàng hoặc nút dưới cùng để vào chợ. Ánh sáng và bóng đổ tính trực tiếp; máy chậm thì tự giảm độ nét. `docChu` ở đây là bản rút gọn, chỉ đọc giá và dải cân nặng.
 
 ## Chạy thử trên máy
 
